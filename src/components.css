@@ -133,20 +133,39 @@
 }
 .snack-chev { flex: none; color: var(--muted); line-height: 0; transition: transform 0.15s ease; }
 .snack-chev.open { transform: rotate(180deg); }
+.snack-chev.right { transform: rotate(-90deg); }
 
-/* 상세 아코디언 */
-.snack-more {
-  padding: 0 16px 15px;
+/* ---------- 상세 페이지 ---------- */
+.detail-photo { border-radius: var(--radius-lg); overflow: hidden; border: 1.5px solid var(--ink); margin-bottom: 14px; }
+.detail-photo img { width: 100%; display: block; max-height: 300px; object-fit: cover; }
+.detail-name { font-size: 24px; font-weight: 700; margin: 0 0 8px; font-family: var(--font-hand); }
+.detail-tags { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.detail-tags .snack-date { margin-left: auto; }
+.detail-memo { font-size: 14.5px; line-height: 1.6; margin: 10px 0 0; }
+
+/* 수정 아코디언 */
+.edit-acc { margin-top: 22px; }
+.edit-acc-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: none;
+  color: inherit;
+  font-family: var(--font-hand);
+  font-size: 18px;
+  font-weight: 700;
+  padding: 14px 16px;
+  text-align: left;
+}
+.edit-acc-body {
+  padding: 4px 16px 16px;
   border-top: 1.5px dashed color-mix(in srgb, var(--ink) 25%, transparent);
   margin: 0 14px;
-  padding-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+  padding-top: 14px;
 }
-.snack-more-tags { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.snack-more-tags .snack-date { margin: 0 0 0 auto; }
-.snack-edit { flex: none; align-self: flex-start; padding: 8px 18px; }
+.edit-acc-body > .field:first-child { margin-top: 2px; }
 .snack-thumb {
   flex: none;
   width: 58px;
@@ -159,7 +178,7 @@
 .snack-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .snack-body { flex: 1; min-width: 0; }
 .snack-name-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.snack-name { font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; }
+.snack-name { font-size: 19px; font-weight: 700; letter-spacing: 0; font-family: var(--font-hand); }
 .base-tag, .kind-tag {
   font-size: 11px;
   font-weight: 800;
@@ -222,7 +241,7 @@
 
 /* ---------- 통계 ---------- */
 .stat-section { margin-top: 24px; }
-.stat-title { font-size: 15px; font-weight: 800; margin: 0 0 11px; }
+.stat-title { font-size: 18px; font-weight: 700; margin: 0 0 11px; font-family: var(--font-hand); }
 
 /* 히어로 지표 */
 .hero-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; margin-top: 8px; }

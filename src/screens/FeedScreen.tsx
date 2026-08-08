@@ -20,7 +20,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   const { cats, groups } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [filter, setFilter] = useState<string>('all') // 'all' | groupId
-  const [editing, setEditing] = useState<Snack | null>(null)
+  const [viewing, setViewing] = useState<Snack | null>(null)
 
   async function reload() {
     setSnacks(await listSnacks())
@@ -36,6 +36,24 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     return snacks.filter((s) => Object.keys(s.reactions).some((id) => memberIds.has(id)))
   }, [snacks, filter, cats])
 
+  // ---- 상세 페이지 ----
+  if (viewing) {
+    return (
+      <SnackDetail
+        snack={viewing}
+        cats={cats}
+        groups={groups}
+        onBack={() => setViewing(null)}
+        onDone={async () => {
+          setViewing(null)
+          await reload()
+          onChanged()
+        }}
+      />
+    )
+  }
+
+  // ---- 피드 ----
   return (
     <div className="screen">
       <div className="topbar">
@@ -74,41 +92,20 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
       ) : (
         <div className="feed-list">
           {filtered.map((s) => (
-            <SnackCard key={s.id} snack={s} cats={cats} onClick={() => setEditing(s)} />
+            <SnackCard key={s.id} snack={s} cats={cats} onOpen={() => setViewing(s)} />
           ))}
         </div>
-      )}
-
-      {editing && (
-        <SnackSheet
-          snack={editing}
-          cats={cats}
-          groups={groups}
-          onClose={() => setEditing(null)}
-          onSaved={async () => {
-            setEditing(null)
-            await reload()
-            onChanged()
-          }}
-          onDeleted={async () => {
-            setEditing(null)
-            await reload()
-            onChanged()
-          }}
-        />
       )}
     </div>
   )
 }
 
-function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClick: () => void }) {
+function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen: () => void }) {
   const url = usePhotoURL(snack.photoId)
-  const [open, setOpen] = useState(false)
   const entries = Object.entries(snack.reactions) as [string, ReactionLevel][]
   return (
     <div className="card snack-card">
-      {/* 이름 + 반응 (항상 보임) — 누르면 상세 아코디언 */}
-      <button className="snack-row" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+      <button className="snack-row" onClick={onOpen}>
         {url && (
           <div className="snack-thumb">
             <img src={url} alt={snack.name} loading="lazy" />
@@ -127,100 +124,126 @@ function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClic
             })}
           </div>
         </div>
-        <span className={'snack-chev' + (open ? ' open' : '')}><IconChevronDown size={18} /></span>
+        <span className="snack-chev right"><IconChevronDown size={18} /></span>
       </button>
-
-      {/* 상세 (아코디언) */}
-      {open && (
-        <div className="snack-more">
-          <div className="snack-more-tags">
-            {snack.kind && <span className="kind-tag">{snack.kind}</span>}
-            {snack.base && <span className="base-tag">{snack.base}</span>}
-            <span className="snack-date">{formatDate(snack.createdAt)}</span>
-          </div>
-          {snack.memo && <div className="snack-memo">{snack.memo}</div>}
-          <button className="mini-btn snack-edit" onClick={onClick}>수정하기</button>
-        </div>
-      )}
     </div>
   )
 }
 
-function SnackSheet({
+/** 상세 페이지 — 카드를 누르면 이동. 정보는 보기 전용, 수정 폼은 아코디언으로 접힘 */
+function SnackDetail({
   snack,
   cats,
   groups,
-  onClose,
-  onSaved,
-  onDeleted,
+  onBack,
+  onDone,
 }: {
   snack: Snack
   cats: Cat[]
   groups: Group[]
-  onClose: () => void
-  onSaved: () => void
-  onDeleted: () => void
+  onBack: () => void
+  onDone: () => void
 }) {
   const url = usePhotoURL(snack.photoId)
+  const [editOpen, setEditOpen] = useState(false)
   const [name, setName] = useState(snack.name)
   const [kind, setKind] = useState(snack.kind ?? '')
   const [base, setBase] = useState(snack.base ?? '')
   const [memo, setMemo] = useState(snack.memo ?? '')
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>(snack.reactions)
+  const [saving, setSaving] = useState(false)
+
+  const entries = Object.entries(snack.reactions) as [string, ReactionLevel][]
 
   async function save() {
-    await updateSnack({
-      ...snack,
-      name: name.trim() || snack.name,
-      kind: kind.trim() || undefined,
-      base: base.trim() || undefined,
-      memo: memo.trim() || undefined,
-      reactions,
-    })
-    onSaved()
+    setSaving(true)
+    try {
+      await updateSnack({
+        ...snack,
+        name: name.trim() || snack.name,
+        kind: kind.trim() || undefined,
+        base: base.trim() || undefined,
+        memo: memo.trim() || undefined,
+        reactions,
+      })
+      onDone()
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function remove() {
     if (!confirm('이 기록을 삭제할까요?')) return
     await deleteSnack(snack.id)
-    onDeleted()
+    onDone()
   }
 
   return (
-    <div className="sheet-backdrop" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="sheet-handle" />
-        {url && (
-          <div className="sheet-photo">
-            <img src={url} alt={name} />
+    <div className="screen">
+      <div className="topbar">
+        <button className="link-btn" onClick={onBack}>← 뒤로</button>
+        <h1 style={{ fontSize: 20 }}>간식 상세</h1>
+        <span style={{ width: 44 }} />
+      </div>
+
+      {/* ---- 보기 모드 ---- */}
+      {url && (
+        <div className="detail-photo">
+          <img src={url} alt={snack.name} />
+        </div>
+      )}
+      <h2 className="detail-name">{snack.name}</h2>
+      <div className="detail-tags">
+        {snack.kind && <span className="kind-tag">{snack.kind}</span>}
+        {snack.base && <span className="base-tag">{snack.base}</span>}
+        <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
+      </div>
+      {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
+      <div className="pills" style={{ marginTop: 12 }}>
+        {entries.length === 0 && <span className="muted" style={{ fontSize: 13 }}>반응 기록 없음</span>}
+        {entries.map(([catId, lv]) => {
+          const cat = cats.find((c) => c.id === catId)
+          if (!cat) return null
+          return <ReactionPill key={catId} cat={cat} level={lv} />
+        })}
+      </div>
+
+      {/* ---- 수정 (아코디언) ---- */}
+      <div className="card edit-acc">
+        <button className="edit-acc-head" onClick={() => setEditOpen((v) => !v)} aria-expanded={editOpen}>
+          수정하기
+          <span className={'snack-chev' + (editOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
+        </button>
+        {editOpen && (
+          <div className="edit-acc-body">
+            <div className="field">
+              <label>제품 이름</label>
+              <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
+            <div className="field">
+              <label>종류</label>
+              <KindChooser value={kind} onChange={setKind} />
+            </div>
+            <div className="field">
+              <label>베이스 · 주재료</label>
+              <BaseChooser value={base} onChange={setBase} />
+            </div>
+            <div className="field">
+              <label>메모</label>
+              <textarea className="textarea" value={memo} onChange={(e) => setMemo(e.target.value)} />
+            </div>
+            <div className="field">
+              <label>반응</label>
+              <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
+            </div>
+            <button className="btn btn-primary btn-block" disabled={saving} onClick={save}>
+              {saving ? '저장중…' : '저장하기'}
+            </button>
+            <button className="btn btn-icon btn-block" onClick={remove} style={{ color: 'var(--bad)', marginTop: 10 }}>
+              <IconTrash size={18} />이 기록 삭제
+            </button>
           </div>
         )}
-        <div className="field">
-          <label>제품 이름</label>
-          <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div className="field">
-          <label>종류</label>
-          <KindChooser value={kind} onChange={setKind} />
-        </div>
-        <div className="field">
-          <label>베이스 · 주재료</label>
-          <BaseChooser value={base} onChange={setBase} />
-        </div>
-        <div className="field">
-          <label>메모</label>
-          <textarea className="textarea" value={memo} onChange={(e) => setMemo(e.target.value)} />
-        </div>
-        <div className="field">
-          <label>반응</label>
-          <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
-        </div>
-        <div className="sheet-actions">
-          <button className="btn btn-icon" onClick={remove} style={{ color: 'var(--bad)' }}>
-            <IconTrash size={18} />삭제
-          </button>
-          <button className="btn btn-primary" style={{ flex: 1 }} onClick={save}>저장</button>
-        </div>
       </div>
     </div>
   )

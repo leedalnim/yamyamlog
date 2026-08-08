@@ -36,7 +36,9 @@
   --radius-sm: 10px;
   --shadow: none;
   --shadow-sm: none;
-  --font: 'Gaegu', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  /* 본문은 잘 읽히는 일반체, 손글씨(Gaegu)는 제목·포인트에만 */
+  --font: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, sans-serif;
+  --font-hand: 'Gaegu', 'Apple SD Gothic Neo', sans-serif;
   --nav-h: 64px;
 }
 
@@ -70,7 +72,6 @@ html, body, #root { height: 100%; }
 
 body {
   margin: 0;
-  font-size: 17px;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
@@ -110,7 +111,7 @@ button { font-family: inherit; cursor: pointer; }
   justify-content: space-between;
   padding: 12px 4px 10px;
 }
-.topbar h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.03em; margin: 0; }
+.topbar h1 { font-size: 27px; font-weight: 700; letter-spacing: 0; margin: 0; font-family: var(--font-hand); }
 .topbar .sub { font-size: 13px; color: var(--muted); margin-top: 3px; letter-spacing: -0.01em; }
 
 /* ===================== 하단 네비 ===================== */
