@@ -69,6 +69,21 @@
 .lv-btn.active[data-level="ok"] { background: var(--ok); border-color: var(--ok); }
 .lv-btn.active[data-level="bad"] { background: var(--bad); border-color: var(--bad); }
 
+/* ---------- 베이스(주재료) 선택 ---------- */
+.base-chooser { display: flex; flex-direction: column; gap: 10px; }
+.base-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.base-chip {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.base-chip.active { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+.base-custom { font-size: 14px; }
+
 /* ---------- 피드 ---------- */
 .feed-list { display: flex; flex-direction: column; gap: 14px; }
 .snack-card {
@@ -83,7 +98,17 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 .snack-photo { width: 100%; aspect-ratio: 16 / 10; background: var(--surface-2); overflow: hidden; }
 .snack-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .snack-body { padding: 13px 15px 15px; }
+.snack-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .snack-name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+.base-tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--accent-2);
+  border: 1px solid var(--line);
+}
 .snack-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .snack-memo { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
@@ -153,6 +178,19 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 .bar-track { height: 8px; background: var(--surface-2); border-radius: 5px; overflow: hidden; }
 .bar-fill { height: 100%; background: var(--primary); border-radius: 5px; }
 .rank-score { font-size: 14px; font-weight: 800; width: 30px; text-align: right; color: var(--primary); }
+
+.base-badge {
+  flex: none;
+  min-width: 58px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--accent-2);
+  font-size: 12.5px;
+  font-weight: 800;
+  text-align: center;
+}
+.base-sub { font-size: 11px; margin-top: 4px; }
 
 .cat-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .cat-stat { padding: 13px 14px; }

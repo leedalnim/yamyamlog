@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
+  BaseChooser,
   ReactionEditor,
   ReactionPill,
   useCatsAndGroups,
@@ -109,7 +110,10 @@ function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClic
         </div>
       )}
       <div className="snack-body">
-        <div className="snack-name">{snack.name}</div>
+        <div className="snack-name-row">
+          <span className="snack-name">{snack.name}</span>
+          {snack.base && <span className="base-tag">{snack.base}</span>}
+        </div>
         <div className="snack-date">{formatDate(snack.createdAt)}</div>
         {snack.memo && <div className="snack-memo">{snack.memo}</div>}
         <div className="pills">
@@ -142,6 +146,7 @@ function SnackSheet({
 }) {
   const url = usePhotoURL(snack.photoId)
   const [name, setName] = useState(snack.name)
+  const [base, setBase] = useState(snack.base ?? '')
   const [memo, setMemo] = useState(snack.memo ?? '')
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>(snack.reactions)
 
@@ -149,6 +154,7 @@ function SnackSheet({
     await updateSnack({
       ...snack,
       name: name.trim() || snack.name,
+      base: base.trim() || undefined,
       memo: memo.trim() || undefined,
       reactions,
     })
@@ -173,6 +179,10 @@ function SnackSheet({
         <div className="field">
           <label>제품 이름</label>
           <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>베이스 (주재료)</label>
+          <BaseChooser value={base} onChange={setBase} />
         </div>
         <div className="field">
           <label>메모</label>

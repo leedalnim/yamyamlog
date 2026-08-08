@@ -27,6 +27,26 @@ export function StatsScreen() {
       .slice(0, 6)
   }, [snacks])
 
+  // ---- 베이스(주재료)별 기호성 ----
+  const perBase = useMemo(() => {
+    const map = new Map<string, { scoreSum: number; count: number; snacks: number }>()
+    for (const s of snacks) {
+      if (!s.base) continue
+      const vals = Object.values(s.reactions) as ReactionLevel[]
+      if (vals.length === 0) continue
+      const cur = map.get(s.base) ?? { scoreSum: 0, count: 0, snacks: 0 }
+      for (const lv of vals) {
+        cur.scoreSum += REACTION_SCORE[lv]
+        cur.count += 1
+      }
+      cur.snacks += 1
+      map.set(s.base, cur)
+    }
+    return [...map.entries()]
+      .map(([base, v]) => ({ base, score: v.scoreSum / v.count, snacks: v.snacks }))
+      .sort((a, b) => b.score - a.score)
+  }, [snacks])
+
   // ---- 고양이별 반응 집계 ----
   const perCat = useMemo(() => {
     return cats.map((cat) => {
@@ -91,6 +111,32 @@ export function StatsScreen() {
           )}
         </div>
       </section>
+
+      {/* 베이스별 기호성 */}
+      {perBase.length > 0 && (
+        <section className="stat-section">
+          <h2 className="stat-title">🥩 베이스(주재료)별 기호성</h2>
+          <div className="card stat-card">
+            {perBase.map((r) => (
+              <div key={r.base} className="rank-row">
+                <div className="base-badge">{r.base}</div>
+                <div className="rank-info">
+                  <div className="bar-track">
+                    <div
+                      className="bar-fill"
+                      style={{ width: `${Math.max(6, r.score * 100)}%`, background: 'var(--accent-2)' }}
+                    />
+                  </div>
+                  <div className="base-sub muted">간식 {r.snacks}종</div>
+                </div>
+                <div className="rank-score tabular" style={{ color: 'var(--accent-2)' }}>
+                  {Math.round(r.score * 100)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 고양이별 선호 */}
       <section className="stat-section">

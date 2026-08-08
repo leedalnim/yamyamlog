@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
-import { REACTION_META } from '../data/types'
+import { BASE_PRESETS, REACTION_META } from '../data/types'
 
 /** 고양이 + 그룹 로드 (한 번) */
 export function useCatsAndGroups() {
@@ -47,6 +47,46 @@ export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel })
       <span className="dot" />
       {cat.name} {m.short}
     </span>
+  )
+}
+
+/** 베이스(주재료) 선택: 프리셋 칩 + 직접입력 */
+export function BaseChooser({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (v: string) => void
+}) {
+  const isPreset = (BASE_PRESETS as readonly string[]).includes(value)
+  const [custom, setCustom] = useState(value && !isPreset ? value : '')
+  return (
+    <div className="base-chooser">
+      <div className="base-chips">
+        {BASE_PRESETS.map((b) => (
+          <button
+            key={b}
+            type="button"
+            className={'base-chip' + (value === b ? ' active' : '')}
+            onClick={() => {
+              onChange(value === b ? '' : b)
+              setCustom('')
+            }}
+          >
+            {b}
+          </button>
+        ))}
+      </div>
+      <input
+        className="input base-custom"
+        placeholder="직접 입력 (예: 오리, 참치+게살)"
+        value={custom}
+        onChange={(e) => {
+          setCustom(e.target.value)
+          onChange(e.target.value)
+        }}
+      />
+    </div>
   )
 }
 

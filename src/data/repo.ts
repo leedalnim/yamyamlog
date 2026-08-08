@@ -53,6 +53,7 @@ export async function getPhotoURL(photoId?: string): Promise<string | undefined>
 // ---------- 간식 ----------
 export interface SnackInput {
   name: string
+  base?: string
   memo?: string
   photoId?: string
   reactions: Record<string, ReactionLevel>
@@ -64,6 +65,7 @@ export async function addSnack(input: SnackInput): Promise<Snack> {
   const snack: Snack = {
     id: uid(),
     name: input.name.trim() || '이름 없는 간식',
+    base: input.base?.trim() || undefined,
     memo: input.memo?.trim() || undefined,
     photoId: input.photoId,
     reactions: input.reactions,

@@ -27,6 +27,8 @@ export interface Cat {
 export interface Snack {
   id: string
   name: string
+  /** 주재료(베이스). 예: 참치, 닭가슴살, 연어. 통계 그룹핑에 사용 */
+  base?: string
   /** 브랜드/맛 등 메모 */
   memo?: string
   /** 사진 (IndexedDB Blob 참조 키). 없으면 undefined */
@@ -61,6 +63,18 @@ export const REACTION_META: Record<ReactionLevel, { label: string; short: string
   ok: { label: '보통', short: '보통', emoji: '😐' },
   bad: { label: '안 먹음', short: '안먹음', emoji: '🙅' },
 }
+
+/** 자주 쓰는 베이스(주재료) 프리셋 */
+export const BASE_PRESETS = [
+  '참치',
+  '닭가슴살',
+  '연어',
+  '게살',
+  '새우',
+  '가리비',
+  '소고기',
+  '북어',
+] as const
 
 /** 기호성 점수화 (통계용): good=1, ok=0.5, bad=0 */
 export const REACTION_SCORE: Record<ReactionLevel, number> = {

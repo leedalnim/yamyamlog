@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ReactionEditor, useCatsAndGroups } from '../components/common'
+import { BaseChooser, ReactionEditor, useCatsAndGroups } from '../components/common'
 import type { ReactionLevel } from '../data/types'
 import { addSnack, savePhoto } from '../data/repo'
 import { compressImage } from '../lib/image'
@@ -12,6 +12,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
   const [photoBlob, setPhotoBlob] = useState<Blob>()
   const [photoPreview, setPhotoPreview] = useState<string>()
   const [name, setName] = useState('')
+  const [base, setBase] = useState('')
   const [memo, setMemo] = useState('')
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>({})
   const [saving, setSaving] = useState(false)
@@ -49,7 +50,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
     try {
       let photoId: string | undefined
       if (photoBlob) photoId = await savePhoto(photoBlob)
-      await addSnack({ name, memo, photoId, reactions })
+      await addSnack({ name, base, memo, photoId, reactions })
       onDone()
     } finally {
       setSaving(false)
@@ -108,6 +109,12 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+      </div>
+
+      {/* 베이스(주재료) */}
+      <div className="field">
+        <label>베이스 (주재료)</label>
+        <BaseChooser value={base} onChange={setBase} />
       </div>
 
       {/* 메모 */}
