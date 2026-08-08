@@ -61,24 +61,32 @@ class MemoryDB implements AppDB {
 
 let dbPromise: Promise<AppDB> | null = null
 
+async function openReal(): Promise<AppDB> {
+  // indexedDB 접근 자체가 동기적으로 throw 될 수 있어(사생활 모드/샌드박스 iframe) 먼저 확인
+  if (typeof indexedDB === 'undefined' || !indexedDB) throw new Error('no indexedDB')
+  const db = await openDB<YumlogDB>(DB_NAME, DB_VERSION, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains('groups')) db.createObjectStore('groups', { keyPath: 'id' })
+      if (!db.objectStoreNames.contains('cats')) {
+        const cats = db.createObjectStore('cats', { keyPath: 'id' })
+        cats.createIndex('byGroup', 'groupId')
+      }
+      if (!db.objectStoreNames.contains('snacks')) {
+        const snacks = db.createObjectStore('snacks', { keyPath: 'id' })
+        snacks.createIndex('byCreatedAt', 'createdAt')
+      }
+      if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' })
+      if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta')
+    },
+  })
+  return db as unknown as AppDB
+}
+
 export function getDB(): Promise<AppDB> {
   if (!dbPromise) {
-    dbPromise = openDB<YumlogDB>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        if (!db.objectStoreNames.contains('groups')) db.createObjectStore('groups', { keyPath: 'id' })
-        if (!db.objectStoreNames.contains('cats')) {
-          const cats = db.createObjectStore('cats', { keyPath: 'id' })
-          cats.createIndex('byGroup', 'groupId')
-        }
-        if (!db.objectStoreNames.contains('snacks')) {
-          const snacks = db.createObjectStore('snacks', { keyPath: 'id' })
-          snacks.createIndex('byCreatedAt', 'createdAt')
-        }
-        if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' })
-        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta')
-      },
-    })
-      .then((db) => db as unknown as AppDB)
+    // 동기 throw + 비동기 reject 를 모두 잡아 메모리 저장으로 폴백
+    dbPromise = Promise.resolve()
+      .then(openReal)
       .catch((err) => {
         console.warn('[얌로그] IndexedDB 사용 불가 → 메모리 저장으로 전환합니다.', err)
         return new MemoryDB()

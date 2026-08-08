@@ -33,12 +33,19 @@ export default function App() {
   // 초기 로드
   useEffect(() => {
     ;(async () => {
-      await ensureSeeded()
-      const saved = await readSettings()
-      const s = saved ?? DEFAULT_SETTINGS
-      setSettings(s)
-      applyTheme(s)
-      setReady(true)
+      try {
+        await ensureSeeded()
+        const saved = await readSettings()
+        const s = saved ?? DEFAULT_SETTINGS
+        setSettings(s)
+        applyTheme(s)
+      } catch (err) {
+        // 저장소 초기화가 실패해도 앱은 뜨게 한다
+        console.error('[얌로그] 초기화 실패, 기본값으로 시작합니다.', err)
+        applyTheme(DEFAULT_SETTINGS)
+      } finally {
+        setReady(true)
+      }
     })()
   }, [])
 

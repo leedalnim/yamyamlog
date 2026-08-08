@@ -61,17 +61,23 @@ export const IconSettings = (p: P) =>
     p,
   )
 
-export const IconPaw = (p: P) =>
-  svg(
-    <>
-      <ellipse cx="12" cy="15.5" rx="4.3" ry="3.6" />
-      <ellipse cx="6.2" cy="10.5" rx="1.7" ry="2.1" />
-      <ellipse cx="10" cy="8" rx="1.7" ry="2.2" />
-      <ellipse cx="14" cy="8" rx="1.7" ry="2.2" />
-      <ellipse cx="17.8" cy="10.5" rx="1.7" ry="2.1" />
-    </>,
-    p,
-  )
+// 꽉 찬(fill) 발바닥 — 메인 패드 + 발가락 4개
+export const IconPaw = ({ size = 24, className }: P) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M12 13c2.9 0 5.4 1.9 5.4 4.3 0 1.9-1.5 3-3.4 3-1 0-1.5-.35-2-.35s-1 .35-2 .35c-1.9 0-3.4-1.1-3.4-3C6.6 14.9 9.1 13 12 13Z" />
+    <ellipse cx="5.7" cy="10.7" rx="2.05" ry="2.55" transform="rotate(-14 5.7 10.7)" />
+    <ellipse cx="9.6" cy="7.7" rx="2.1" ry="2.75" transform="rotate(-6 9.6 7.7)" />
+    <ellipse cx="14.4" cy="7.7" rx="2.1" ry="2.75" transform="rotate(6 14.4 7.7)" />
+    <ellipse cx="18.3" cy="10.7" rx="2.05" ry="2.55" transform="rotate(14 18.3 10.7)" />
+  </svg>
+)
 
 export const IconTrophy = (p: P) =>
   svg(

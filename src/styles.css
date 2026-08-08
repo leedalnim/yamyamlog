@@ -4,101 +4,100 @@
    컴포넌트는 var(--토큰)만 사용 → 테마 바꿔도 그대로 동작.
 ============================================================= */
 
-/* ---------- 공통 기본값 (cozy-light) ---------- */
+/* ---------- 공통 기본값 (warm-light) ----------
+   따뜻하지만 차분한 그레이지 톤 + 절제된 퍼시몬 포인트 */
 :root {
-  --bg: #fbf4e9;
+  --bg: #f5f2ee;
   --surface: #ffffff;
-  --surface-2: #fff9f0;
-  --ink: #5b4636;
-  --muted: #a08a74;
-  --line: #efe4d5;
-  --primary: #ff8c6b;
+  --surface-2: #f0ece6;
+  --ink: #262220;
+  --muted: #8c847b;
+  --line: #ece6de;
+  --primary: #e8674a;
   --primary-ink: #ffffff;
-  --accent-2: #86b49a;
-  --good: #6fb98f;
-  --good-bg: #e6f2e6;
-  --ok: #e0a63f;
-  --ok-bg: #fbeecf;
-  --bad: #e07d7d;
-  --bad-bg: #fadede;
-  --radius-lg: 22px;
-  --radius-md: 16px;
-  --radius-sm: 11px;
-  --shadow: 0 6px 20px rgba(120, 90, 60, 0.12);
-  --shadow-sm: 0 3px 10px rgba(120, 90, 60, 0.10);
-  --font: "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", system-ui, -apple-system, sans-serif;
-  --nav-h: 66px;
+  --accent-2: #3f8a76;
+  --good: #4f9a7b;
+  --good-bg: #eaf2ee;
+  --ok: #c8912f;
+  --ok-bg: #f6eed9;
+  --bad: #d76a63;
+  --bad-bg: #f8e6e4;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 6px 24px rgba(40, 32, 24, 0.07);
+  --shadow-sm: 0 2px 10px rgba(40, 32, 24, 0.05);
+  --font: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif;
+  --nav-h: 64px;
 }
 
-/* ---------- cozy dark ---------- */
+/* ---------- warm dark ---------- */
 html[data-theme="cozy"][data-mode="dark"] {
-  --bg: #241c16;
-  --surface: #2f2620;
-  --surface-2: #362c24;
-  --ink: #f2e7d9;
-  --muted: #b6a48f;
-  --line: #3d3229;
-  --primary: #ff9e80;
-  --primary-ink: #2a1a12;
-  --accent-2: #93c3a6;
-  --good: #79c79b;
-  --good-bg: #24382c;
-  --ok: #e6b455;
-  --ok-bg: #3a2f1c;
-  --bad: #e98f8f;
-  --bad-bg: #3a2626;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.3);
+  --bg: #1a1613;
+  --surface: #232019;
+  --surface-2: #2b271f;
+  --ink: #f0eae1;
+  --muted: #a89e92;
+  --line: #322d25;
+  --primary: #f07a5f;
+  --primary-ink: #23100a;
+  --accent-2: #5aab93;
+  --good: #63b48f;
+  --good-bg: #1f342a;
+  --ok: #d7a63f;
+  --ok-bg: #352b18;
+  --bad: #e0847d;
+  --bad-bg: #362321;
+  --shadow: 0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* ---------- clean light ---------- */
+/* ---------- clean light (쿨 미니멀) ---------- */
 html[data-theme="clean"][data-mode="light"] {
-  --bg: #f6f7f5;
+  --bg: #fafaf8;
   --surface: #ffffff;
-  --surface-2: #f4f5f3;
-  --ink: #16161a;
-  --muted: #78776f;
+  --surface-2: #f2f3f1;
+  --ink: #17181a;
+  --muted: #7b7d78;
   --line: #e8e9e5;
-  --primary: #1f8a70;
+  --primary: #10876a;
   --primary-ink: #ffffff;
-  --accent-2: #8fc7b7;
-  --good: #1f8a70;
-  --good-bg: #e4f2ed;
-  --ok: #b8862b;
-  --ok-bg: #f6ecd6;
-  --bad: #c24e4e;
-  --bad-bg: #f7e2e2;
-  --radius-lg: 14px;
-  --radius-md: 11px;
-  --radius-sm: 8px;
-  --shadow: 0 6px 18px rgba(20, 20, 26, 0.08);
-  --shadow-sm: 0 2px 8px rgba(20, 20, 26, 0.06);
-  --font: "Pretendard", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
+  --accent-2: #5c7688;
+  --good: #10876a;
+  --good-bg: #e4f1ec;
+  --ok: #ad7f26;
+  --ok-bg: #f4ecd8;
+  --bad: #c5544e;
+  --bad-bg: #f6e3e1;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 9px;
+  --shadow: 0 4px 18px rgba(20, 22, 26, 0.06);
+  --shadow-sm: 0 1px 6px rgba(20, 22, 26, 0.05);
 }
 
 /* ---------- clean dark ---------- */
 html[data-theme="clean"][data-mode="dark"] {
-  --bg: #101113;
-  --surface: #1a1b1e;
-  --surface-2: #202226;
-  --ink: #ececec;
-  --muted: #9a9a98;
-  --line: #2a2c30;
-  --primary: #35b08f;
-  --primary-ink: #06120e;
-  --accent-2: #6fae9c;
-  --good: #35b08f;
-  --good-bg: #16302a;
-  --ok: #d3a648;
-  --ok-bg: #322916;
-  --bad: #d96a6a;
-  --bad-bg: #331e1e;
-  --radius-lg: 14px;
-  --radius-md: 11px;
-  --radius-sm: 8px;
-  --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
-  --font: "Pretendard", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
+  --bg: #0f1011;
+  --surface: #191a1c;
+  --surface-2: #202123;
+  --ink: #eceded;
+  --muted: #999a96;
+  --line: #292a2c;
+  --primary: #2eb590;
+  --primary-ink: #06130e;
+  --accent-2: #85a2b6;
+  --good: #2eb590;
+  --good-bg: #143029;
+  --ok: #cea146;
+  --ok-bg: #302816;
+  --bad: #d76a64;
+  --bad-bg: #321f1e;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 9px;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.32);
 }
 
 * { box-sizing: border-box; }
@@ -146,8 +145,8 @@ button { font-family: inherit; cursor: pointer; }
   justify-content: space-between;
   padding: 12px 4px 10px;
 }
-.topbar h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
-.topbar .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.topbar h1 { font-size: 25px; font-weight: 800; letter-spacing: -0.03em; margin: 0; }
+.topbar .sub { font-size: 13px; color: var(--muted); margin-top: 3px; letter-spacing: -0.01em; }
 
 /* ===================== 하단 네비 ===================== */
 .nav {
@@ -185,11 +184,12 @@ button { font-family: inherit; cursor: pointer; }
 /* ===================== 공통 컴포넌트 ===================== */
 .card {
   background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
-html[data-theme="clean"] .card { border: 1px solid var(--line); box-shadow: none; }
+html[data-theme="clean"] .card { box-shadow: none; }
 
 .btn {
   border: none;

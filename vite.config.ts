@@ -22,8 +22,8 @@ export default defineConfig({
             name: '얌로그 - 고양이 기호성 체크',
             short_name: '얌로그',
             description: '우리집 고양이들이 어떤 간식을 잘 먹는지 기록하는 앱',
-            theme_color: '#FF8C6B',
-            background_color: '#FBF4E9',
+            theme_color: '#E8674A',
+            background_color: '#F5F2EE',
             display: 'standalone',
             orientation: 'portrait',
             icons: [
