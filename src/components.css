@@ -120,9 +120,18 @@
   background: var(--surface);
 }
 html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
-.snack-photo { width: 100%; aspect-ratio: 16 / 10; background: var(--surface-2); overflow: hidden; }
-.snack-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.snack-body { padding: 15px 16px 16px; }
+.snack-row { display: flex; align-items: flex-start; gap: 13px; padding: 15px 16px 16px; }
+.snack-thumb {
+  flex: none;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1.5px solid var(--line);
+}
+.snack-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.snack-body { flex: 1; min-width: 0; }
 .snack-name-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .snack-name { font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; }
 .base-tag, .kind-tag {
@@ -335,6 +344,7 @@ html[data-theme="doodle"] .nav-fab { border: 2px solid var(--ink); box-shadow: n
 html[data-theme="doodle"] .btn-primary { border: 1.5px solid var(--ink); }
 
 /* 세로 막대 트랙·필 외곽선 — 얇게 */
+html[data-theme="doodle"] .snack-thumb { border: 1.5px solid var(--ink); }
 html[data-theme="doodle"] .cbar-track { border: 1.5px solid var(--ink); }
 html[data-theme="doodle"] .cbar-pct { text-shadow: none; }
 html[data-theme="doodle"] .bar-track { border: 1.5px solid var(--ink); height: 12px; }

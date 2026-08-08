@@ -106,26 +106,28 @@ function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClic
   const entries = Object.entries(snack.reactions) as [string, ReactionLevel][]
   return (
     <button className="card snack-card" onClick={onClick}>
-      {url && (
-        <div className="snack-photo">
-          <img src={url} alt={snack.name} loading="lazy" />
-        </div>
-      )}
-      <div className="snack-body">
-        <div className="snack-name-row">
-          <span className="snack-name">{snack.name}</span>
-          {snack.kind && <span className="kind-tag">{snack.kind}</span>}
-          {snack.base && <span className="base-tag">{snack.base}</span>}
-        </div>
-        <div className="snack-date">{formatDate(snack.createdAt)}</div>
-        {snack.memo && <div className="snack-memo">{snack.memo}</div>}
-        <div className="pills">
-          {entries.length === 0 && <span className="muted" style={{ fontSize: 12.5 }}>반응 기록 없음</span>}
-          {entries.map(([catId, lv]) => {
-            const cat = cats.find((c) => c.id === catId)
-            if (!cat) return null
-            return <ReactionPill key={catId} cat={cat} level={lv} />
-          })}
+      <div className="snack-row">
+        {url && (
+          <div className="snack-thumb">
+            <img src={url} alt={snack.name} loading="lazy" />
+          </div>
+        )}
+        <div className="snack-body">
+          <div className="snack-name-row">
+            <span className="snack-name">{snack.name}</span>
+            {snack.kind && <span className="kind-tag">{snack.kind}</span>}
+            {snack.base && <span className="base-tag">{snack.base}</span>}
+          </div>
+          <div className="snack-date">{formatDate(snack.createdAt)}</div>
+          {snack.memo && <div className="snack-memo">{snack.memo}</div>}
+          <div className="pills">
+            {entries.length === 0 && <span className="muted" style={{ fontSize: 12.5 }}>반응 기록 없음</span>}
+            {entries.map(([catId, lv]) => {
+              const cat = cats.find((c) => c.id === catId)
+              if (!cat) return null
+              return <ReactionPill key={catId} cat={cat} level={lv} />
+            })}
+          </div>
         </div>
       </div>
     </button>
