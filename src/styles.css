@@ -100,6 +100,54 @@ html[data-theme="clean"][data-mode="dark"] {
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.32);
 }
 
+/* ---------- doodle (손그림) light ---------- */
+html[data-theme="doodle"][data-mode="light"] {
+  --bg: #fbfaf1;
+  --surface: #ffffff;
+  --surface-2: #f3f1e2;
+  --ink: #1a1a1a;
+  --muted: #6d6b5f;
+  --line: #1a1a1a;
+  --primary: #c6f04b;
+  --primary-ink: #1a1a1a;
+  --accent-2: #3f8a76;
+  --good: #4f9a7b;
+  --good-bg: #e7f2ea;
+  --ok: #c08a2b;
+  --ok-bg: #f6edd2;
+  --bad: #e0655c;
+  --bad-bg: #fae1de;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow: none;
+  --shadow-sm: none;
+}
+
+/* ---------- doodle dark ---------- */
+html[data-theme="doodle"][data-mode="dark"] {
+  --bg: #1b1b16;
+  --surface: #24241e;
+  --surface-2: #2d2d25;
+  --ink: #f0efe3;
+  --muted: #a9a795;
+  --line: #f0efe3;
+  --primary: #cdf25a;
+  --primary-ink: #1a1a1a;
+  --accent-2: #64b89c;
+  --good: #6ab793;
+  --good-bg: #1f342a;
+  --ok: #d7a63f;
+  --ok-bg: #352b18;
+  --bad: #e0847d;
+  --bad-bg: #362321;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow: none;
+  --shadow-sm: none;
+}
+
 * { box-sizing: border-box; }
 
 html, body, #root { height: 100%; }

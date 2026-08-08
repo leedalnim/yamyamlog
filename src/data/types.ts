@@ -50,7 +50,7 @@ export interface Photo {
 /** 앱 설정 */
 export interface Settings {
   /** 화면 테마 */
-  theme: 'cozy' | 'clean'
+  theme: 'cozy' | 'clean' | 'doodle'
   /** 다크/라이트/시스템 (테마 색감과 별개로 밝기) */
   colorMode: 'light' | 'dark' | 'system'
 }

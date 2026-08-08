@@ -27,7 +27,14 @@ export function SettingsScreen({
             onClick={() => onChange({ theme: 'clean' })}
             title="미니 화이트"
             desc="깔끔하고 모던한"
-            swatches={['#FFFFFF', '#1F8A70', '#D8DAD6']}
+            swatches={['#FFFFFF', '#10876A', '#D8DAD6']}
+          />
+          <ThemeOption
+            active={settings.theme === 'doodle'}
+            onClick={() => onChange({ theme: 'doodle' })}
+            title="손그림"
+            desc="장난기 있는 두들"
+            swatches={['#FBFAF1', '#C6F04B', '#1A1A1A']}
           />
         </div>
       </section>
