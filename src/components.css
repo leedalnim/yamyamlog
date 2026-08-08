@@ -293,7 +293,7 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 html[data-theme="doodle"] .card {
   border: 2.5px solid var(--ink);
   border-radius: 235px 16px 225px 18px / 18px 220px 20px 235px;
-  box-shadow: 3px 4px 0 var(--ink);
+  box-shadow: none;
 }
 html[data-theme="doodle"] .hero-card { border-radius: 18px 225px 18px 235px / 230px 18px 235px 16px; }
 html[data-theme="doodle"] .cat-bars { border-radius: 225px 18px 235px 16px / 16px 235px 18px 225px; }
@@ -327,7 +327,7 @@ html[data-theme="doodle"] .sel-chip.on { color: var(--ink); border-color: var(--
 
 /* 라운드 아이콘 뱃지·FAB·발자국 아이콘 검은 외곽선 */
 html[data-theme="doodle"] .ti-badge { border: 2px solid var(--ink); }
-html[data-theme="doodle"] .nav-fab { border: 3px solid var(--ink); box-shadow: 2px 3px 0 var(--ink); }
+html[data-theme="doodle"] .nav-fab { border: 3px solid var(--ink); box-shadow: none; }
 html[data-theme="doodle"] .btn-primary { border: 2px solid var(--ink); }
 
 /* 세로 막대 트랙·필 외곽선 */
