@@ -15,27 +15,28 @@
   font-display: swap;
 }
 
+/* Headspace풍 팔레트 — 포근한 크림 바탕 + 소프트 블루/샌드/오렌지, 외곽선 없는 말랑한 면 */
 :root {
-  --bg: #fbfaf1;
-  --surface: #ffffff;
-  --surface-2: #f3f1e2;
-  --ink: #1a1a1a;
-  --muted: #6d6b5f;
-  --line: #1a1a1a;
-  --primary: #c6f04b;
-  --primary-ink: #1a1a1a;
-  --accent-2: #3f8a76;
-  --good: #4f9a7b;
-  --good-bg: #e7f2ea;
-  --ok: #c08a2b;
-  --ok-bg: #f6edd2;
-  --bad: #e0655c;
-  --bad-bg: #fae1de;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --shadow: none;
-  --shadow-sm: none;
+  --bg: #faf3e1;
+  --surface: #fffdf6;
+  --surface-2: #f5ead1;
+  --ink: #4a4440;
+  --muted: #98897a;
+  --line: #eee0c4;
+  --primary: #e1873f;
+  --primary-ink: #ffffff;
+  --accent-2: #7fa3d7;
+  --good: #e1873f;
+  --good-bg: #f9e4cb;
+  --ok: #e5b958;
+  --ok-bg: #f8efd2;
+  --bad: #7fa3d7;
+  --bad-bg: #e3edf9;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --shadow: 0 8px 24px rgba(120, 95, 60, 0.10);
+  --shadow-sm: 0 3px 12px rgba(120, 95, 60, 0.08);
   /* 본문은 잘 읽히는 일반체, 손글씨(Gaegu)는 제목·포인트에만 */
   --font: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, sans-serif;
   --font-hand: 'Gaegu', 'Apple SD Gothic Neo', sans-serif;
@@ -44,26 +45,23 @@
 
 /* ---------- 다크 ---------- */
 html[data-mode="dark"] {
-  --bg: #1b1b16;
-  --surface: #24241e;
-  --surface-2: #2d2d25;
-  --ink: #f0efe3;
-  --muted: #a9a795;
-  --line: #f0efe3;
-  --primary: #cdf25a;
-  --primary-ink: #1a1a1a;
-  --accent-2: #64b89c;
-  --good: #6ab793;
-  --good-bg: #1f342a;
-  --ok: #d7a63f;
-  --ok-bg: #352b18;
-  --bad: #e0847d;
-  --bad-bg: #362321;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --shadow: none;
-  --shadow-sm: none;
+  --bg: #232019;
+  --surface: #2c2820;
+  --surface-2: #363127;
+  --ink: #f2ead9;
+  --muted: #ab9d8a;
+  --line: #403a2e;
+  --primary: #e6934f;
+  --primary-ink: #2a1c0e;
+  --accent-2: #89a9d8;
+  --good: #e6934f;
+  --good-bg: #3d2d1c;
+  --ok: #dcb45e;
+  --ok-bg: #3a3218;
+  --bad: #89a9d8;
+  --bad-bg: #253243;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.3);
 }
 
 * { box-sizing: border-box; }

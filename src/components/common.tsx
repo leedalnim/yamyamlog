@@ -54,7 +54,7 @@ export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel })
   const m = REACTION_META[level]
   return (
     <span className="react-pill" data-level={level}>
-      <span className="dot" />
+      <ReactionIcon level={level} size={16} />
       {cat.name} {m.short}
     </span>
   )
@@ -188,7 +188,7 @@ export function ReactionChooser({
               aria-pressed={active}
               onClick={() => onChange(active ? undefined : lv)}
             >
-              <ReactionIcon level={lv} size={19} />
+              <ReactionIcon level={lv} size={30} />
               {m.short}
             </button>
           )

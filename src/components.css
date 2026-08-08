@@ -85,11 +85,12 @@
   gap: 2px;
   transition: transform 0.08s ease;
 }
-.lv-btn .lv-emoji { font-size: 15px; }
-.lv-btn.active { transform: scale(1.02); color: #fff; }
-.lv-btn.active[data-level="good"] { background: var(--good); border-color: var(--good); }
-.lv-btn.active[data-level="ok"] { background: var(--ok); border-color: var(--ok); }
-.lv-btn.active[data-level="bad"] { background: var(--bad); border-color: var(--bad); }
+/* 블롭은 항상 컬러 — 선택하면 카드가 은은한 같은 색으로 채워짐 */
+.lv-btn { background: var(--surface); color: var(--muted); gap: 4px; padding: 10px 4px 8px; }
+.lv-btn.active { transform: scale(1.03); color: var(--ink); border-width: 2px; border-color: var(--ink); font-weight: 800; }
+.lv-btn.active[data-level="good"] { background: var(--good-bg); }
+.lv-btn.active[data-level="ok"] { background: var(--ok-bg); }
+.lv-btn.active[data-level="bad"] { background: var(--bad-bg); }
 
 /* ---------- 칩 선택기 (종류/베이스 공용) ---------- */
 .chip-select { display: flex; flex-direction: column; gap: 10px; }
@@ -197,19 +198,16 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
-  padding: 5px 11px;
-  border-radius: 9px;
+  padding: 5px 11px 5px 8px;
+  border-radius: 10px;
   letter-spacing: -0.01em;
 }
-.react-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+.react-pill svg { flex: none; }
 .react-pill[data-level="good"] { background: var(--good-bg); color: var(--good); }
-.react-pill[data-level="good"] .dot { background: var(--good); }
 .react-pill[data-level="ok"] { background: var(--ok-bg); color: var(--ok); }
-.react-pill[data-level="ok"] .dot { background: var(--ok); }
 .react-pill[data-level="bad"] { background: var(--bad-bg); color: var(--bad); }
-.react-pill[data-level="bad"] .dot { background: var(--bad); }
 
 /* ---------- 바텀 시트 ---------- */
 .sheet-backdrop {
@@ -342,48 +340,110 @@
 
 .app-foot { text-align: center; font-size: 12px; margin-top: 30px; }
 
-/* ===================== 손그림(doodle) 테마 데코 ===================== */
-/* 삐뚤빼뚤 손그림 테두리 + 하드 그림자 + 세리프 제목 */
-html[data-theme="doodle"] .card {
-  border: 1.5px solid var(--ink);
-  border-radius: 235px 16px 225px 18px / 18px 220px 20px 235px;
-  box-shadow: none;
-}
-html[data-theme="doodle"] .hero-card { border-radius: 18px 225px 18px 235px / 230px 18px 235px 16px; }
-html[data-theme="doodle"] .cat-bars { border-radius: 225px 18px 235px 16px / 16px 235px 18px 225px; }
+/* ===================== 말랑(Headspace풍) 마감 ===================== */
+/* 외곽선 없이 면과 그림자로만 구분 */
+.card { border: none; }
+.chip-tab { border: none; background: var(--surface-2); color: var(--muted); padding: 9px 16px; }
+.chip-tab.active { background: var(--primary); color: var(--primary-ink); }
+.sel-chip { border: none; background: var(--surface-2); }
+.sel-chip.on[data-accent="kind"] { background: var(--primary); color: var(--primary-ink); }
+.sel-chip.on[data-accent="base"] { background: var(--accent-2); color: #fff; }
+.input, .textarea { border: none; background: var(--surface); box-shadow: var(--shadow-sm); }
+.base-tag, .kind-tag { border: none; background: var(--surface-2); }
+.kind-tag { color: var(--primary); }
+.base-tag { color: var(--accent-2); }
+.base-badge { border: none; background: var(--surface-2); color: var(--accent-2); }
+.snack-thumb { border: none; box-shadow: var(--shadow-sm); }
+.detail-photo { border: none; box-shadow: var(--shadow-sm); }
+.lv-btn { border: 2px solid transparent; background: var(--surface); box-shadow: var(--shadow-sm); }
+.lv-btn.active { border-width: 2px; font-weight: 800; }
+.lv-btn.active[data-level="good"] { border-color: var(--good); }
+.lv-btn.active[data-level="ok"] { border-color: var(--ok); }
+.lv-btn.active[data-level="bad"] { border-color: var(--bad); }
+.cbar-track { border: none; }
+.bar-track { border: none; height: 10px; }
+.ti-badge { border: none; }
+.nav-fab { border: 4px solid var(--bg); box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 40%, transparent); }
+.photo-drop { border: 2px dashed var(--line); }
+.edit-acc-body { border-top: 1.5px solid var(--line); }
+.mini-btn { border: none; background: var(--surface-2); }
+.hero-card, .cat-bars { border-radius: var(--radius-lg); }
 
-/* 칩/버튼 손그림 외곽선 — 얇게. 라벨(태그·반응 알약)은 라인 없이 배경색만 */
-html[data-theme="doodle"] .chip-tab,
-html[data-theme="doodle"] .sel-chip,
-html[data-theme="doodle"] .seg,
-html[data-theme="doodle"] .input,
-html[data-theme="doodle"] .textarea {
-  border: 1.5px solid var(--ink);
+/* ===================== 통계 (아이별) ===================== */
+.cat-chip { display: inline-flex; align-items: center; gap: 6px; }
+
+.stat-hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--ok);
+  border-radius: var(--radius-lg);
+  padding: 20px 20px 18px;
+  color: #4a4440;
+  box-shadow: var(--shadow);
 }
-html[data-theme="doodle"] .base-tag,
-html[data-theme="doodle"] .kind-tag {
-  border: none;
+.stat-hero-info { flex: 1; min-width: 0; }
+.stat-hero-label { font-size: 13.5px; font-weight: 800; opacity: 0.75; }
+.stat-hero-num { font-size: 46px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-top: 2px; }
+.stat-hero-unit { font-size: 18px; font-weight: 800; margin-left: 2px; opacity: 0.7; }
+.stat-hero-cap { font-size: 12px; font-weight: 600; opacity: 0.75; margin-top: 4px; }
+.stat-hero-track { height: 10px; background: rgba(255, 255, 255, 0.55); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+.stat-hero-fill { height: 100%; background: #fffdf6; border-radius: 999px; }
+.stat-hero-chara { flex: none; line-height: 0; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08)); }
+
+/* 기록 리스트 (레퍼런스의 거래내역 스타일) */
+.record-list { display: flex; flex-direction: column; padding: 6px 0; }
+.record-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; }
+.record-row + .record-row { border-top: 1px solid var(--line); }
+.record-thumb {
+  flex: none;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
   background: var(--surface-2);
-  color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
 }
-html[data-theme="doodle"] .react-pill { border: none; }
-html[data-theme="doodle"] .base-badge { border: none; background: var(--surface-2); color: var(--ink); }
-html[data-theme="doodle"] .chip-tab { border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; }
-html[data-theme="doodle"] .chip-tab.active,
-html[data-theme="doodle"] .sel-chip.on { color: var(--ink); border-color: var(--ink); }
+.record-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.record-info { flex: 1; min-width: 0; }
+.record-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.record-sub { font-size: 12px; margin-top: 1px; }
 
-/* 라운드 아이콘 뱃지·FAB 외곽선 — 얇게 */
-html[data-theme="doodle"] .ti-badge { border: 1.5px solid var(--ink); }
-html[data-theme="doodle"] .nav-fab { border: 2px solid var(--ink); box-shadow: none; }
-html[data-theme="doodle"] .btn-primary { border: 1.5px solid var(--ink); }
+.cat-avatar {
+  flex: none;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
 
-/* 세로 막대 트랙·필 외곽선 — 얇게 */
-html[data-theme="doodle"] .snack-thumb { border: 1.5px solid var(--ink); }
-html[data-theme="doodle"] .cbar-track { border: 1.5px solid var(--ink); }
-html[data-theme="doodle"] .cbar-pct { text-shadow: none; }
-html[data-theme="doodle"] .bar-track { border: 1.5px solid var(--ink); height: 12px; }
-
-/* 라임색은 흰 배경에서 흐리므로 큰 숫자·점수는 잉크색으로 */
-html[data-theme="doodle"] .hero-num { color: var(--ink); }
-html[data-theme="doodle"] .rank-score { color: var(--ink); }
-html[data-theme="doodle"] .empty .doodle { color: var(--ink); }
+/* ===================== 상세 페이지 (사진 + 시트) ===================== */
+.detail-page {
+  min-height: 100%;
+  padding-bottom: calc(var(--nav-h) + 24px);
+  background: var(--bg);
+}
+.detail-hero { position: relative; height: 300px; background: var(--surface-2); }
+.detail-hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.detail-hero-fallback { height: 100%; display: flex; align-items: center; justify-content: center; }
+.detail-back {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 14px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 253, 246, 0.9);
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.detail-sheet {
+  position: relative;
+  margin-top: -28px;
+  background: var(--surface);
+  border-radius: 28px 28px 0 0;
+  padding: 10px 20px 24px;
+  box-shadow: 0 -8px 24px rgba(120, 95, 60, 0.10);
+}
+.detail-sheet .sheet-handle { margin-bottom: 12px; }

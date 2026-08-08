@@ -6,9 +6,10 @@ import { FeedScreen } from './screens/FeedScreen'
 import { AddScreen } from './screens/AddScreen'
 import { StatsScreen } from './screens/StatsScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
+import { CatsScreen } from './screens/CatsScreen'
 import { IconHome, IconPlus, IconChart, IconSettings, IconPaw } from './components/icons'
 
-type Tab = 'feed' | 'add' | 'stats' | 'settings'
+type Tab = 'feed' | 'add' | 'stats' | 'cats' | 'settings'
 
 function applyTheme(s: Settings) {
   const root = document.documentElement
@@ -88,6 +89,7 @@ export default function App() {
       {tab === 'feed' && <FeedScreen key={dataVersion} onAdd={() => setTab('add')} onChanged={refresh} />}
       {tab === 'add' && <AddScreen onDone={() => { refresh(); setTab('feed') }} onCancel={() => setTab('feed')} />}
       {tab === 'stats' && <StatsScreen key={dataVersion} />}
+      {tab === 'cats' && <CatsScreen />}
       {tab === 'settings' && <SettingsScreen settings={settings} onChange={updateSettings} />}
 
       <nav className="nav">
@@ -107,10 +109,12 @@ export default function App() {
           <IconPlus size={28} />
         </button>
         <div className="nav-side">
+          <button className={'nav-tab' + (tab === 'cats' ? ' active' : '')} onClick={() => setTab('cats')}>
+            <span className="ico"><IconPaw /></span>냥이들
+          </button>
           <button className={'nav-tab' + (tab === 'settings' ? ' active' : '')} onClick={() => setTab('settings')}>
             <span className="ico"><IconSettings /></span>설정
           </button>
-          <span className="nav-ghost" aria-hidden="true" />
         </div>
       </nav>
     </div>

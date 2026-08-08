@@ -9,7 +9,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { CatDoodle, IconChevronDown, IconTrash } from '../components/icons'
+import { CatDoodle, IconChevronDown, IconTrash, ReactionIcon } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -179,36 +179,39 @@ function SnackDetail({
   }
 
   return (
-    <div className="screen">
-      <div className="topbar">
-        <button className="link-btn" onClick={onBack}>← 뒤로</button>
-        <h1 style={{ fontSize: 20 }}>간식 상세</h1>
-        <span style={{ width: 44 }} />
-      </div>
-
-      {/* ---- 보기 모드 ---- */}
-      {url && (
-        <div className="detail-photo">
+    <div className="detail-page">
+      {/* ---- 사진 풀블리드 히어로 ---- */}
+      <div className="detail-hero">
+        {url ? (
           <img src={url} alt={snack.name} />
-        </div>
-      )}
-      <h2 className="detail-name">{snack.name}</h2>
-      <div className="detail-tags">
-        {snack.kind && <span className="kind-tag">{snack.kind}</span>}
-        {snack.base && <span className="base-tag">{snack.base}</span>}
-        <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
-      </div>
-      {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
-      <div className="pills" style={{ marginTop: 12 }}>
-        {entries.length === 0 && <span className="muted" style={{ fontSize: 13 }}>반응 기록 없음</span>}
-        {entries.map(([catId, lv]) => {
-          const cat = cats.find((c) => c.id === catId)
-          if (!cat) return null
-          return <ReactionPill key={catId} cat={cat} level={lv} />
-        })}
+        ) : (
+          <div className="detail-hero-fallback">
+            <ReactionPillFallback entries={entries} />
+          </div>
+        )}
+        <button className="detail-back" onClick={onBack} aria-label="뒤로">←</button>
       </div>
 
-      {/* ---- 수정 (아코디언) ---- */}
+      {/* ---- 아래에서 올라오는 흰 시트 ---- */}
+      <div className="detail-sheet">
+        <div className="sheet-handle" />
+        <h2 className="detail-name">{snack.name}</h2>
+        <div className="detail-tags">
+          {snack.kind && <span className="kind-tag">{snack.kind}</span>}
+          {snack.base && <span className="base-tag">{snack.base}</span>}
+          <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
+        </div>
+        {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
+        <div className="pills" style={{ marginTop: 12 }}>
+          {entries.length === 0 && <span className="muted" style={{ fontSize: 13 }}>반응 기록 없음</span>}
+          {entries.map(([catId, lv]) => {
+            const cat = cats.find((c) => c.id === catId)
+            if (!cat) return null
+            return <ReactionPill key={catId} cat={cat} level={lv} />
+          })}
+        </div>
+
+        {/* ---- 수정 (아코디언) ---- */}
       <div className="card edit-acc">
         <button className="edit-acc-head" onClick={() => setEditOpen((v) => !v)} aria-expanded={editOpen}>
           수정하기
@@ -244,7 +247,15 @@ function SnackDetail({
             </button>
           </div>
         )}
+        </div>
       </div>
     </div>
   )
+}
+
+/** 사진이 없는 기록의 히어로 대체 — 대표 반응 블롭 얼굴 */
+function ReactionPillFallback({ entries }: { entries: [string, ReactionLevel][] }) {
+  const levels = entries.map(([, lv]) => lv)
+  const level: ReactionLevel = levels.includes('good') ? 'good' : levels.includes('ok') ? 'ok' : levels.length ? 'bad' : 'ok'
+  return <ReactionIcon level={level} size={96} />
 }

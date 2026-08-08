@@ -141,42 +141,55 @@ export const IconBowl = (p: P) =>
     p,
   )
 
-// 반응 3단계 — 고양이 얼굴 라인 아이콘 (귀 + 수염 + 표정)
-const catHead = (
-  <>
-    {/* 얼굴 + 귀 */}
-    <path d="M5 13.5c0 4.1 3.1 6.8 7 6.8s7-2.7 7-6.8c0-1.4-.35-2.7-1-3.8l.85-4.1c.1-.55-.5-.95-.95-.62L15 6.6a7.8 7.8 0 0 0-6 0L6.1 4.98c-.45-.33-1.05.07-.95.62l.85 4.1a7.1 7.1 0 0 0-1 3.8Z" />
-    {/* 수염 */}
-    <path d="M5.5 13.5H3M5.6 15.5l-2.3.8M18.5 13.5H21M18.4 15.5l2.3.8" />
-  </>
-)
+// 반응 3단계 — 통통한 컬러 블롭 고양이 얼굴 (fill + 표정)
+// 몸통색은 CSS 변수(--good/--ok/--bad), 표정은 진한 잉크색
+const BLOB_HEAD =
+  'M4 10.2c0-1.7.55-3.2 1.5-4.4L4.7 3c-.2-.7.55-1.25 1.15-.85L8.5 3.9A9.6 9.6 0 0 1 12 3.25c1.25 0 2.43.23 3.5.65l2.65-1.75c.6-.4 1.35.15 1.15.85l-.8 2.8A7.1 7.1 0 0 1 20 10.2v3.6c0 4.5-3.6 7.6-8 7.6s-8-3.1-8-7.6Z'
+
+function blob(
+  color: string,
+  features: ReactNode,
+  { size = 24, className }: P,
+) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path d={BLOB_HEAD} fill={color} />
+      <g fill="none" stroke="#4E4034" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+        {features}
+      </g>
+    </svg>
+  )
+}
 
 export const IconFaceGood = (p: P) =>
-  svg(
+  blob(
+    'var(--good)',
     <>
-      {catHead}
-      <path d="M9.3 11.5v1.4M14.7 11.5v1.4" />
-      <path d="M9.5 15.3s1 1.4 2.5 1.4 2.5-1.4 2.5-1.4" />
+      {/* 기분 좋은 ∪∪ 눈 + 웃는 입 */}
+      <path d="M7.7 11.6q1.3-1.5 2.6 0M13.7 11.6q1.3-1.5 2.6 0" />
+      <path d="M9.4 15.2q2.6 2.3 5.2 0" />
     </>,
     p,
   )
 
 export const IconFaceOk = (p: P) =>
-  svg(
+  blob(
+    'var(--ok)',
     <>
-      {catHead}
-      <path d="M9.3 11.5v1.4M14.7 11.5v1.4" />
-      <path d="M9.8 15.8h4.4" />
+      {/* 점 눈 + 무표정 */}
+      <path d="M9 11.2v1.2M15 11.2v1.2" />
+      <path d="M9.6 15.6h4.8" />
     </>,
     p,
   )
 
 export const IconFaceBad = (p: P) =>
-  svg(
+  blob(
+    'var(--bad)',
     <>
-      {catHead}
-      <path d="M9.3 11.5v1.4M14.7 11.5v1.4" />
-      <path d="M9.5 16.6s1-1.4 2.5-1.4 2.5 1.4 2.5 1.4" />
+      {/* >< 눈 + 시무룩 입 */}
+      <path d="M8 10.9l2 1.1-2 1.1M16 10.9l-2 1.1 2 1.1" />
+      <path d="M9.4 16.6q2.6-2.2 5.2 0" />
     </>,
     p,
   )
