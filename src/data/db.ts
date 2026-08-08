@@ -84,13 +84,29 @@ async function openReal(): Promise<AppDB> {
 
 export function getDB(): Promise<AppDB> {
   if (!dbPromise) {
-    // 동기 throw + 비동기 reject 를 모두 잡아 메모리 저장으로 폴백
-    dbPromise = Promise.resolve()
-      .then(openReal)
-      .catch((err) => {
-        console.warn('[얌로그] IndexedDB 사용 불가 → 메모리 저장으로 전환합니다.', err)
-        return new MemoryDB()
-      })
+    // 동기 throw + 비동기 reject + "영원히 대기(무응답)" 를 모두 처리.
+    // 일부 iframe/사생활 모드에서는 indexedDB.open 이 성공/실패 이벤트를
+    // 아예 안 주기 때문에, 타임아웃을 걸어 메모리 저장으로 폴백한다.
+    dbPromise = new Promise<AppDB>((resolve) => {
+      let settled = false
+      const finish = (db: AppDB, note?: string) => {
+        if (settled) return
+        settled = true
+        if (note) console.warn('[얌로그] ' + note + ' → 메모리 저장으로 전환합니다.')
+        resolve(db)
+      }
+      const timer = setTimeout(() => finish(new MemoryDB(), 'IndexedDB 응답 없음'), 2500)
+      Promise.resolve()
+        .then(openReal)
+        .then((db) => {
+          clearTimeout(timer)
+          finish(db)
+        })
+        .catch((err) => {
+          clearTimeout(timer)
+          finish(new MemoryDB(), 'IndexedDB 사용 불가(' + (err?.message ?? err) + ')')
+        })
+    })
   }
   return dbPromise
 }

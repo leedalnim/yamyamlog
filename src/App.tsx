@@ -32,6 +32,11 @@ export default function App() {
 
   // 초기 로드
   useEffect(() => {
+    // 무슨 일이 있어도 화면은 뜨게 하는 안전 타임아웃
+    const safety = setTimeout(() => {
+      applyTheme(DEFAULT_SETTINGS)
+      setReady(true)
+    }, 3500)
     ;(async () => {
       try {
         await ensureSeeded()
@@ -40,13 +45,14 @@ export default function App() {
         setSettings(s)
         applyTheme(s)
       } catch (err) {
-        // 저장소 초기화가 실패해도 앱은 뜨게 한다
         console.error('[얌로그] 초기화 실패, 기본값으로 시작합니다.', err)
         applyTheme(DEFAULT_SETTINGS)
       } finally {
+        clearTimeout(safety)
         setReady(true)
       }
     })()
+    return () => clearTimeout(safety)
   }, [])
 
   // 시스템 다크모드 변화 반영

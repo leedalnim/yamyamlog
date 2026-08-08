@@ -2,7 +2,7 @@
 // 화면에서는 이 함수들만 씁니다. 나중에 Supabase로 바꿀 때
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
-import { getDB, isSeeded, markSeeded } from './db'
+import { getDB, isSeeded } from './db'
 import { SEED_CATS, SEED_GROUPS, SEED_PHOTO_ID, SEED_SNACKS } from './seed'
 import { CHURU_PHOTO_B64 } from './seed-photo'
 import type { Cat, Group, ReactionLevel, Snack } from './types'
@@ -23,25 +23,21 @@ export async function ensureSeeded(): Promise<void> {
   if (await isSeeded()) return
   const db = await getDB()
 
-  // 그룹 + 고양이
-  const tx = db.transaction(['groups', 'cats'], 'readwrite')
-  for (const g of SEED_GROUPS) await tx.objectStore('groups').put(g)
-  for (const c of SEED_CATS) await tx.objectStore('cats').put(c)
-  await tx.done
+  // 모든 시드 데이터를 한 트랜잭션으로 커밋 → 첫 조회에서 확실히 보이게
+  const tx = db.transaction(['groups', 'cats', 'photos', 'snacks', 'meta'], 'readwrite')
+  for (const g of SEED_GROUPS) tx.objectStore('groups').put(g)
+  for (const c of SEED_CATS) tx.objectStore('cats').put(c)
+  tx.objectStore('photos').put({ id: SEED_PHOTO_ID, blob: b64ToBlob(CHURU_PHOTO_B64) })
 
-  // 시드 사진
-  await db.put('photos', { id: SEED_PHOTO_ID, blob: b64ToBlob(CHURU_PHOTO_B64) })
-
-  // 시드 기록
   const now = Date.now()
   for (const s of SEED_SNACKS) {
     const { agoMs, ...rest } = s
     const t = now - agoMs
     const snack: Snack = { ...rest, createdAt: t, updatedAt: t }
-    await db.put('snacks', snack)
+    tx.objectStore('snacks').put(snack)
   }
-
-  await markSeeded()
+  tx.objectStore('meta').put(true, 'seeded')
+  await tx.done
 }
 
 // ---------- 그룹 / 고양이 ----------

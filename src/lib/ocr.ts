@@ -37,19 +37,19 @@ function cleanup(raw: string): string {
     .split('\n')
     .map((l) => l.replace(/\s+/g, ' ').trim())
     // 너무 짧거나 숫자/기호만 있는 줄 제거
-    .filter((l) => l.length >= 2 && /[가-힣A-Za-z]/.test(l))
+    .filter((l) => l.length >= 2 && /[\uAC00-\uD7A3A-Za-z]/.test(l))
 
   if (lines.length === 0) return ''
 
   // 한글이 포함된, 가장 그럴듯한(적당히 긴) 줄 우선
-  const korean = lines.filter((l) => /[가-힣]/.test(l))
+  const korean = lines.filter((l) => /[\uAC00-\uD7A3]/.test(l))
   const pool = korean.length ? korean : lines
   pool.sort((a, b) => scoreLine(b) - scoreLine(a))
   return pool[0].slice(0, 40)
 }
 
 function scoreLine(l: string): number {
-  const koreanCount = (l.match(/[가-힣]/g) || []).length
+  const koreanCount = (l.match(/[\uAC00-\uD7A3]/g) || []).length
   // 4~20자 사이가 제품명일 확률이 높음
   const lenPenalty = Math.abs(l.length - 10)
   return koreanCount * 2 - lenPenalty * 0.3
