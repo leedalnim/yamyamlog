@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { CatPaw, useCatsAndGroups } from '../components/common'
+import { useCatsAndGroups } from '../components/common'
+import { BlobFace } from '../components/icons'
 
 export function CatsScreen() {
   const { cats, groups } = useCatsAndGroups()
@@ -19,8 +20,8 @@ export function CatsScreen() {
           <div className="card record-list">
             {members.map((cat) => (
               <div className="record-row" key={cat.id}>
-                <div className="cat-avatar" style={{ background: cat.color }}>
-                  <CatPaw cat={{ ...cat, color: '#FFFFFF' }} size={22} />
+                <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
+                  <BlobFace color={cat.color} size={30} />
                 </div>
                 <div className="record-info">
                   <div className="record-name">{cat.name}</div>

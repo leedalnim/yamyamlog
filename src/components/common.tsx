@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
 import { BASE_PRESETS, KIND_PRESETS, REACTION_META } from '../data/types'
-import { IconPaw, ReactionIcon } from './icons'
+import { BlobFace, ReactionIcon } from './icons'
 
-/** 고양이 색상 발바닥 아이콘 */
+/** 고양이 얼굴 아이콘 — 색상으로 고양이 구분 */
 export function CatPaw({ cat, size = 18 }: { cat: Cat; size?: number }) {
   return (
-    <span className="cat-paw" style={{ color: cat.color }}>
-      <IconPaw size={size} />
+    <span className="cat-paw">
+      <BlobFace color={cat.color} size={size} />
     </span>
   )
 }
@@ -54,7 +54,7 @@ export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel })
   const m = REACTION_META[level]
   return (
     <span className="react-pill" data-level={level}>
-      <ReactionIcon level={level} size={16} />
+      <ReactionIcon level={level} size={16} color={cat.color} />
       {cat.name} {m.short}
     </span>
   )
@@ -188,7 +188,7 @@ export function ReactionChooser({
               aria-pressed={active}
               onClick={() => onChange(active ? undefined : lv)}
             >
-              <ReactionIcon level={lv} size={30} />
+              <ReactionIcon level={lv} size={30} color={cat.color} />
               {m.short}
             </button>
           )

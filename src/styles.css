@@ -1,19 +1,4 @@
-/* ===================== 얌로그 — 손그림(doodle) 단일 테마 =====================
-   귀여운 손글씨체(Gaegu) + 얇은 손그림 외곽선. 밝기(light/dark)만 전환.
-============================================================================ */
-
-@font-face {
-  font-family: 'Gaegu';
-  src: url('./assets/Gaegu-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Gaegu';
-  src: url('./assets/Gaegu-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-display: swap;
-}
+/* ===================== 얌로그 — 블롭 파스텔 테마 (화이트 배경 · 고딕) ===================== */
 
 /* Headspace풍 팔레트 — 포근한 크림 바탕 + 소프트 블루/샌드/오렌지, 외곽선 없는 말랑한 면 */
 :root {
@@ -39,7 +24,7 @@
   --shadow-sm: 0 4px 16px rgba(120, 95, 60, 0.10);
   /* 본문은 잘 읽히는 일반체, 손글씨(Gaegu)는 제목·포인트에만 */
   --font: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, sans-serif;
-  --font-hand: 'Gaegu', 'Apple SD Gothic Neo', sans-serif;
+  --font-hand: var(--font);
   --nav-h: 64px;
 }
 

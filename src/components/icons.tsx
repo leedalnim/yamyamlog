@@ -146,53 +146,63 @@ export const IconBowl = (p: P) =>
 const BLOB_HEAD =
   'M4 10.2c0-1.7.55-3.2 1.5-4.4L4.7 3c-.2-.7.55-1.25 1.15-.85L8.5 3.9A9.6 9.6 0 0 1 12 3.25c1.25 0 2.43.23 3.5.65l2.65-1.75c.6-.4 1.35.15 1.15.85l-.8 2.8A7.1 7.1 0 0 1 20 10.2v3.6c0 4.5-3.6 7.6-8 7.6s-8-3.1-8-7.6Z'
 
-function blob(
-  color: string,
-  features: ReactNode,
-  { size = 24, className }: P,
-) {
+/** 표정 (기호성 구분) */
+const FACES: Record<string, ReactNode> = {
+  // 잘먹음: 기분 좋은 ∪∪ 눈 + 웃는 입
+  good: (
+    <>
+      <path d="M7.7 11.6q1.3-1.5 2.6 0M13.7 11.6q1.3-1.5 2.6 0" />
+      <path d="M9.4 15.2q2.6 2.3 5.2 0" />
+    </>
+  ),
+  // 보통: 점 눈 + 무표정
+  ok: (
+    <>
+      <path d="M9 11.2v1.2M15 11.2v1.2" />
+      <path d="M9.6 15.6h4.8" />
+    </>
+  ),
+  // 안먹음: >< 눈 + 시무룩 입
+  bad: (
+    <>
+      <path d="M8 10.9l2 1.1-2 1.1M16 10.9l-2 1.1 2 1.1" />
+      <path d="M9.4 16.6q2.6-2.2 5.2 0" />
+    </>
+  ),
+  // 기본: 점 눈 + 살짝 미소 (고양이 프로필용)
+  neutral: (
+    <>
+      <path d="M9 11.2v1.2M15 11.2v1.2" />
+      <path d="M9.8 15.2q2.2 1.6 4.4 0" />
+    </>
+  ),
+}
+
+/** 블롭 고양이 얼굴 — 색상은 고양이 구분, 표정은 기호성 구분 */
+export function BlobFace({
+  color,
+  level = 'neutral',
+  size = 24,
+  className,
+}: {
+  color: string
+  level?: ReactionLevel | 'neutral'
+  size?: number
+  className?: string
+}) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path d={BLOB_HEAD} fill={color} />
       <g fill="none" stroke="#4E4034" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-        {features}
+        {FACES[level]}
       </g>
     </svg>
   )
 }
 
-export const IconFaceGood = (p: P) =>
-  blob(
-    'var(--good)',
-    <>
-      {/* 기분 좋은 ∪∪ 눈 + 웃는 입 */}
-      <path d="M7.7 11.6q1.3-1.5 2.6 0M13.7 11.6q1.3-1.5 2.6 0" />
-      <path d="M9.4 15.2q2.6 2.3 5.2 0" />
-    </>,
-    p,
-  )
-
-export const IconFaceOk = (p: P) =>
-  blob(
-    'var(--ok)',
-    <>
-      {/* 점 눈 + 무표정 */}
-      <path d="M9 11.2v1.2M15 11.2v1.2" />
-      <path d="M9.6 15.6h4.8" />
-    </>,
-    p,
-  )
-
-export const IconFaceBad = (p: P) =>
-  blob(
-    'var(--bad)',
-    <>
-      {/* >< 눈 + 시무룩 입 */}
-      <path d="M8 10.9l2 1.1-2 1.1M16 10.9l-2 1.1 2 1.1" />
-      <path d="M9.4 16.6q2.6-2.2 5.2 0" />
-    </>,
-    p,
-  )
+export const IconFaceGood = (p: P) => <BlobFace color="var(--good)" level="good" size={p.size} />
+export const IconFaceOk = (p: P) => <BlobFace color="var(--ok)" level="ok" size={p.size} />
+export const IconFaceBad = (p: P) => <BlobFace color="var(--bad)" level="bad" size={p.size} />
 
 // 손그림 느낌의 라인 고양이 일러스트 (앉아있는 고양이)
 export const CatDoodle = ({ size = 120, className }: P) => (
@@ -232,8 +242,13 @@ export const CatDoodle = ({ size = 120, className }: P) => (
   </svg>
 )
 
-export const ReactionIcon = ({ level, size }: { level: ReactionLevel; size?: number }) => {
-  if (level === 'good') return <IconFaceGood size={size} />
-  if (level === 'ok') return <IconFaceOk size={size} />
-  return <IconFaceBad size={size} />
-}
+/** 반응 아이콘 — color를 주면 고양이 색으로, 없으면 기호성 기본색 */
+export const ReactionIcon = ({
+  level,
+  size,
+  color,
+}: {
+  level: ReactionLevel
+  size?: number
+  color?: string
+}) => <BlobFace color={color ?? `var(--${level})`} level={level} size={size} />

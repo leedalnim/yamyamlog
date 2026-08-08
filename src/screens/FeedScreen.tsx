@@ -19,7 +19,7 @@ function formatDate(ts: number): string {
 export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged: () => void }) {
   const { cats, groups } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
-  const [filter, setFilter] = useState<string>('all') // 'all' | groupId
+  const [filter, setFilter] = useState<string>('all') // 'all' | 종류(kind) | '기타'
   const [viewing, setViewing] = useState<Snack | null>(null)
 
   async function reload() {
@@ -29,12 +29,24 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     void reload()
   }, [])
 
+  // 기록에 실제로 있는 종류들로 필터 칩 구성
+  const kinds = useMemo(() => {
+    const seen = new Map<string, number>()
+    let etc = 0
+    for (const s of snacks) {
+      if (s.kind) seen.set(s.kind, (seen.get(s.kind) ?? 0) + 1)
+      else etc++
+    }
+    const list = [...seen.entries()].sort((a, b) => b[1] - a[1]).map(([k]) => k)
+    if (etc > 0) list.push('기타')
+    return list
+  }, [snacks])
+
   const filtered = useMemo(() => {
     if (filter === 'all') return snacks
-    const memberIds = new Set(cats.filter((c) => c.groupId === filter).map((c) => c.id))
-    // 해당 그룹 고양이의 반응이 하나라도 있는 간식만
-    return snacks.filter((s) => Object.keys(s.reactions).some((id) => memberIds.has(id)))
-  }, [snacks, filter, cats])
+    if (filter === '기타') return snacks.filter((s) => !s.kind)
+    return snacks.filter((s) => s.kind === filter)
+  }, [snacks, filter])
 
   // ---- 상세 페이지 ----
   if (viewing) {
@@ -67,13 +79,13 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         <button className={'chip-tab' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>
           전체
         </button>
-        {groups.map((g) => (
+        {kinds.map((k) => (
           <button
-            key={g.id}
-            className={'chip-tab' + (filter === g.id ? ' active' : '')}
-            onClick={() => setFilter(g.id)}
+            key={k}
+            className={'chip-tab' + (filter === k ? ' active' : '')}
+            onClick={() => setFilter(k)}
           >
-            {g.name}
+            {k}
           </button>
         ))}
       </div>
