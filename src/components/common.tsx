@@ -2,6 +2,16 @@ import { useEffect, useState } from 'react'
 import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
 import { BASE_PRESETS, REACTION_META } from '../data/types'
+import { IconPaw, ReactionIcon } from './icons'
+
+/** 고양이 색상 발바닥 아이콘 */
+export function CatPaw({ cat, size = 18 }: { cat: Cat; size?: number }) {
+  return (
+    <span className="cat-paw" style={{ color: cat.color }}>
+      <IconPaw size={size} />
+    </span>
+  )
+}
 
 /** 고양이 + 그룹 로드 (한 번) */
 export function useCatsAndGroups() {
@@ -145,7 +155,7 @@ export function ReactionChooser({
   return (
     <div className="chooser">
       <div className="chooser-name">
-        <span className="cat-emoji">{cat.emoji}</span>
+        <CatPaw cat={cat} size={17} />
         {cat.name}
       </div>
       <div className="chooser-btns">
@@ -161,7 +171,7 @@ export function ReactionChooser({
               aria-pressed={active}
               onClick={() => onChange(active ? undefined : lv)}
             >
-              <span className="lv-emoji">{m.emoji}</span>
+              <ReactionIcon level={lv} size={19} />
               {m.short}
             </button>
           )

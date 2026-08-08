@@ -178,7 +178,8 @@ button { font-family: inherit; cursor: pointer; }
   gap: 3px;
   padding-top: 10px;
 }
-.nav button .ico { font-size: 21px; line-height: 1; }
+.nav button .ico { line-height: 0; }
+.nav button .ico svg { width: 23px; height: 23px; }
 .nav button.active { color: var(--primary); }
 
 /* ===================== 공통 컴포넌트 ===================== */
@@ -237,7 +238,13 @@ html[data-theme="clean"] .card { border: 1px solid var(--line); box-shadow: none
   color: var(--muted);
   padding: 60px 20px;
 }
-.empty .big { font-size: 44px; margin-bottom: 12px; }
+.empty .big {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+  color: var(--line);
+}
+html[data-theme] .empty .big { color: color-mix(in srgb, var(--muted) 55%, transparent); }
 
 .muted { color: var(--muted); }
 .tabular { font-variant-numeric: tabular-nums; }

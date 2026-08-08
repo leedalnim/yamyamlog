@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useCatsAndGroups } from '../components/common'
+import { CatPaw, useCatsAndGroups } from '../components/common'
 import type { Cat, ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
+import { IconChart, IconPaw, IconTag, IconTrophy } from '../components/icons'
 
 export function StatsScreen() {
   const { cats } = useCatsAndGroups()
@@ -66,9 +67,9 @@ export function StatsScreen() {
   if (totalRecords === 0) {
     return (
       <div className="screen">
-        <div className="topbar"><h1>통계 📊</h1></div>
+        <div className="topbar"><h1>통계</h1></div>
         <div className="empty">
-          <div className="big">📈</div>
+          <div className="big"><IconChart size={44} /></div>
           기록이 쌓이면
           <br />
           누가 뭘 잘 먹는지 그래프로 보여드릴게요!
@@ -81,14 +82,14 @@ export function StatsScreen() {
     <div className="screen">
       <div className="topbar">
         <div>
-          <h1>통계 📊</h1>
+          <h1>통계</h1>
           <div className="sub">총 {totalRecords}개 간식 기록</div>
         </div>
       </div>
 
       {/* 간식 랭킹 */}
       <section className="stat-section">
-        <h2 className="stat-title">🏆 잘 먹는 간식 랭킹</h2>
+        <h2 className="stat-title"><IconTrophy size={18} />잘 먹는 간식 랭킹</h2>
         <div className="card stat-card">
           {ranking.length === 0 ? (
             <div className="muted" style={{ fontSize: 13 }}>아직 반응이 기록된 간식이 없어요.</div>
@@ -115,7 +116,7 @@ export function StatsScreen() {
       {/* 베이스별 기호성 */}
       {perBase.length > 0 && (
         <section className="stat-section">
-          <h2 className="stat-title">🥩 베이스(주재료)별 기호성</h2>
+          <h2 className="stat-title"><IconTag size={18} />베이스(주재료)별 기호성</h2>
           <div className="card stat-card">
             {perBase.map((r) => (
               <div key={r.base} className="rank-row">
@@ -140,7 +141,7 @@ export function StatsScreen() {
 
       {/* 고양이별 선호 */}
       <section className="stat-section">
-        <h2 className="stat-title">🐱 고양이별 반응</h2>
+        <h2 className="stat-title"><IconPaw size={18} />고양이별 반응</h2>
         <div className="cat-stat-grid">
           {perCat.map((p) => (
             <CatStat key={p.cat.id} data={p} />
@@ -161,7 +162,7 @@ function CatStat({
   return (
     <div className="card cat-stat">
       <div className="cat-stat-head">
-        <span className="cat-emoji">{cat.emoji}</span>
+        <CatPaw cat={cat} size={18} />
         <span className="cat-stat-name">{cat.name}</span>
         <span className="muted tabular" style={{ marginLeft: 'auto', fontSize: 12 }}>{total}건</span>
       </div>

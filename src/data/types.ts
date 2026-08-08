@@ -18,8 +18,8 @@ export interface Cat {
   id: string
   name: string
   groupId: string
-  /** 카드에 쓰는 이모지/색 포인트 */
-  emoji: string
+  /** 아이콘 색상 포인트 */
+  color: string
   order: number
 }
 
@@ -58,10 +58,10 @@ export const DEFAULT_SETTINGS: Settings = {
   colorMode: 'system',
 }
 
-export const REACTION_META: Record<ReactionLevel, { label: string; short: string; emoji: string }> = {
-  good: { label: '잘 먹음', short: '잘먹음', emoji: '😋' },
-  ok: { label: '보통', short: '보통', emoji: '😐' },
-  bad: { label: '안 먹음', short: '안먹음', emoji: '🙅' },
+export const REACTION_META: Record<ReactionLevel, { label: string; short: string }> = {
+  good: { label: '잘 먹음', short: '잘먹음' },
+  ok: { label: '보통', short: '보통' },
+  bad: { label: '안 먹음', short: '안먹음' },
 }
 
 /** 자주 쓰는 베이스(주재료) 프리셋 */

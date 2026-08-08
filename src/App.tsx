@@ -6,6 +6,7 @@ import { FeedScreen } from './screens/FeedScreen'
 import { AddScreen } from './screens/AddScreen'
 import { StatsScreen } from './screens/StatsScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
+import { IconHome, IconPlus, IconChart, IconSettings, IconPaw } from './components/icons'
 
 type Tab = 'feed' | 'add' | 'stats' | 'settings'
 
@@ -63,7 +64,7 @@ export default function App() {
     return (
       <div className="app">
         <div className="empty" style={{ marginTop: '40vh' }}>
-          <div className="big">🐾</div>
+          <div className="big" style={{ color: 'var(--primary)' }}><IconPaw size={44} /></div>
         </div>
       </div>
     )
@@ -78,16 +79,16 @@ export default function App() {
 
       <nav className="nav">
         <button className={tab === 'feed' ? 'active' : ''} onClick={() => setTab('feed')}>
-          <span className="ico">🏠</span>홈
+          <span className="ico"><IconHome /></span>홈
         </button>
         <button className={tab === 'add' ? 'active' : ''} onClick={() => setTab('add')}>
-          <span className="ico">➕</span>추가
+          <span className="ico"><IconPlus /></span>추가
         </button>
         <button className={tab === 'stats' ? 'active' : ''} onClick={() => setTab('stats')}>
-          <span className="ico">📊</span>통계
+          <span className="ico"><IconChart /></span>통계
         </button>
         <button className={tab === 'settings' ? 'active' : ''} onClick={() => setTab('settings')}>
-          <span className="ico">⚙️</span>설정
+          <span className="ico"><IconSettings /></span>설정
         </button>
       </nav>
     </div>

@@ -8,6 +8,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
+import { IconBowl, IconPaw, IconTrash } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -37,9 +38,12 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   return (
     <div className="screen">
       <div className="topbar">
-        <div>
-          <h1>얌로그 🐾</h1>
-          <div className="sub">우리집 냥이들 간식 기호성 기록</div>
+        <div className="brand">
+          <span className="brand-mark"><IconPaw size={22} /></span>
+          <div>
+            <h1>얌로그</h1>
+            <div className="sub">우리집 냥이들 간식 기호성 기록</div>
+          </div>
         </div>
       </div>
 
@@ -60,10 +64,10 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
 
       {filtered.length === 0 ? (
         <div className="empty">
-          <div className="big">🍽️</div>
+          <div className="big"><IconBowl size={46} /></div>
           아직 기록이 없어요.
           <br />
-          아래 <b>＋추가</b>로 첫 간식을 기록해보세요!
+          아래 <b>추가</b>에서 첫 간식을 기록해보세요!
           <br />
           <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={onAdd}>
             간식 기록하기
@@ -193,7 +197,9 @@ function SnackSheet({
           <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
         </div>
         <div className="sheet-actions">
-          <button className="btn" onClick={remove} style={{ color: 'var(--bad)' }}>삭제</button>
+          <button className="btn btn-icon" onClick={remove} style={{ color: 'var(--bad)' }}>
+            <IconTrash size={18} />삭제
+          </button>
           <button className="btn btn-primary" style={{ flex: 1 }} onClick={save}>저장</button>
         </div>
       </div>

@@ -8,8 +8,8 @@ export const SEED_GROUPS: Group[] = [
 ]
 
 export const SEED_CATS: Cat[] = [
-  { id: 'c-tangja', name: '탱자', groupId: 'g-a', emoji: '🐯', order: 0 },
-  { id: 'c-yuja', name: '유자', groupId: 'g-a', emoji: '🍊', order: 1 },
-  { id: 'c-kong', name: '콩이', groupId: 'g-b', emoji: '🫘', order: 2 },
-  { id: 'c-namul', name: '나물이', groupId: 'g-b', emoji: '🌿', order: 3 },
+  { id: 'c-tangja', name: '탱자', groupId: 'g-a', color: '#E8894A', order: 0 },
+  { id: 'c-yuja', name: '유자', groupId: 'g-a', color: '#F0B429', order: 1 },
+  { id: 'c-kong', name: '콩이', groupId: 'g-b', color: '#9B7A52', order: 2 },
+  { id: 'c-namul', name: '나물이', groupId: 'g-b', color: '#6FA76B', order: 3 },
 ]

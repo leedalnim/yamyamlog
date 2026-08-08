@@ -4,6 +4,7 @@ import type { ReactionLevel } from '../data/types'
 import { addSnack, savePhoto } from '../data/repo'
 import { compressImage } from '../lib/image'
 import { readText } from '../lib/ocr'
+import { IconCamera, IconScan } from '../components/icons'
 
 export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
   const { cats, groups } = useCatsAndGroups()
@@ -86,15 +87,17 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
             <div className="photo-actions">
               <button className="mini-btn" onClick={() => fileRef.current?.click()}>다시 찍기</button>
               <button className="mini-btn" onClick={runOCR} disabled={ocrState === 'running'}>
-                {ocrState === 'running'
-                  ? `읽는 중 ${Math.round(ocrProgress * 100)}%`
-                  : '📖 사진에서 제목 읽기'}
+                {ocrState === 'running' ? (
+                  `읽는 중 ${Math.round(ocrProgress * 100)}%`
+                ) : (
+                  <><IconScan size={16} />사진에서 제목 읽기</>
+                )}
               </button>
             </div>
           </div>
         ) : (
           <button className="photo-drop" onClick={() => fileRef.current?.click()}>
-            <span className="big">📷</span>
+            <span className="big"><IconCamera size={34} /></span>
             사진 찍기 / 고르기
           </button>
         )}

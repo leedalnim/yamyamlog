@@ -9,7 +9,7 @@ export function SettingsScreen({
 }) {
   return (
     <div className="screen">
-      <div className="topbar"><h1>설정 ⚙️</h1></div>
+      <div className="topbar"><h1>설정</h1></div>
 
       {/* 테마 (말랑 코지 / 미니 화이트) */}
       <section className="stat-section">
@@ -59,7 +59,7 @@ export function SettingsScreen({
         </div>
       </section>
 
-      <div className="app-foot muted">얌로그 v0.1 · 🐾 콩이 · 나물이 · 탱자 · 유자</div>
+      <div className="app-foot muted">얌로그 v0.1 · 콩이 · 나물이 · 탱자 · 유자</div>
     </div>
   )
 }
