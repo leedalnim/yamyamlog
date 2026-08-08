@@ -3,8 +3,16 @@
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
 import { getDB, isSeeded, markSeeded } from './db'
-import { SEED_CATS, SEED_GROUPS } from './seed'
+import { SEED_CATS, SEED_GROUPS, SEED_PHOTO_ID, SEED_SNACKS } from './seed'
+import { CHURU_PHOTO_B64 } from './seed-photo'
 import type { Cat, Group, ReactionLevel, Snack } from './types'
+
+function b64ToBlob(b64: string, type = 'image/jpeg'): Blob {
+  const bin = atob(b64)
+  const arr = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i)
+  return new Blob([arr], { type })
+}
 
 function uid(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36)
@@ -14,10 +22,25 @@ function uid(): string {
 export async function ensureSeeded(): Promise<void> {
   if (await isSeeded()) return
   const db = await getDB()
+
+  // 그룹 + 고양이
   const tx = db.transaction(['groups', 'cats'], 'readwrite')
   for (const g of SEED_GROUPS) await tx.objectStore('groups').put(g)
   for (const c of SEED_CATS) await tx.objectStore('cats').put(c)
   await tx.done
+
+  // 시드 사진
+  await db.put('photos', { id: SEED_PHOTO_ID, blob: b64ToBlob(CHURU_PHOTO_B64) })
+
+  // 시드 기록
+  const now = Date.now()
+  for (const s of SEED_SNACKS) {
+    const { agoMs, ...rest } = s
+    const t = now - agoMs
+    const snack: Snack = { ...rest, createdAt: t, updatedAt: t }
+    await db.put('snacks', snack)
+  }
+
   await markSeeded()
 }
 
