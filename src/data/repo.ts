@@ -2,8 +2,8 @@
 // 화면에서는 이 함수들만 씁니다. 나중에 Supabase로 바꿀 때
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
-import { getDB, isSeeded } from './db'
-import { SEED_CATS, SEED_GROUPS, SEED_PHOTO_ID, SEED_SNACKS } from './seed'
+import { getDB } from './db'
+import { SEED_CATS, SEED_GROUPS, SEED_PHOTO_ID, SEED_SNACKS, SEED_VERSION } from './seed'
 import { CHURU_PHOTO_B64 } from './seed-photo'
 import type { Cat, Group, ReactionLevel, Snack } from './types'
 
@@ -20,10 +20,12 @@ function uid(): string {
 
 // ---------- 초기 시드 ----------
 export async function ensureSeeded(): Promise<void> {
-  if (await isSeeded()) return
   const db = await getDB()
+  const ver = Number(await db.get('meta', 'seedVersion')) || 0
+  if (ver >= SEED_VERSION) return
 
   // 모든 시드 데이터를 한 트랜잭션으로 커밋 → 첫 조회에서 확실히 보이게
+  // put은 id 기준이라 이미 있으면 덮어쓸 뿐 중복되지 않음
   const tx = db.transaction(['groups', 'cats', 'photos', 'snacks', 'meta'], 'readwrite')
   for (const g of SEED_GROUPS) tx.objectStore('groups').put(g)
   for (const c of SEED_CATS) tx.objectStore('cats').put(c)
@@ -36,7 +38,7 @@ export async function ensureSeeded(): Promise<void> {
     const snack: Snack = { ...rest, createdAt: t, updatedAt: t }
     tx.objectStore('snacks').put(snack)
   }
-  tx.objectStore('meta').put(true, 'seeded')
+  tx.objectStore('meta').put(SEED_VERSION, 'seedVersion')
   await tx.done
 }
 

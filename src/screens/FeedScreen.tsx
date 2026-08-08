@@ -9,7 +9,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { IconBowl, IconPaw, IconTrash } from '../components/icons'
+import { IconBowl, IconTrash } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -39,12 +39,9 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   return (
     <div className="screen">
       <div className="topbar">
-        <div className="brand">
-          <span className="brand-mark"><IconPaw size={22} /></span>
-          <div>
-            <h1>얌로그</h1>
-            <div className="sub">우리집 냥이들 간식 기호성 기록</div>
-          </div>
+        <div>
+          <h1>얌로그</h1>
+          <div className="sub">우리집 냥이들 간식 기호성 기록</div>
         </div>
       </div>
 

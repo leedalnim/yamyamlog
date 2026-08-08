@@ -120,13 +120,3 @@ export async function writeSettings(s: Settings): Promise<void> {
   const db = await getDB()
   await db.put('meta', s, 'settings')
 }
-
-export async function isSeeded(): Promise<boolean> {
-  const db = await getDB()
-  return Boolean(await db.get('meta', 'seeded'))
-}
-
-export async function markSeeded(): Promise<void> {
-  const db = await getDB()
-  await db.put('meta', true, 'seeded')
-}

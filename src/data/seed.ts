@@ -14,6 +14,9 @@ export const SEED_CATS: Cat[] = [
   { id: 'c-namul', name: '나물이', groupId: 'g-b', color: '#6FA76B', order: 3 },
 ]
 
+/** 시드 버전 — 올리면 기존 사용자에게도 시드를 한 번 다시 적용 */
+export const SEED_VERSION = 2
+
 /** 사진이 있는 시드 기록의 photoId */
 export const SEED_PHOTO_ID = 'p-churu-1'
 
