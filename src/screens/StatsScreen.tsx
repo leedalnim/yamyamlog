@@ -3,7 +3,7 @@ import { CatPaw, useCatsAndGroups } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
-import { CatDoodle, IconChart, IconPaw, IconTag, IconTrophy } from '../components/icons'
+import { IconChart, IconPaw, IconTag, IconTrophy } from '../components/icons'
 
 export function StatsScreen() {
   const { cats } = useCatsAndGroups()
@@ -12,16 +12,6 @@ export function StatsScreen() {
   useEffect(() => {
     ;(async () => setSnacks(await listSnacks()))()
   }, [])
-
-  const allReactions = useMemo(
-    () => snacks.flatMap((s) => Object.values(s.reactions) as ReactionLevel[]),
-    [snacks],
-  )
-
-  // ---- 전체 기호도 (모든 반응 평균) ----
-  const overall = allReactions.length
-    ? allReactions.reduce((a, lv) => a + REACTION_SCORE[lv], 0) / allReactions.length
-    : 0
 
   // ---- 간식 랭킹 ----
   const ranking = useMemo(() => {
@@ -88,22 +78,14 @@ export function StatsScreen() {
 
   return (
     <div className="screen">
-      <div className="topbar"><h1>통계</h1></div>
-
-      {/* 히어로 지표 */}
-      <div className="card hero-card">
-        <div className="hero-left">
-          <div className="hero-label">우리 냥이들 전체 기호도</div>
-          <div className="hero-num tabular">
-            {Math.round(overall * 100)}
-            <span className="hero-unit">점</span>
-          </div>
-          <div className="hero-cap muted">간식 {totalRecords}개 · 반응 {allReactions.length}번 기록</div>
+      <div className="topbar">
+        <div>
+          <h1>통계</h1>
+          <div className="sub">간식 {totalRecords}개 기록</div>
         </div>
-        <div className="hero-art"><CatDoodle size={78} /></div>
       </div>
 
-      {/* 고양이별 기호도 — 세로 막대 */}
+      {/* 고양이별 기호도 — 세로 막대 (메인) */}
       <section className="stat-section">
         <h2 className="stat-title">
           <span className="ti-badge badge-cat"><IconPaw size={15} /></span>고양이별 기호도

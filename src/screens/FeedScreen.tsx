@@ -9,7 +9,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { CatDoodle, IconTrash } from '../components/icons'
+import { CatDoodle, IconChevronDown, IconTrash } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -103,10 +103,12 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
 
 function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClick: () => void }) {
   const url = usePhotoURL(snack.photoId)
+  const [open, setOpen] = useState(false)
   const entries = Object.entries(snack.reactions) as [string, ReactionLevel][]
   return (
-    <button className="card snack-card" onClick={onClick}>
-      <div className="snack-row">
+    <div className="card snack-card">
+      {/* 이름 + 반응 (항상 보임) — 누르면 상세 아코디언 */}
+      <button className="snack-row" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
         {url && (
           <div className="snack-thumb">
             <img src={url} alt={snack.name} loading="lazy" />
@@ -115,13 +117,9 @@ function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClic
         <div className="snack-body">
           <div className="snack-name-row">
             <span className="snack-name">{snack.name}</span>
-            {snack.kind && <span className="kind-tag">{snack.kind}</span>}
-            {snack.base && <span className="base-tag">{snack.base}</span>}
           </div>
-          <div className="snack-date">{formatDate(snack.createdAt)}</div>
-          {snack.memo && <div className="snack-memo">{snack.memo}</div>}
           <div className="pills">
-            {entries.length === 0 && <span className="muted" style={{ fontSize: 12.5 }}>반응 기록 없음</span>}
+            {entries.length === 0 && <span className="muted" style={{ fontSize: 13 }}>반응 기록 없음</span>}
             {entries.map(([catId, lv]) => {
               const cat = cats.find((c) => c.id === catId)
               if (!cat) return null
@@ -129,8 +127,22 @@ function SnackCard({ snack, cats, onClick }: { snack: Snack; cats: Cat[]; onClic
             })}
           </div>
         </div>
-      </div>
-    </button>
+        <span className={'snack-chev' + (open ? ' open' : '')}><IconChevronDown size={18} /></span>
+      </button>
+
+      {/* 상세 (아코디언) */}
+      {open && (
+        <div className="snack-more">
+          <div className="snack-more-tags">
+            {snack.kind && <span className="kind-tag">{snack.kind}</span>}
+            {snack.base && <span className="base-tag">{snack.base}</span>}
+            <span className="snack-date">{formatDate(snack.createdAt)}</span>
+          </div>
+          {snack.memo && <div className="snack-memo">{snack.memo}</div>}
+          <button className="mini-btn snack-edit" onClick={onClick}>수정하기</button>
+        </div>
+      )}
+    </div>
   )
 }
 

@@ -128,6 +128,9 @@ export const IconTrash = (p: P) =>
 export const IconCheck = (p: P) =>
   svg(<path d="M5 12.5 10 17 19 7" />, { ...p, strokeWidth: p.strokeWidth ?? 2.2 })
 
+export const IconChevronDown = (p: P) =>
+  svg(<path d="M6 9.5 12 15.5 18 9.5" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
+
 export const IconBowl = (p: P) =>
   svg(
     <>
@@ -138,13 +141,22 @@ export const IconBowl = (p: P) =>
     p,
   )
 
-// 반응 3단계 — 표정 라인 아이콘
+// 반응 3단계 — 고양이 얼굴 라인 아이콘 (귀 + 수염 + 표정)
+const catHead = (
+  <>
+    {/* 얼굴 + 귀 */}
+    <path d="M5 13.5c0 4.1 3.1 6.8 7 6.8s7-2.7 7-6.8c0-1.4-.35-2.7-1-3.8l.85-4.1c.1-.55-.5-.95-.95-.62L15 6.6a7.8 7.8 0 0 0-6 0L6.1 4.98c-.45-.33-1.05.07-.95.62l.85 4.1a7.1 7.1 0 0 0-1 3.8Z" />
+    {/* 수염 */}
+    <path d="M5.5 13.5H3M5.6 15.5l-2.3.8M18.5 13.5H21M18.4 15.5l2.3.8" />
+  </>
+)
+
 export const IconFaceGood = (p: P) =>
   svg(
     <>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8 14.5s1.4 2 4 2 4-2 4-2" />
-      <path d="M9 9.5h.01M15 9.5h.01" />
+      {catHead}
+      <path d="M9.3 11.5v1.4M14.7 11.5v1.4" />
+      <path d="M9.5 15.3s1 1.4 2.5 1.4 2.5-1.4 2.5-1.4" />
     </>,
     p,
   )
@@ -152,9 +164,9 @@ export const IconFaceGood = (p: P) =>
 export const IconFaceOk = (p: P) =>
   svg(
     <>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8.5 15h7" />
-      <path d="M9 9.5h.01M15 9.5h.01" />
+      {catHead}
+      <path d="M9.3 11.5v1.4M14.7 11.5v1.4" />
+      <path d="M9.8 15.8h4.4" />
     </>,
     p,
   )
@@ -162,9 +174,9 @@ export const IconFaceOk = (p: P) =>
 export const IconFaceBad = (p: P) =>
   svg(
     <>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8 16s1.4-2 4-2 4 2 4 2" />
-      <path d="M9 9.5h.01M15 9.5h.01" />
+      {catHead}
+      <path d="M9.3 11.5v1.4M14.7 11.5v1.4" />
+      <path d="M9.5 16.6s1-1.4 2.5-1.4 2.5 1.4 2.5 1.4" />
     </>,
     p,
   )

@@ -1,107 +1,21 @@
-/* ===================== 얌로그 테마 시스템 =====================
-   테마 2종(cozy=말랑 코지 / clean=미니 화이트) × 밝기 2종(light/dark)
-   html[data-theme][data-mode] 조합으로 토큰만 갈아끼웁니다.
-   컴포넌트는 var(--토큰)만 사용 → 테마 바꿔도 그대로 동작.
-============================================================= */
+/* ===================== 얌로그 — 손그림(doodle) 단일 테마 =====================
+   귀여운 손글씨체(Gaegu) + 얇은 손그림 외곽선. 밝기(light/dark)만 전환.
+============================================================================ */
 
-/* ---------- 공통 기본값 (warm-light) ----------
-   따뜻하지만 차분한 그레이지 톤 + 절제된 퍼시몬 포인트 */
+@font-face {
+  font-family: 'Gaegu';
+  src: url('./assets/Gaegu-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gaegu';
+  src: url('./assets/Gaegu-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
-  --bg: #f5f2ee;
-  --surface: #ffffff;
-  --surface-2: #f0ece6;
-  --ink: #262220;
-  --muted: #8c847b;
-  --line: #ece6de;
-  --primary: #e8674a;
-  --primary-ink: #ffffff;
-  --accent-2: #3f8a76;
-  --good: #4f9a7b;
-  --good-bg: #eaf2ee;
-  --ok: #c8912f;
-  --ok-bg: #f6eed9;
-  --bad: #d76a63;
-  --bad-bg: #f8e6e4;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --shadow: 0 6px 24px rgba(40, 32, 24, 0.07);
-  --shadow-sm: 0 2px 10px rgba(40, 32, 24, 0.05);
-  --font: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, -apple-system, sans-serif;
-  --nav-h: 64px;
-}
-
-/* ---------- warm dark ---------- */
-html[data-theme="cozy"][data-mode="dark"] {
-  --bg: #1a1613;
-  --surface: #232019;
-  --surface-2: #2b271f;
-  --ink: #f0eae1;
-  --muted: #a89e92;
-  --line: #322d25;
-  --primary: #f07a5f;
-  --primary-ink: #23100a;
-  --accent-2: #5aab93;
-  --good: #63b48f;
-  --good-bg: #1f342a;
-  --ok: #d7a63f;
-  --ok-bg: #352b18;
-  --bad: #e0847d;
-  --bad-bg: #362321;
-  --shadow: 0 8px 28px rgba(0, 0, 0, 0.42);
-  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* ---------- clean light (쿨 미니멀) ---------- */
-html[data-theme="clean"][data-mode="light"] {
-  --bg: #fafaf8;
-  --surface: #ffffff;
-  --surface-2: #f2f3f1;
-  --ink: #17181a;
-  --muted: #7b7d78;
-  --line: #e8e9e5;
-  --primary: #10876a;
-  --primary-ink: #ffffff;
-  --accent-2: #5c7688;
-  --good: #10876a;
-  --good-bg: #e4f1ec;
-  --ok: #ad7f26;
-  --ok-bg: #f4ecd8;
-  --bad: #c5544e;
-  --bad-bg: #f6e3e1;
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 9px;
-  --shadow: 0 4px 18px rgba(20, 22, 26, 0.06);
-  --shadow-sm: 0 1px 6px rgba(20, 22, 26, 0.05);
-}
-
-/* ---------- clean dark ---------- */
-html[data-theme="clean"][data-mode="dark"] {
-  --bg: #0f1011;
-  --surface: #191a1c;
-  --surface-2: #202123;
-  --ink: #eceded;
-  --muted: #999a96;
-  --line: #292a2c;
-  --primary: #2eb590;
-  --primary-ink: #06130e;
-  --accent-2: #85a2b6;
-  --good: #2eb590;
-  --good-bg: #143029;
-  --ok: #cea146;
-  --ok-bg: #302816;
-  --bad: #d76a64;
-  --bad-bg: #321f1e;
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 9px;
-  --shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.32);
-}
-
-/* ---------- doodle (손그림) light ---------- */
-html[data-theme="doodle"][data-mode="light"] {
   --bg: #fbfaf1;
   --surface: #ffffff;
   --surface-2: #f3f1e2;
@@ -122,10 +36,12 @@ html[data-theme="doodle"][data-mode="light"] {
   --radius-sm: 10px;
   --shadow: none;
   --shadow-sm: none;
+  --font: 'Gaegu', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --nav-h: 64px;
 }
 
-/* ---------- doodle dark ---------- */
-html[data-theme="doodle"][data-mode="dark"] {
+/* ---------- 다크 ---------- */
+html[data-mode="dark"] {
   --bg: #1b1b16;
   --surface: #24241e;
   --surface-2: #2d2d25;
@@ -154,6 +70,7 @@ html, body, #root { height: 100%; }
 
 body {
   margin: 0;
+  font-size: 17px;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
@@ -260,7 +177,6 @@ button { font-family: inherit; cursor: pointer; }
   box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
-html[data-theme="clean"] .card { box-shadow: none; }
 
 .btn {
   border: none;

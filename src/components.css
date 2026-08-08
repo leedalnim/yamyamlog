@@ -119,8 +119,34 @@
   width: 100%;
   background: var(--surface);
 }
-html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
-.snack-row { display: flex; align-items: flex-start; gap: 13px; padding: 15px 16px 16px; }
+.snack-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 14px 14px 16px;
+  width: 100%;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  font-family: inherit;
+}
+.snack-chev { flex: none; color: var(--muted); line-height: 0; transition: transform 0.15s ease; }
+.snack-chev.open { transform: rotate(180deg); }
+
+/* 상세 아코디언 */
+.snack-more {
+  padding: 0 16px 15px;
+  border-top: 1.5px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+  margin: 0 14px;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.snack-more-tags { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.snack-more-tags .snack-date { margin: 0 0 0 auto; }
+.snack-edit { flex: none; align-self: flex-start; padding: 8px 18px; }
 .snack-thumb {
   flex: none;
   width: 58px;
@@ -146,7 +172,7 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 .kind-tag { color: var(--primary); }
 .snack-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .snack-memo { font-size: 13px; color: var(--muted); margin-top: 6px; }
-.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
 
 .react-pill {
   display: inline-flex;
@@ -306,17 +332,6 @@ html[data-theme="doodle"] .card {
 }
 html[data-theme="doodle"] .hero-card { border-radius: 18px 225px 18px 235px / 230px 18px 235px 16px; }
 html[data-theme="doodle"] .cat-bars { border-radius: 225px 18px 235px 16px / 16px 235px 18px 225px; }
-
-html[data-theme="doodle"] .topbar h1,
-html[data-theme="doodle"] .snack-name,
-html[data-theme="doodle"] .hero-num,
-html[data-theme="doodle"] .stat-title,
-html[data-theme="doodle"] .cbar-pct,
-html[data-theme="doodle"] .rank-name,
-html[data-theme="doodle"] .theme-opt-title {
-  font-family: Georgia, "Times New Roman", serif;
-  letter-spacing: 0;
-}
 
 /* 칩/버튼 손그림 외곽선 — 얇게. 라벨(태그·반응 알약)은 라인 없이 배경색만 */
 html[data-theme="doodle"] .chip-tab,

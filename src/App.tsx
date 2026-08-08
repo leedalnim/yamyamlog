@@ -12,7 +12,7 @@ type Tab = 'feed' | 'add' | 'stats' | 'settings'
 
 function applyTheme(s: Settings) {
   const root = document.documentElement
-  root.dataset.theme = s.theme
+  root.dataset.theme = 'doodle'
   const mode =
     s.colorMode === 'system'
       ? window.matchMedia('(prefers-color-scheme: dark)').matches
