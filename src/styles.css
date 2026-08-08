@@ -1,0 +1,243 @@
+/* ===================== 얌로그 테마 시스템 =====================
+   테마 2종(cozy=말랑 코지 / clean=미니 화이트) × 밝기 2종(light/dark)
+   html[data-theme][data-mode] 조합으로 토큰만 갈아끼웁니다.
+   컴포넌트는 var(--토큰)만 사용 → 테마 바꿔도 그대로 동작.
+============================================================= */
+
+/* ---------- 공통 기본값 (cozy-light) ---------- */
+:root {
+  --bg: #fbf4e9;
+  --surface: #ffffff;
+  --surface-2: #fff9f0;
+  --ink: #5b4636;
+  --muted: #a08a74;
+  --line: #efe4d5;
+  --primary: #ff8c6b;
+  --primary-ink: #ffffff;
+  --accent-2: #86b49a;
+  --good: #6fb98f;
+  --good-bg: #e6f2e6;
+  --ok: #e0a63f;
+  --ok-bg: #fbeecf;
+  --bad: #e07d7d;
+  --bad-bg: #fadede;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 11px;
+  --shadow: 0 6px 20px rgba(120, 90, 60, 0.12);
+  --shadow-sm: 0 3px 10px rgba(120, 90, 60, 0.10);
+  --font: "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", system-ui, -apple-system, sans-serif;
+  --nav-h: 66px;
+}
+
+/* ---------- cozy dark ---------- */
+html[data-theme="cozy"][data-mode="dark"] {
+  --bg: #241c16;
+  --surface: #2f2620;
+  --surface-2: #362c24;
+  --ink: #f2e7d9;
+  --muted: #b6a48f;
+  --line: #3d3229;
+  --primary: #ff9e80;
+  --primary-ink: #2a1a12;
+  --accent-2: #93c3a6;
+  --good: #79c79b;
+  --good-bg: #24382c;
+  --ok: #e6b455;
+  --ok-bg: #3a2f1c;
+  --bad: #e98f8f;
+  --bad-bg: #3a2626;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- clean light ---------- */
+html[data-theme="clean"][data-mode="light"] {
+  --bg: #f6f7f5;
+  --surface: #ffffff;
+  --surface-2: #f4f5f3;
+  --ink: #16161a;
+  --muted: #78776f;
+  --line: #e8e9e5;
+  --primary: #1f8a70;
+  --primary-ink: #ffffff;
+  --accent-2: #8fc7b7;
+  --good: #1f8a70;
+  --good-bg: #e4f2ed;
+  --ok: #b8862b;
+  --ok-bg: #f6ecd6;
+  --bad: #c24e4e;
+  --bad-bg: #f7e2e2;
+  --radius-lg: 14px;
+  --radius-md: 11px;
+  --radius-sm: 8px;
+  --shadow: 0 6px 18px rgba(20, 20, 26, 0.08);
+  --shadow-sm: 0 2px 8px rgba(20, 20, 26, 0.06);
+  --font: "Pretendard", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
+}
+
+/* ---------- clean dark ---------- */
+html[data-theme="clean"][data-mode="dark"] {
+  --bg: #101113;
+  --surface: #1a1b1e;
+  --surface-2: #202226;
+  --ink: #ececec;
+  --muted: #9a9a98;
+  --line: #2a2c30;
+  --primary: #35b08f;
+  --primary-ink: #06120e;
+  --accent-2: #6fae9c;
+  --good: #35b08f;
+  --good-bg: #16302a;
+  --ok: #d3a648;
+  --ok-bg: #322916;
+  --bad: #d96a6a;
+  --bad-bg: #331e1e;
+  --radius-lg: 14px;
+  --radius-md: 11px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --font: "Pretendard", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+button { font-family: inherit; cursor: pointer; }
+
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ===================== 레이아웃 ===================== */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--bg);
+}
+
+.screen {
+  flex: 1;
+  padding: 0 16px calc(var(--nav-h) + 24px);
+  padding-top: calc(env(safe-area-inset-top) + 8px);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px 10px;
+}
+.topbar h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+.topbar .sub { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+/* ===================== 하단 네비 ===================== */
+.nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  max-width: 480px;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  z-index: 20;
+}
+.nav button {
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding-top: 10px;
+}
+.nav button .ico { font-size: 21px; line-height: 1; }
+.nav button.active { color: var(--primary); }
+
+/* ===================== 공통 컴포넌트 ===================== */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+html[data-theme="clean"] .card { border: 1px solid var(--line); box-shadow: none; }
+
+.btn {
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.btn-primary { background: var(--primary); color: var(--primary-ink); }
+.btn-block { width: 100%; }
+.btn:disabled { opacity: 0.5; }
+
+.chip-tab {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.chip-tab.active { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
+
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+
+.field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+.field label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.input, .textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  font-size: 15px;
+  font-family: inherit;
+}
+.textarea { resize: vertical; min-height: 64px; }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 60px 20px;
+}
+.empty .big { font-size: 44px; margin-bottom: 12px; }
+
+.muted { color: var(--muted); }
+.tabular { font-variant-numeric: tabular-nums; }
