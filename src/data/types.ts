@@ -27,6 +27,8 @@ export interface Cat {
 export interface Snack {
   id: string
   name: string
+  /** 종류(형태). 예: 츄르, 캔, 파우치(습식), 건식, 트릿 */
+  kind?: string
   /** 주재료(베이스). 예: 참치, 닭가슴살, 연어. 통계 그룹핑에 사용 */
   base?: string
   /** 브랜드/맛 등 메모 */
@@ -63,6 +65,9 @@ export const REACTION_META: Record<ReactionLevel, { label: string; short: string
   ok: { label: '보통', short: '보통' },
   bad: { label: '안 먹음', short: '안먹음' },
 }
+
+/** 간식 종류(형태) 프리셋 */
+export const KIND_PRESETS = ['츄르', '캔', '파우치(습식)', '건식', '트릿', '양갱', '동결건조'] as const
 
 /** 자주 쓰는 베이스(주재료) 프리셋 */
 export const BASE_PRESETS = [

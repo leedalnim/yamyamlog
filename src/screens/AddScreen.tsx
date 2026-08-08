@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { BaseChooser, ReactionEditor, useCatsAndGroups } from '../components/common'
+import { BaseChooser, KindChooser, ReactionEditor, useCatsAndGroups } from '../components/common'
 import type { ReactionLevel } from '../data/types'
 import { addSnack, savePhoto } from '../data/repo'
 import { compressImage } from '../lib/image'
@@ -13,6 +13,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
   const [photoBlob, setPhotoBlob] = useState<Blob>()
   const [photoPreview, setPhotoPreview] = useState<string>()
   const [name, setName] = useState('')
+  const [kind, setKind] = useState('')
   const [base, setBase] = useState('')
   const [memo, setMemo] = useState('')
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>({})
@@ -51,7 +52,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
     try {
       let photoId: string | undefined
       if (photoBlob) photoId = await savePhoto(photoBlob)
-      await addSnack({ name, base, memo, photoId, reactions })
+      await addSnack({ name, kind, base, memo, photoId, reactions })
       onDone()
     } finally {
       setSaving(false)
@@ -103,6 +104,8 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         )}
       </div>
 
+      <p className="add-hint muted">이름과 반응만 있어도 저장돼요. 종류·베이스는 비워둬도 되고 나중에 수정할 수 있어요.</p>
+
       {/* 제목 */}
       <div className="field">
         <label>제품 이름</label>
@@ -114,9 +117,15 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         />
       </div>
 
+      {/* 종류(형태) */}
+      <div className="field">
+        <label>종류 (선택)</label>
+        <KindChooser value={kind} onChange={setKind} />
+      </div>
+
       {/* 베이스(주재료) */}
       <div className="field">
-        <label>베이스 (주재료)</label>
+        <label>베이스 · 주재료 (선택)</label>
         <BaseChooser value={base} onChange={setBase} />
       </div>
 

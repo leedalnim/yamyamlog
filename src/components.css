@@ -90,10 +90,10 @@
 .lv-btn.active[data-level="ok"] { background: var(--ok); border-color: var(--ok); }
 .lv-btn.active[data-level="bad"] { background: var(--bad); border-color: var(--bad); }
 
-/* ---------- 베이스(주재료) 선택 ---------- */
-.base-chooser { display: flex; flex-direction: column; gap: 10px; }
-.base-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.base-chip {
+/* ---------- 칩 선택기 (종류/베이스 공용) ---------- */
+.chip-select { display: flex; flex-direction: column; gap: 10px; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.sel-chip {
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--ink);
@@ -102,8 +102,11 @@
   font-size: 13px;
   font-weight: 700;
 }
-.base-chip.active { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
-.base-custom { font-size: 14px; }
+.sel-chip.on[data-accent="base"] { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+.sel-chip.on[data-accent="kind"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.sel-custom { font-size: 14px; }
+
+.add-hint { font-size: 12.5px; margin: -4px 0 16px; line-height: 1.5; }
 
 /* ---------- 피드 ---------- */
 .feed-list { display: flex; flex-direction: column; gap: 14px; }
@@ -121,15 +124,16 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 .snack-body { padding: 13px 15px 15px; }
 .snack-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .snack-name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
-.base-tag {
+.base-tag, .kind-tag {
   font-size: 11px;
   font-weight: 800;
   padding: 3px 9px;
   border-radius: 999px;
   background: var(--surface-2);
-  color: var(--accent-2);
   border: 1px solid var(--line);
 }
+.base-tag { color: var(--accent-2); }
+.kind-tag { color: var(--primary); }
 .snack-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .snack-memo { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }

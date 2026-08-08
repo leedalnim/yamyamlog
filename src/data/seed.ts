@@ -23,9 +23,10 @@ export type SeedSnack = Omit<Snack, 'createdAt' | 'updatedAt'> & { agoMs: number
 export const SEED_SNACKS: SeedSnack[] = [
   {
     id: 's-nc-yeongyang',
-    name: '네츄럴코어 냥이 영양갱',
-    base: '영양 츄르',
-    memo: '프리미엄 영양 츄르 타입 · 8g',
+    name: '조공 네덜란드 산양유 양갱',
+    kind: '양갱',
+    base: '산양유',
+    memo: '부드러운 양갱 타입 · 8g',
     photoId: SEED_PHOTO_ID,
     reactions: { 'c-tangja': 'good', 'c-yuja': 'bad' },
     agoMs: 0,

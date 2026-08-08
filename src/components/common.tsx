@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
-import { BASE_PRESETS, REACTION_META } from '../data/types'
+import { BASE_PRESETS, KIND_PRESETS, REACTION_META } from '../data/types'
 import { IconPaw, ReactionIcon } from './icons'
 
 /** 고양이 색상 발바닥 아이콘 */
@@ -60,24 +60,31 @@ export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel })
   )
 }
 
-/** 베이스(주재료) 선택: 프리셋 칩 + 직접입력 */
-export function BaseChooser({
+/** 프리셋 칩 + 직접입력 선택기 (베이스/종류 공용) */
+export function ChipSelect({
   value,
   onChange,
+  presets,
+  placeholder,
+  accent,
 }: {
   value: string
   onChange: (v: string) => void
+  presets: readonly string[]
+  placeholder: string
+  accent: 'base' | 'kind'
 }) {
-  const isPreset = (BASE_PRESETS as readonly string[]).includes(value)
+  const isPreset = presets.includes(value)
   const [custom, setCustom] = useState(value && !isPreset ? value : '')
   return (
-    <div className="base-chooser">
-      <div className="base-chips">
-        {BASE_PRESETS.map((b) => (
+    <div className="chip-select">
+      <div className="chip-row">
+        {presets.map((b) => (
           <button
             key={b}
             type="button"
-            className={'base-chip' + (value === b ? ' active' : '')}
+            data-accent={accent}
+            className={'sel-chip' + (value === b ? ' on' : '')}
             onClick={() => {
               onChange(value === b ? '' : b)
               setCustom('')
@@ -88,8 +95,8 @@ export function BaseChooser({
         ))}
       </div>
       <input
-        className="input base-custom"
-        placeholder="직접 입력 (예: 오리, 참치+게살)"
+        className="input sel-custom"
+        placeholder={placeholder}
         value={custom}
         onChange={(e) => {
           setCustom(e.target.value)
@@ -98,6 +105,16 @@ export function BaseChooser({
       />
     </div>
   )
+}
+
+/** 종류(형태) 선택 */
+export function KindChooser(p: { value: string; onChange: (v: string) => void }) {
+  return <ChipSelect {...p} presets={KIND_PRESETS} placeholder="직접 입력 (예: 수프, 스틱)" accent="kind" />
+}
+
+/** 베이스(주재료) 선택 */
+export function BaseChooser(p: { value: string; onChange: (v: string) => void }) {
+  return <ChipSelect {...p} presets={BASE_PRESETS} placeholder="직접 입력 (예: 오리, 참치+게살)" accent="base" />
 }
 
 /** 그룹별로 고양이를 나눠서 반응을 선택하는 편집기 */
