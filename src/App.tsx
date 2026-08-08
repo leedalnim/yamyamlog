@@ -91,18 +91,27 @@ export default function App() {
       {tab === 'settings' && <SettingsScreen settings={settings} onChange={updateSettings} />}
 
       <nav className="nav">
-        <button className={tab === 'feed' ? 'active' : ''} onClick={() => setTab('feed')}>
-          <span className="ico"><IconHome /></span>홈
+        <div className="nav-side">
+          <button className={'nav-tab' + (tab === 'feed' ? ' active' : '')} onClick={() => setTab('feed')}>
+            <span className="ico"><IconHome /></span>홈
+          </button>
+          <button className={'nav-tab' + (tab === 'stats' ? ' active' : '')} onClick={() => setTab('stats')}>
+            <span className="ico"><IconChart /></span>통계
+          </button>
+        </div>
+        <button
+          className={'nav-fab' + (tab === 'add' ? ' active' : '')}
+          onClick={() => setTab('add')}
+          aria-label="간식 기록 추가"
+        >
+          <IconPlus size={28} />
         </button>
-        <button className={tab === 'add' ? 'active' : ''} onClick={() => setTab('add')}>
-          <span className="ico"><IconPlus /></span>추가
-        </button>
-        <button className={tab === 'stats' ? 'active' : ''} onClick={() => setTab('stats')}>
-          <span className="ico"><IconChart /></span>통계
-        </button>
-        <button className={tab === 'settings' ? 'active' : ''} onClick={() => setTab('settings')}>
-          <span className="ico"><IconSettings /></span>설정
-        </button>
+        <div className="nav-side">
+          <button className={'nav-tab' + (tab === 'settings' ? ' active' : '')} onClick={() => setTab('settings')}>
+            <span className="ico"><IconSettings /></span>설정
+          </button>
+          <span className="nav-ghost" aria-hidden="true" />
+        </div>
       </nav>
     </div>
   )

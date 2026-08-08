@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CatPaw, useCatsAndGroups } from '../components/common'
-import type { Cat, ReactionLevel, Snack } from '../data/types'
+import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
-import { IconChart, IconPaw, IconTag, IconTrophy } from '../components/icons'
+import { CatDoodle, IconChart, IconPaw, IconTag, IconTrophy } from '../components/icons'
 
 export function StatsScreen() {
   const { cats } = useCatsAndGroups()
@@ -13,14 +13,22 @@ export function StatsScreen() {
     ;(async () => setSnacks(await listSnacks()))()
   }, [])
 
-  // ---- 간식 랭킹 (평균 기호성 점수) ----
+  const allReactions = useMemo(
+    () => snacks.flatMap((s) => Object.values(s.reactions) as ReactionLevel[]),
+    [snacks],
+  )
+
+  // ---- 전체 기호도 (모든 반응 평균) ----
+  const overall = allReactions.length
+    ? allReactions.reduce((a, lv) => a + REACTION_SCORE[lv], 0) / allReactions.length
+    : 0
+
+  // ---- 간식 랭킹 ----
   const ranking = useMemo(() => {
     return snacks
       .map((s) => {
         const vals = Object.values(s.reactions) as ReactionLevel[]
-        const score = vals.length
-          ? vals.reduce((a, lv) => a + REACTION_SCORE[lv], 0) / vals.length
-          : 0
+        const score = vals.length ? vals.reduce((a, lv) => a + REACTION_SCORE[lv], 0) / vals.length : 0
         return { snack: s, score, count: vals.length }
       })
       .filter((r) => r.count > 0)
@@ -28,7 +36,7 @@ export function StatsScreen() {
       .slice(0, 6)
   }, [snacks])
 
-  // ---- 베이스(주재료)별 기호성 ----
+  // ---- 베이스별 기호성 ----
   const perBase = useMemo(() => {
     const map = new Map<string, { scoreSum: number; count: number; snacks: number }>()
     for (const s of snacks) {
@@ -48,17 +56,17 @@ export function StatsScreen() {
       .sort((a, b) => b.score - a.score)
   }, [snacks])
 
-  // ---- 고양이별 반응 집계 ----
+  // ---- 고양이별 기호도 ----
   const perCat = useMemo(() => {
     return cats.map((cat) => {
-      let good = 0, ok = 0, bad = 0
+      let sum = 0, total = 0
       for (const s of snacks) {
         const lv = s.reactions[cat.id]
-        if (lv === 'good') good++
-        else if (lv === 'ok') ok++
-        else if (lv === 'bad') bad++
+        if (!lv) continue
+        sum += REACTION_SCORE[lv]
+        total += 1
       }
-      return { cat, good, ok, bad, total: good + ok + bad }
+      return { cat, score: total ? sum / total : 0, total }
     })
   }, [cats, snacks])
 
@@ -80,16 +88,55 @@ export function StatsScreen() {
 
   return (
     <div className="screen">
-      <div className="topbar">
-        <div>
-          <h1>통계</h1>
-          <div className="sub">총 {totalRecords}개 간식 기록</div>
+      <div className="topbar"><h1>통계</h1></div>
+
+      {/* 히어로 지표 */}
+      <div className="card hero-card">
+        <div className="hero-left">
+          <div className="hero-label">우리 냥이들 전체 기호도</div>
+          <div className="hero-num tabular">
+            {Math.round(overall * 100)}
+            <span className="hero-unit">점</span>
+          </div>
+          <div className="hero-cap muted">간식 {totalRecords}개 · 반응 {allReactions.length}번 기록</div>
         </div>
+        <div className="hero-art"><CatDoodle size={78} /></div>
       </div>
+
+      {/* 고양이별 기호도 — 세로 막대 */}
+      <section className="stat-section">
+        <h2 className="stat-title">
+          <span className="ti-badge badge-cat"><IconPaw size={15} /></span>고양이별 기호도
+        </h2>
+        <div className="card cat-bars">
+          {perCat.map((p) => (
+            <div className="cbar" key={p.cat.id}>
+              <div className="cbar-track">
+                <div
+                  className="cbar-fill"
+                  style={{
+                    height: `${p.total ? Math.max(12, p.score * 100) : 4}%`,
+                    background: p.total ? p.cat.color : 'var(--line)',
+                  }}
+                >
+                  {p.total > 0 && <span className="cbar-pct">{Math.round(p.score * 100)}</span>}
+                </div>
+              </div>
+              <div className="cbar-name">
+                <CatPaw cat={p.cat} size={14} />
+                {p.cat.name}
+              </div>
+              <div className="cbar-sub muted">{p.total ? `${p.total}번` : '–'}</div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* 간식 랭킹 */}
       <section className="stat-section">
-        <h2 className="stat-title"><IconTrophy size={18} />잘 먹는 간식 랭킹</h2>
+        <h2 className="stat-title">
+          <span className="ti-badge badge-rank"><IconTrophy size={15} /></span>잘 먹는 간식 랭킹
+        </h2>
         <div className="card stat-card">
           {ranking.length === 0 ? (
             <div className="muted" style={{ fontSize: 13 }}>아직 반응이 기록된 간식이 없어요.</div>
@@ -100,10 +147,7 @@ export function StatsScreen() {
                 <div className="rank-info">
                   <div className="rank-name">{r.snack.name}</div>
                   <div className="bar-track">
-                    <div
-                      className="bar-fill"
-                      style={{ width: `${Math.max(6, r.score * 100)}%` }}
-                    />
+                    <div className="bar-fill" style={{ width: `${Math.max(6, r.score * 100)}%` }} />
                   </div>
                 </div>
                 <div className="rank-score tabular">{Math.round(r.score * 100)}</div>
@@ -116,7 +160,9 @@ export function StatsScreen() {
       {/* 베이스별 기호성 */}
       {perBase.length > 0 && (
         <section className="stat-section">
-          <h2 className="stat-title"><IconTag size={18} />베이스(주재료)별 기호성</h2>
+          <h2 className="stat-title">
+            <span className="ti-badge badge-base"><IconTag size={15} /></span>베이스(주재료)별 기호성
+          </h2>
           <div className="card stat-card">
             {perBase.map((r) => (
               <div key={r.base} className="rank-row">
@@ -137,50 +183,6 @@ export function StatsScreen() {
             ))}
           </div>
         </section>
-      )}
-
-      {/* 고양이별 선호 */}
-      <section className="stat-section">
-        <h2 className="stat-title"><IconPaw size={18} />고양이별 반응</h2>
-        <div className="cat-stat-grid">
-          {perCat.map((p) => (
-            <CatStat key={p.cat.id} data={p} />
-          ))}
-        </div>
-      </section>
-    </div>
-  )
-}
-
-function CatStat({
-  data,
-}: {
-  data: { cat: Cat; good: number; ok: number; bad: number; total: number }
-}) {
-  const { cat, good, ok, bad, total } = data
-  const pct = (n: number) => (total ? (n / total) * 100 : 0)
-  return (
-    <div className="card cat-stat">
-      <div className="cat-stat-head">
-        <CatPaw cat={cat} size={18} />
-        <span className="cat-stat-name">{cat.name}</span>
-        <span className="muted tabular" style={{ marginLeft: 'auto', fontSize: 12 }}>{total}건</span>
-      </div>
-      {total === 0 ? (
-        <div className="muted" style={{ fontSize: 12 }}>기록 없음</div>
-      ) : (
-        <>
-          <div className="stack-bar">
-            {good > 0 && <div style={{ width: `${pct(good)}%`, background: 'var(--good)' }} />}
-            {ok > 0 && <div style={{ width: `${pct(ok)}%`, background: 'var(--ok)' }} />}
-            {bad > 0 && <div style={{ width: `${pct(bad)}%`, background: 'var(--bad)' }} />}
-          </div>
-          <div className="stack-legend">
-            <span><i style={{ background: 'var(--good)' }} />잘먹음 {good}</span>
-            <span><i style={{ background: 'var(--ok)' }} />보통 {ok}</span>
-            <span><i style={{ background: 'var(--bad)' }} />안먹음 {bad}</span>
-          </div>
-        </>
       )}
     </div>
   )

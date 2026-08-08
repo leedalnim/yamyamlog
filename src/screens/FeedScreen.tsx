@@ -9,7 +9,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { IconBowl, IconTrash } from '../components/icons'
+import { CatDoodle, IconTrash } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -62,7 +62,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
 
       {filtered.length === 0 ? (
         <div className="empty">
-          <div className="big"><IconBowl size={46} /></div>
+          <div className="doodle"><CatDoodle size={116} /></div>
           아직 기록이 없어요.
           <br />
           아래 <b>추가</b>에서 첫 간식을 기록해보세요!

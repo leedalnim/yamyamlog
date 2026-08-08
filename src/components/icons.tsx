@@ -169,6 +169,44 @@ export const IconFaceBad = (p: P) =>
     p,
   )
 
+// 손그림 느낌의 라인 고양이 일러스트 (앉아있는 고양이)
+export const CatDoodle = ({ size = 120, className }: P) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 128 128"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={3.2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    {/* 몸통 */}
+    <path d="M38 112c-8 0-13-6-13-16 0-9 4-18 11-24" />
+    <path d="M90 112c8 0 13-6 13-16 0-9-4-18-11-24" />
+    <path d="M38 112h52" />
+    {/* 머리 + 귀 */}
+    <path d="M40 52c-3-5-4-11-3-18 0-1 1-2 3-1l11 8" />
+    <path d="M88 52c3-5 4-11 3-18 0-1-1-2-3-1l-11 8" />
+    <path d="M51 41c3.5-2 8-3.2 13-3.2s9.5 1.2 13 3.2" />
+    <path d="M40 52c0 15 11 25 24 25s24-10 24-25" />
+    {/* 눈 */}
+    <path d="M54 54v3.5" />
+    <path d="M74 54v3.5" />
+    {/* 코 + 입 */}
+    <path d="M62.5 62l1.5 1.6 1.5-1.6" />
+    <path d="M64 63.6v3" />
+    {/* 수염 */}
+    <path d="M50 60l-9-2M50 64l-9 2M78 60l9-2M78 64l9 2" />
+    {/* 꼬리 */}
+    <path d="M90 108c14 3 22-6 18-18-2-6-8-8-11-4" />
+    {/* 앞발 */}
+    <path d="M56 112v-8M72 112v-8" />
+  </svg>
+)
+
 export const ReactionIcon = ({ level, size }: { level: ReactionLevel; size?: number }) => {
   if (level === 'good') return <IconFaceGood size={size} />
   if (level === 'ok') return <IconFaceOk size={size} />

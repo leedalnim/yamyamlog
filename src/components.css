@@ -186,8 +186,35 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---------- 통계 ---------- */
-.stat-section { margin-top: 22px; }
-.stat-title { font-size: 15px; font-weight: 800; margin: 0 0 10px; }
+.stat-section { margin-top: 24px; }
+.stat-title { font-size: 15px; font-weight: 800; margin: 0 0 11px; }
+
+/* 히어로 지표 */
+.hero-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; margin-top: 8px; }
+.hero-left { flex: 1; min-width: 0; }
+.hero-label { font-size: 12.5px; font-weight: 700; color: var(--muted); }
+.hero-num { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.02; margin-top: 3px; color: var(--primary); }
+.hero-unit { font-size: 19px; font-weight: 800; margin-left: 3px; color: var(--muted); }
+.hero-cap { font-size: 12px; margin-top: 5px; }
+.hero-art { flex: none; color: var(--primary); opacity: 0.9; }
+
+/* 섹션 타이틀 컬러 뱃지 */
+.ti-badge { width: 26px; height: 26px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; }
+.stat-title .ti-badge svg { color: #fff; }
+.badge-cat { background: var(--primary); }
+.badge-rank { background: #e0a52e; }
+.badge-base { background: var(--accent-2); }
+
+/* 고양이별 기호도 — 세로 막대 */
+.cat-bars { display: flex; align-items: flex-end; justify-content: space-around; gap: 8px; padding: 16px 14px 15px; }
+.cbar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.cbar-track { width: 100%; max-width: 48px; height: 134px; background: var(--surface-2); border-radius: 15px; display: flex; align-items: flex-end; overflow: hidden; }
+.cbar-fill { width: 100%; border-radius: 13px; min-height: 16px; display: flex; align-items: flex-end; justify-content: center; }
+.cbar-pct { color: #fff; font-size: 12px; font-weight: 800; padding-bottom: 7px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22); }
+.cbar-name { display: flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 800; }
+.cbar-sub { font-size: 10.5px; }
+
+.stat-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
 .stat-card { padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
 
 .rank-row { display: flex; align-items: center; gap: 12px; }
@@ -202,8 +229,8 @@ html[data-theme="clean"] .snack-card { border: 1px solid var(--line); }
 .rank-row:first-child .rank-num { background: var(--primary); color: var(--primary-ink); }
 .rank-info { flex: 1; min-width: 0; }
 .rank-name { font-size: 13.5px; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bar-track { height: 8px; background: var(--surface-2); border-radius: 5px; overflow: hidden; }
-.bar-fill { height: 100%; background: var(--primary); border-radius: 5px; }
+.bar-track { height: 9px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--primary); border-radius: 999px; }
 .rank-score { font-size: 14px; font-weight: 800; width: 30px; text-align: right; color: var(--primary); }
 
 .base-badge {
