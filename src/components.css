@@ -597,3 +597,15 @@
 
 /* ---------- 피하는 간식 ---------- */
 .avoid-note { font-size: 12px; font-weight: 700; color: var(--bad); white-space: nowrap; }
+
+/* 로고 (목업: 오렌지 + 발바닥) */
+.topbar h1.logo { color: var(--primary); display: inline-flex; align-items: center; gap: 4px; }
+.logo-paw { line-height: 0; transform: rotate(12deg) translateY(-4px); }
+.promo-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--primary); color: #fff; font-size: 11px; margin-left: 2px;
+}
+.promo-banner { background: linear-gradient(115deg, #fdeee0, #fadfc4); overflow: hidden; padding: 18px 8px 0 20px; align-items: flex-end; }
+.promo-text { padding-bottom: 18px; }
+.promo-face { margin-bottom: -6px; }

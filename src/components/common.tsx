@@ -79,6 +79,42 @@ export function ReactionFaces({
   )
 }
 
+/** 태그 파스텔 컬러 (목업 컬러코딩) — [배경, 글자] */
+const KIND_TAG_COLORS: Record<string, [string, string]> = {
+  '츄르': ['#FCE1C4', '#D96E1E'],
+  '캔': ['#EFEAE2', '#877E72'],
+  '양갱': ['#FADCE5', '#D4587F'],
+  '파우치(습식)': ['#E2ECFA', '#5C86C1'],
+  '건식': ['#F0EBE1', '#877E72'],
+  '트릿': ['#F6E8C9', '#B08A2E'],
+  '동결건조': ['#E7F0E4', '#5F9457'],
+}
+const BASE_TAG_COLORS: Record<string, [string, string]> = {
+  '해산물': ['#DEEAFB', '#4E7CC0'],
+  '참치': ['#DEEAFB', '#4E7CC0'],
+  '연어': ['#FADCE5', '#D4587F'],
+  '게살': ['#DEEAFB', '#4E7CC0'],
+  '새우': ['#DEEAFB', '#4E7CC0'],
+  '가리비': ['#DEEAFB', '#4E7CC0'],
+  '북어': ['#DEEAFB', '#4E7CC0'],
+  '닭가슴살': ['#FBE7CE', '#C97F2C'],
+  '소고기': ['#FADCDC', '#C95B5B'],
+  '육류': ['#FADCDC', '#C95B5B'],
+  '기능성': ['#EBE2F8', '#8461C9'],
+  '유산균': ['#E3F0DE', '#5E9A52'],
+  '산양유': ['#F6E8C9', '#B08A2E'],
+}
+
+export function KindTag({ v }: { v: string }) {
+  const [bg, fg] = KIND_TAG_COLORS[v] ?? ['#F0EBE1', '#877E72']
+  return <span className="kind-tag" style={{ background: bg, color: fg }}>{v}</span>
+}
+
+export function BaseTag({ v }: { v: string }) {
+  const [bg, fg] = BASE_TAG_COLORS[v] ?? ['#DEEAFB', '#4E7CC0']
+  return <span className="base-tag" style={{ background: bg, color: fg }}>{v}</span>
+}
+
 /** 반응 pill 하나 */
 export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel }) {
   const m = REACTION_META[level]

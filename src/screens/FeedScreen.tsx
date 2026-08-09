@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   BaseChooser,
+  BaseTag,
   KindChooser,
+  KindTag,
   ReactionEditor,
   ReactionFaces,
   useCatsAndGroups,
@@ -9,7 +11,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { CatDoodle, IconChevronDown, IconTrash, ReactionIcon } from '../components/icons'
+import { BannerCat, CatDoodle, IconChevronDown, IconPaw, IconTrash, ReactionIcon } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -70,8 +72,8 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     <div className="screen">
       <div className="topbar">
         <div>
-          <h1>얌로그</h1>
-          <div className="sub">우리집 냥이들 간식 기호성 기록</div>
+          <h1 className="logo">얌로그 <span className="logo-paw"><IconPaw size={17} /></span></h1>
+          <div className="sub">우리 냥이들의 간식 기록</div>
         </div>
       </div>
 
@@ -90,13 +92,15 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         ))}
       </div>
 
-      {/* 오늘의 기록 유도 배너 */}
+      {/* 오늘의 기록 유도 배너 (목업 스타일) */}
       <button className="promo-banner" onClick={onAdd}>
         <div className="promo-text">
           <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
-          <div className="promo-sub">새로운 간식을 기록해보세요 →</div>
+          <div className="promo-sub">
+            새로운 간식을 기록해보세요 <span className="promo-arrow">→</span>
+          </div>
         </div>
-        <span className="promo-face"><ReactionIcon level="good" size={64} /></span>
+        <span className="promo-face"><BannerCat size={104} /></span>
       </button>
 
       {filtered.length === 0 ? (
@@ -138,8 +142,8 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
               <span className="snack-name">{snack.name}</span>
             </div>
             <div className="snack-tags-row">
-              {snack.kind && <span className="kind-tag">{snack.kind}</span>}
-              {snack.base && <span className="base-tag">{snack.base}</span>}
+              {snack.kind && <KindTag v={snack.kind} />}
+              {snack.base && <BaseTag v={snack.base} />}
             </div>
           </div>
           <span className="snack-chev right"><IconChevronDown size={18} /></span>
@@ -218,8 +222,8 @@ function SnackDetail({
         <div className="sheet-handle" />
         <h2 className="detail-name">{snack.name}</h2>
         <div className="detail-tags">
-          {snack.kind && <span className="kind-tag">{snack.kind}</span>}
-          {snack.base && <span className="base-tag">{snack.base}</span>}
+          {snack.kind && <KindTag v={snack.kind} />}
+          {snack.base && <BaseTag v={snack.base} />}
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>
         {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}

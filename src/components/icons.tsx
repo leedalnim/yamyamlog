@@ -147,39 +147,48 @@ export const IconBowl = (p: P) =>
 const BLOB_HEAD =
   'M2.5 13.5c0-2.8 1.1-5.2 2.9-6.9L4.9 3.6c-.12-.68.62-1.15 1.2-.78L8.6 4.7A10.9 10.9 0 0 1 12 4.15c1.2 0 2.34.19 3.4.55l2.5-1.88c.58-.37 1.32.1 1.2.78l-.5 3c1.8 1.7 2.9 4.1 2.9 6.9 0 4.7-4.2 7.8-9.5 7.8s-9.5-3.1-9.5-7.8Z'
 
-/** 표정 (기호성 구분) */
+/** 이목구비 색 (목업 기준 진한 웜브라운) */
+const FACE_INK = '#57493B'
+
+/** 표정 (기호성 구분 — 목업 캐릭터 그대로) */
 const FACES: Record<string, ReactNode> = {
-  // 잘먹음: 기분 좋은 ∪∪ 눈 + 웃는 입
+  // 잘먹음: ∪∪ 눈 + 활짝 벌린 입(혀)
   good: (
-    <>
-      <path d="M7.4 11.8q1.4-1.6 2.8 0M13.8 11.8q1.4-1.6 2.8 0" />
-      <path d="M9.6 14.6q2.4 2.1 4.8 0" />
-    </>
+    <g>
+      <g fill="none" stroke={FACE_INK} strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7.4 11.4q1.4-1.6 2.8 0M13.8 11.4q1.4-1.6 2.8 0" />
+      </g>
+      <path
+        d="M9.3 13.9h5.4c-.3 2.5-1.3 3.9-2.7 3.9s-2.4-1.4-2.7-3.9Z"
+        fill={FACE_INK}
+      />
+      <path d="M10.7 16.6q1.3 1.15 2.6 0c-.3.8-.75 1.2-1.3 1.2s-1-.4-1.3-1.2Z" fill="#F2999E" />
+    </g>
   ),
-  // 보통: 점 눈 + 무표정
+  // 보통: 점 눈 + 짧은 무표정 입
   ok: (
-    <>
-      <path d="M8.8 11.4v1.1M15.2 11.4v1.1" />
-      <path d="M10.2 15.2h3.6" />
-    </>
+    <g fill="none" stroke={FACE_INK} strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8.9 11.2v1.3M15.1 11.2v1.3" />
+      <path d="M10.9 15.3h2.2" />
+    </g>
   ),
   // 안먹음: >< 눈 + 시무룩 입
   bad: (
-    <>
-      <path d="M7.6 10.9l2 1.05-2 1.05M16.4 10.9l-2 1.05 2 1.05" />
-      <path d="M9.6 16q2.4-1.9 4.8 0" />
-    </>
+    <g fill="none" stroke={FACE_INK} strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7.6 10.8l2 1.05-2 1.05M16.4 10.8l-2 1.05 2 1.05" />
+      <path d="M10 15.8q2-1.4 4 0" />
+    </g>
   ),
   // 기본: 점 눈 + 살짝 미소 (고양이 프로필용)
   neutral: (
-    <>
-      <path d="M8.8 11.4v1.1M15.2 11.4v1.1" />
-      <path d="M10 14.8q2 1.5 4 0" />
-    </>
+    <g fill="none" stroke={FACE_INK} strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8.9 11.2v1.3M15.1 11.2v1.3" />
+      <path d="M10.4 14.9q1.6 1.3 3.2 0" />
+    </g>
   ),
 }
 
-/** 블롭 고양이 얼굴 — 납작 동글 이모티콘 + 볼터치, 표정으로 기호성 구분 */
+/** 블롭 고양이 얼굴 — 목업 캐릭터 스타일, 표정으로 기호성 구분 */
 export function BlobFace({
   color,
   level = 'neutral',
@@ -194,13 +203,35 @@ export function BlobFace({
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path d={BLOB_HEAD} fill={color} />
-      {/* 볼터치 */}
-      <g fill="#FFFFFF" opacity={0.38}>
-        <ellipse cx="6.6" cy="14.8" rx="1.5" ry="1" />
-        <ellipse cx="17.4" cy="14.8" rx="1.5" ry="1" />
+      {FACES[level]}
+    </svg>
+  )
+}
+
+/** 홈 배너용 장면 — 반짝이 + 밥그릇 앞의 신난 고양이 (목업 배너) */
+export function BannerCat({ size = 96 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.78} viewBox="0 0 96 75" aria-hidden="true">
+      {/* 반짝이 */}
+      <g fill="#F2B33D">
+        <path d="M12 8l1.5 4.2L18 13.7l-4.5 1.5L12 19.4l-1.5-4.2L6 13.7l4.5-1.5Z" />
+        <path d="M83 4l1.1 3.1 3.3 1.1-3.3 1.1L83 12.4l-1.1-3.1-3.3-1.1 3.3-1.1Z" />
+        <path d="M88 28l.9 2.5 2.7.9-2.7.9-.9 2.5-.9-2.5-2.7-.9 2.7-.9Z" />
       </g>
-      <g fill="none" stroke="#4E4034" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        {FACES[level]}
+      {/* 고양이 (잘먹음 얼굴) */}
+      <g transform="translate(22 2) scale(2.35)">
+        <path d={BLOB_HEAD} fill="#F3E3CC" />
+        <g fill="none" stroke="#57493B" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M7.4 11.4q1.4-1.6 2.8 0M13.8 11.4q1.4-1.6 2.8 0" />
+        </g>
+        <path d="M9.3 13.9h5.4c-.3 2.5-1.3 3.9-2.7 3.9s-2.4-1.4-2.7-3.9Z" fill="#57493B" />
+        <path d="M10.7 16.6q1.3 1.15 2.6 0c-.3.8-.75 1.2-1.3 1.2s-1-.4-1.3-1.2Z" fill="#F2999E" />
+      </g>
+      {/* 밥그릇 */}
+      <g>
+        <ellipse cx="24" cy="63" rx="17" ry="5.5" fill="#F3E3CC" />
+        <path d="M8 63h32c0 7-7 11.5-16 11.5S8 70 8 63Z" fill="#E1873F" />
+        <path d="M10.5 66.5h27c-1.6 4.4-6.3 7-13.5 7s-11.9-2.6-13.5-7Z" fill="#C96F2E" opacity=".35" />
       </g>
     </svg>
   )
@@ -248,10 +279,10 @@ export const CatDoodle = ({ size = 120, className }: P) => (
   </svg>
 )
 
-/** 고양이 얼굴 공통 크림색 — 표정만으로 반응을 구분 (레퍼런스 기준) */
-export const CAT_CREAM = '#F0DCC3'
+/** 고양이 얼굴 공통 크림색 — 표정만으로 반응을 구분 (목업 기준) */
+export const CAT_CREAM = '#F3E3CC'
 /** 기록 없는 상태의 흐린 얼굴색 */
-export const CAT_CREAM_EMPTY = '#F1EAE0'
+export const CAT_CREAM_EMPTY = '#F2ECE2'
 
 /** 반응 아이콘 — 크림색 얼굴 + 표정으로 구분. color로 재정의 가능 */
 export const ReactionIcon = ({
