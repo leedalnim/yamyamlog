@@ -447,3 +447,16 @@
   box-shadow: 0 -8px 24px rgba(120, 95, 60, 0.10);
 }
 .detail-sheet .sheet-handle { margin-bottom: 12px; }
+
+/* 냥이 추가하기 (예정) */
+.add-cat-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 15px;
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: none;
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 700;
+}

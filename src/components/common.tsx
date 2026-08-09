@@ -4,11 +4,16 @@ import type { Cat, Group, ReactionLevel } from '../data/types'
 import { BASE_PRESETS, KIND_PRESETS, REACTION_META } from '../data/types'
 import { BlobFace, ReactionIcon } from './icons'
 
-/** 고양이 얼굴 아이콘 — 색상으로 고양이 구분 */
-export function CatPaw({ cat, size = 18 }: { cat: Cat; size?: number }) {
+/** 고양이 공통 블롭 색 (고양이는 색이 아니라 이름으로 구분) */
+export const CAT_BLOB = '#E9B77F'
+/** 반응 없는 상태의 흐린 블롭 색 */
+export const CAT_BLOB_EMPTY = '#DDD5C8'
+
+/** 고양이 얼굴 아이콘 */
+export function CatPaw({ size = 18 }: { cat?: Cat; size?: number }) {
   return (
     <span className="cat-paw">
-      <BlobFace color={cat.color} size={size} />
+      <BlobFace color={CAT_BLOB} size={size} />
     </span>
   )
 }
@@ -54,7 +59,7 @@ export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel })
   const m = REACTION_META[level]
   return (
     <span className="react-pill" data-level={level}>
-      <ReactionIcon level={level} size={16} color={cat.color} />
+      <ReactionIcon level={level} size={16} />
       {cat.name} {m.short}
     </span>
   )
@@ -188,7 +193,7 @@ export function ReactionChooser({
               aria-pressed={active}
               onClick={() => onChange(active ? undefined : lv)}
             >
-              <ReactionIcon level={lv} size={30} color={cat.color} />
+              <ReactionIcon level={lv} size={30} />
               {m.short}
             </button>
           )

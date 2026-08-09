@@ -122,7 +122,6 @@ export function StatsScreen() {
               <ReactionIcon
                 level={score >= 70 ? 'good' : score >= 40 ? 'ok' : counts.total ? 'bad' : 'ok'}
                 size={86}
-                color={cat.color}
               />
             </div>
           </div>
@@ -160,7 +159,7 @@ export function StatsScreen() {
                 </div>
               )}
               {records.map((r) => (
-                <RecordRow key={r.snack.id} snack={r.snack} level={r.level} catColor={cat.color} />
+                <RecordRow key={r.snack.id} snack={r.snack} level={r.level} />
               ))}
             </div>
           </section>
@@ -170,25 +169,13 @@ export function StatsScreen() {
   )
 }
 
-function RecordRow({
-  snack,
-  level,
-  catColor,
-}: {
-  snack: Snack
-  level: ReactionLevel
-  catColor: string
-}) {
+function RecordRow({ snack, level }: { snack: Snack; level: ReactionLevel }) {
   const url = usePhotoURL(snack.photoId)
   const m = REACTION_META[level]
   return (
     <div className="record-row">
       <div className="record-thumb">
-        {url ? (
-          <img src={url} alt={snack.name} loading="lazy" />
-        ) : (
-          <ReactionIcon level={level} size={26} color={catColor} />
-        )}
+        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <ReactionIcon level={level} size={26} />}
       </div>
       <div className="record-info">
         <div className="record-name">{snack.name}</div>
@@ -198,7 +185,7 @@ function RecordRow({
         </div>
       </div>
       <span className="react-pill" data-level={level}>
-        <ReactionIcon level={level} size={15} color={catColor} />
+        <ReactionIcon level={level} size={15} />
         {m.short}
       </span>
     </div>

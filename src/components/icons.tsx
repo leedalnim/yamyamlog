@@ -143,42 +143,43 @@ export const IconBowl = (p: P) =>
 
 // 반응 3단계 — 통통한 컬러 블롭 고양이 얼굴 (fill + 표정)
 // 몸통색은 CSS 변수(--good/--ok/--bad), 표정은 진한 잉크색
+// 동그랗고 납작한(옆으로 퍼진) 고양이 얼굴 + 작은 세모 귀
 const BLOB_HEAD =
-  'M4 10.2c0-1.7.55-3.2 1.5-4.4L4.7 3c-.2-.7.55-1.25 1.15-.85L8.5 3.9A9.6 9.6 0 0 1 12 3.25c1.25 0 2.43.23 3.5.65l2.65-1.75c.6-.4 1.35.15 1.15.85l-.8 2.8A7.1 7.1 0 0 1 20 10.2v3.6c0 4.5-3.6 7.6-8 7.6s-8-3.1-8-7.6Z'
+  'M2.5 13.5c0-2.8 1.1-5.2 2.9-6.9L4.9 3.6c-.12-.68.62-1.15 1.2-.78L8.6 4.7A10.9 10.9 0 0 1 12 4.15c1.2 0 2.34.19 3.4.55l2.5-1.88c.58-.37 1.32.1 1.2.78l-.5 3c1.8 1.7 2.9 4.1 2.9 6.9 0 4.7-4.2 7.8-9.5 7.8s-9.5-3.1-9.5-7.8Z'
 
 /** 표정 (기호성 구분) */
 const FACES: Record<string, ReactNode> = {
   // 잘먹음: 기분 좋은 ∪∪ 눈 + 웃는 입
   good: (
     <>
-      <path d="M7.7 11.6q1.3-1.5 2.6 0M13.7 11.6q1.3-1.5 2.6 0" />
-      <path d="M9.4 15.2q2.6 2.3 5.2 0" />
+      <path d="M7.4 11.8q1.4-1.6 2.8 0M13.8 11.8q1.4-1.6 2.8 0" />
+      <path d="M9.6 14.6q2.4 2.1 4.8 0" />
     </>
   ),
   // 보통: 점 눈 + 무표정
   ok: (
     <>
-      <path d="M9 11.2v1.2M15 11.2v1.2" />
-      <path d="M9.6 15.6h4.8" />
+      <path d="M8.8 11.4v1.1M15.2 11.4v1.1" />
+      <path d="M10.2 15.2h3.6" />
     </>
   ),
   // 안먹음: >< 눈 + 시무룩 입
   bad: (
     <>
-      <path d="M8 10.9l2 1.1-2 1.1M16 10.9l-2 1.1 2 1.1" />
-      <path d="M9.4 16.6q2.6-2.2 5.2 0" />
+      <path d="M7.6 10.9l2 1.05-2 1.05M16.4 10.9l-2 1.05 2 1.05" />
+      <path d="M9.6 16q2.4-1.9 4.8 0" />
     </>
   ),
   // 기본: 점 눈 + 살짝 미소 (고양이 프로필용)
   neutral: (
     <>
-      <path d="M9 11.2v1.2M15 11.2v1.2" />
-      <path d="M9.8 15.2q2.2 1.6 4.4 0" />
+      <path d="M8.8 11.4v1.1M15.2 11.4v1.1" />
+      <path d="M10 14.8q2 1.5 4 0" />
     </>
   ),
 }
 
-/** 블롭 고양이 얼굴 — 색상은 고양이 구분, 표정은 기호성 구분 */
+/** 블롭 고양이 얼굴 — 납작 동글 이모티콘 + 볼터치, 표정으로 기호성 구분 */
 export function BlobFace({
   color,
   level = 'neutral',
@@ -193,7 +194,12 @@ export function BlobFace({
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path d={BLOB_HEAD} fill={color} />
-      <g fill="none" stroke="#4E4034" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+      {/* 볼터치 */}
+      <g fill="#FFFFFF" opacity={0.38}>
+        <ellipse cx="6.6" cy="14.8" rx="1.5" ry="1" />
+        <ellipse cx="17.4" cy="14.8" rx="1.5" ry="1" />
+      </g>
+      <g fill="none" stroke="#4E4034" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
         {FACES[level]}
       </g>
     </svg>

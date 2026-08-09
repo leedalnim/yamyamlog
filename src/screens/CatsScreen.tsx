@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useCatsAndGroups } from '../components/common'
+import { CAT_BLOB, useCatsAndGroups } from '../components/common'
 import { BlobFace } from '../components/icons'
 
 export function CatsScreen() {
@@ -21,7 +21,7 @@ export function CatsScreen() {
             {members.map((cat) => (
               <div className="record-row" key={cat.id}>
                 <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
-                  <BlobFace color={cat.color} size={30} />
+                  <BlobFace color={CAT_BLOB} size={30} />
                 </div>
                 <div className="record-info">
                   <div className="record-name">{cat.name}</div>
@@ -33,9 +33,12 @@ export function CatsScreen() {
         </section>
       ))}
 
-      <p className="muted" style={{ fontSize: 13.5, marginTop: 18, lineHeight: 1.6 }}>
-        고양이 추가·이름 바꾸기·그룹 바꾸기는 다음 업데이트에서 만들 예정이에요.
-      </p>
+      <button
+        className="add-cat-btn"
+        onClick={() => alert('냥이 추가는 다음 업데이트에서 만들 예정이에요!')}
+      >
+        + 냥이 추가하기
+      </button>
     </div>
   )
 }
