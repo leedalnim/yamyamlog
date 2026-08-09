@@ -4,7 +4,7 @@ import type { ReactionLevel } from '../data/types'
 import { addSnack, savePhoto } from '../data/repo'
 import { compressImage } from '../lib/image'
 import { readText } from '../lib/ocr'
-import { IconCamera, IconChevronDown, IconScan } from '../components/icons'
+import { IconCamera, IconChevronDown, IconChevronLeft, IconScan } from '../components/icons'
 
 export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
   const { cats, groups } = useCatsAndGroups()
@@ -64,68 +64,15 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
 
   return (
     <div className="screen">
-      <div className="topbar">
-        <button className="link-btn" onClick={onCancel}>취소</button>
-        <h1 style={{ fontSize: 18 }}>간식 기록</h1>
-        <button className="link-btn strong" disabled={!canSave || saving} onClick={save}>
-          {saving ? '저장중…' : '저장'}
+      <div className="topbar page-top">
+        <button className="back-inline" onClick={onCancel} aria-label="뒤로">
+          <IconChevronLeft size={22} />
         </button>
+        <h1 style={{ fontSize: 19 }}>간식 기록</h1>
       </div>
 
-      {/* 제목 — 가장 중요 */}
+      {/* 사진 — 입력 위 */}
       <div className="field">
-        <label>제품 이름</label>
-        <input
-          className="input"
-          placeholder="예: 챠오 츄르 참치맛"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-
-      {/* 반응 — 두 번째로 중요 */}
-      <div className="field">
-        <label>누가 잘 먹었나요?</label>
-        <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
-      </div>
-
-      <p className="add-hint muted">이름과 반응만으로 저장돼요. 나머지는 나중에 수정해도 괜찮아요.</p>
-
-      <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>
-        {saving ? '저장중…' : '기록 저장하기'}
-      </button>
-
-      {/* 선택 정보 — 접어서 짧게 */}
-      <div className="card edit-acc" style={{ marginTop: 16 }}>
-        <button className="edit-acc-head" onClick={() => setMoreOpen((v) => !v)} aria-expanded={moreOpen}>
-          자세히 입력하기 (선택)
-          <span className={'snack-chev' + (moreOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
-        </button>
-        {moreOpen && (
-          <div className="edit-acc-body">
-            <div className="field">
-              <label>종류</label>
-              <KindChooser value={kind} onChange={setKind} />
-            </div>
-            <div className="field">
-              <label>베이스 · 주재료</label>
-              <BaseChooser value={base} onChange={setBase} />
-            </div>
-            <div className="field">
-              <label>메모</label>
-              <textarea
-                className="textarea"
-                placeholder="브랜드, 맛, 특이사항 등"
-                value={memo}
-                onChange={(e) => setMemo(e.target.value)}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* 사진 — 맨 하단 */}
-      <div className="field" style={{ marginTop: 16 }}>
         <label>사진 (선택)</label>
         <input
           ref={fileRef}
@@ -156,6 +103,59 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
           </button>
         )}
       </div>
+
+      {/* 제목 — 가장 중요 */}
+      <div className="field">
+        <label>제품 이름</label>
+        <input
+          className="input"
+          placeholder="예: 챠오 츄르 참치맛"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+
+      {/* 반응 — 두 번째로 중요 */}
+      <div className="field">
+        <label>누가 잘 먹었나요?</label>
+        <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
+      </div>
+
+      {/* 선택 정보 — 접어서 짧게 */}
+      <div className="card edit-acc" style={{ marginTop: 4 }}>
+        <button className="edit-acc-head" onClick={() => setMoreOpen((v) => !v)} aria-expanded={moreOpen}>
+          자세히 입력하기 (선택)
+          <span className={'snack-chev' + (moreOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
+        </button>
+        {moreOpen && (
+          <div className="edit-acc-body">
+            <div className="field">
+              <label>종류</label>
+              <KindChooser value={kind} onChange={setKind} />
+            </div>
+            <div className="field">
+              <label>베이스 · 주재료</label>
+              <BaseChooser value={base} onChange={setBase} />
+            </div>
+            <div className="field">
+              <label>메모</label>
+              <textarea
+                className="textarea"
+                placeholder="브랜드, 맛, 특이사항 등"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <p className="add-hint muted">이름과 반응만으로 저장돼요. 나머지는 나중에 수정해도 괜찮아요.</p>
+
+      {/* 저장 — 맨 하단 */}
+      <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>
+        {saving ? '저장중…' : '기록 저장하기'}
+      </button>
     </div>
   )
 }

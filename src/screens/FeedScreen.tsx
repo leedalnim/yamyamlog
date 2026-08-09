@@ -11,9 +11,9 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { CatDoodle, IconBell, IconChevronDown, IconChevronLeft, IconDots, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
-import bannerUrl from '../assets/banner.png'
-import logoUrl from '../assets/logo.png'
+import { CatDoodle, IconBell, IconChevronDown, IconChevronLeft, IconChevronRight, IconDots, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
+import bannerCatUrl from '../assets/banner-cat.png'
+import logoUrl from '../assets/logo.svg'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -98,9 +98,16 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         </button>
       </div>
 
-      {/* 오늘의 기록 유도 배너 (목업 스타일) */}
-      <button className="promo-banner promo-img-wrap" onClick={onAdd}>
-        <img src={bannerUrl} alt="오늘은 뭘 먹어볼까요? 새로운 간식을 기록해보세요" className="promo-img" />
+      {/* 오늘의 기록 유도 배너 — 일러스트 + 실제 텍스트 */}
+      <button className="promo-banner promo2" onClick={onAdd}>
+        <div className="promo-text">
+          <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
+          <span className="promo-sub-pill">
+            새로운 간식을 기록해보세요
+            <span className="promo-arrow-dot"><IconChevronRight size={12} /></span>
+          </span>
+        </div>
+        <img src={bannerCatUrl} alt="" className="promo-cat" />
       </button>
 
       <h2 className="stat-title" style={{ marginTop: 4 }}>최근 기록</h2>
@@ -143,7 +150,6 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
             <div className="snack-name-row">
               <span className="snack-name">{snack.name}</span>
             </div>
-            <div className="snack-date">{formatDate(snack.createdAt)}</div>
             <div className="snack-tags-row">
               {snack.kind && <KindTag v={snack.kind} />}
               {snack.base && <BaseTag v={snack.base} />}
