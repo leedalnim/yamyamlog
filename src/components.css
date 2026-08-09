@@ -722,3 +722,6 @@
 .promo-img { width: 100%; display: block; border-radius: var(--radius-lg); }
 .hero-img { width: 176px; display: block; border-radius: 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
 .react-pill img, .week-cell img, .panel-row img, .top3-thumb img.face, .cat-paw img { flex: none; }
+
+/* 가이드 로고 이미지 */
+.logo-img { height: 32px; display: block; }
