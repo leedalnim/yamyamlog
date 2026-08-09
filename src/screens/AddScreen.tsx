@@ -117,6 +117,12 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         />
       </div>
 
+      {/* 반응 */}
+      <div className="field">
+        <label>누가 잘 먹었나요?</label>
+        <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
+      </div>
+
       {/* 종류(형태) */}
       <div className="field">
         <label>종류 (선택)</label>
@@ -138,12 +144,6 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
         />
-      </div>
-
-      {/* 반응 */}
-      <div className="field">
-        <label>누가 잘 먹었나요?</label>
-        <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
       </div>
 
       <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>

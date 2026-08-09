@@ -234,10 +234,7 @@ export function ReactionChooser({
   const levels: ReactionLevel[] = ['good', 'ok', 'bad']
   return (
     <div className="chooser">
-      <div className="chooser-name">
-        <CatPaw cat={cat} size={17} />
-        {cat.name}
-      </div>
+      <div className="chooser-name">{cat.name}</div>
       <div className="chooser-btns">
         {levels.map((lv) => {
           const m = REACTION_META[lv]

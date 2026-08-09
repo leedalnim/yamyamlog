@@ -248,6 +248,10 @@ function SnackDetail({
               <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
             <div className="field">
+              <label>반응</label>
+              <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
+            </div>
+            <div className="field">
               <label>종류</label>
               <KindChooser value={kind} onChange={setKind} />
             </div>
@@ -258,10 +262,6 @@ function SnackDetail({
             <div className="field">
               <label>메모</label>
               <textarea className="textarea" value={memo} onChange={(e) => setMemo(e.target.value)} />
-            </div>
-            <div className="field">
-              <label>반응</label>
-              <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
             </div>
             <button className="btn btn-primary btn-block" disabled={saving} onClick={save}>
               {saving ? '저장중…' : '저장하기'}

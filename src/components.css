@@ -725,3 +725,19 @@
 
 /* 가이드 로고 이미지 */
 .logo-img { height: 32px; display: block; }
+
+/* ===== 플랫 정리: 중첩 입체감 제거 ===== */
+.input, .textarea { box-shadow: none; border: 1px solid var(--line); }
+.react-group { background: none; padding: 0; }
+.react-group + .react-group { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 2px; }
+.react-group-title { margin-bottom: 10px; }
+.lv-btn { box-shadow: none; border: 1.5px solid var(--line); background: var(--surface); }
+.lv-btn.active { border-color: var(--ink); }
+.lv-btn.active[data-level="good"] { border-color: var(--good); }
+.lv-btn.active[data-level="ok"] { border-color: var(--ok); }
+.lv-btn.active[data-level="bad"] { border-color: var(--bad); }
+/* 선택 안 된 얼굴은 흐리게 → 선택 상태 구분 강화 */
+.lv-btn img { opacity: 0.45; filter: saturate(0.6); transition: opacity 0.1s ease; }
+.lv-btn.active img { opacity: 1; filter: none; }
+.stat-hero-panel { box-shadow: none; }
+.snack-thumb { box-shadow: none; }

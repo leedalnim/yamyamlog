@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CatPaw, useCatsAndGroups, usePhotoURL } from '../components/common'
+import { useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
@@ -130,7 +130,6 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             className={'chip-tab cat-chip' + (c.id === catId ? ' active' : '')}
             onClick={() => setCatId(c.id)}
           >
-            <CatPaw cat={c} size={15} />
             {c.name}
           </button>
         ))}
