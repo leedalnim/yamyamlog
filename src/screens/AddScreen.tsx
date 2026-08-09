@@ -4,7 +4,7 @@ import type { ReactionLevel } from '../data/types'
 import { addSnack, savePhoto } from '../data/repo'
 import { compressImage } from '../lib/image'
 import { readText } from '../lib/ocr'
-import { IconCamera, IconScan } from '../components/icons'
+import { IconCamera, IconChevronDown, IconScan } from '../components/icons'
 
 export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
   const { cats, groups } = useCatsAndGroups()
@@ -18,6 +18,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
   const [memo, setMemo] = useState('')
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>({})
   const [saving, setSaving] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
 
   const [ocrState, setOcrState] = useState<'idle' | 'running'>('idle')
   const [ocrProgress, setOcrProgress] = useState(0)
@@ -71,9 +72,61 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         </button>
       </div>
 
-      {/* 사진 */}
+      {/* 제목 — 가장 중요 */}
       <div className="field">
-        <label>사진</label>
+        <label>제품 이름</label>
+        <input
+          className="input"
+          placeholder="예: 챠오 츄르 참치맛"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+
+      {/* 반응 — 두 번째로 중요 */}
+      <div className="field">
+        <label>누가 잘 먹었나요?</label>
+        <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
+      </div>
+
+      <p className="add-hint muted">이름과 반응만으로 저장돼요. 나머지는 나중에 수정해도 괜찮아요.</p>
+
+      <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>
+        {saving ? '저장중…' : '기록 저장하기'}
+      </button>
+
+      {/* 선택 정보 — 접어서 짧게 */}
+      <div className="card edit-acc" style={{ marginTop: 16 }}>
+        <button className="edit-acc-head" onClick={() => setMoreOpen((v) => !v)} aria-expanded={moreOpen}>
+          자세히 입력하기 (선택)
+          <span className={'snack-chev' + (moreOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
+        </button>
+        {moreOpen && (
+          <div className="edit-acc-body">
+            <div className="field">
+              <label>종류</label>
+              <KindChooser value={kind} onChange={setKind} />
+            </div>
+            <div className="field">
+              <label>베이스 · 주재료</label>
+              <BaseChooser value={base} onChange={setBase} />
+            </div>
+            <div className="field">
+              <label>메모</label>
+              <textarea
+                className="textarea"
+                placeholder="브랜드, 맛, 특이사항 등"
+                value={memo}
+                onChange={(e) => setMemo(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 사진 — 맨 하단 */}
+      <div className="field" style={{ marginTop: 16 }}>
+        <label>사진 (선택)</label>
         <input
           ref={fileRef}
           type="file"
@@ -97,58 +150,12 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
             </div>
           </div>
         ) : (
-          <button className="photo-drop" onClick={() => fileRef.current?.click()}>
-            <span className="big"><IconCamera size={34} /></span>
-            사진 찍기 / 고르기
+          <button className="photo-drop slim" onClick={() => fileRef.current?.click()}>
+            <IconCamera size={20} />
+            사진 추가하기
           </button>
         )}
       </div>
-
-      <p className="add-hint muted">이름과 반응만 있어도 저장돼요. 종류·베이스는 비워둬도 되고 나중에 수정할 수 있어요.</p>
-
-      {/* 제목 */}
-      <div className="field">
-        <label>제품 이름</label>
-        <input
-          className="input"
-          placeholder="예: 챠오 츄르 참치맛"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-
-      {/* 반응 */}
-      <div className="field">
-        <label>누가 잘 먹었나요?</label>
-        <ReactionEditor cats={cats} groups={groups} value={reactions} onChange={setReactions} />
-      </div>
-
-      {/* 종류(형태) */}
-      <div className="field">
-        <label>종류 (선택)</label>
-        <KindChooser value={kind} onChange={setKind} />
-      </div>
-
-      {/* 베이스(주재료) */}
-      <div className="field">
-        <label>베이스 · 주재료 (선택)</label>
-        <BaseChooser value={base} onChange={setBase} />
-      </div>
-
-      {/* 메모 */}
-      <div className="field">
-        <label>메모 (선택)</label>
-        <textarea
-          className="textarea"
-          placeholder="브랜드, 맛, 특이사항 등"
-          value={memo}
-          onChange={(e) => setMemo(e.target.value)}
-        />
-      </div>
-
-      <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>
-        {saving ? '저장중…' : '기록 저장하기'}
-      </button>
     </div>
   )
 }
