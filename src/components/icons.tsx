@@ -147,6 +147,14 @@ export const IconTrash = (p: P) =>
 export const IconCheck = (p: P) =>
   svg(<path d="M5 12.5 10 17 19 7" />, { ...p, strokeWidth: p.strokeWidth ?? 2.2 })
 
+export const IconDots = ({ size = 20, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <circle cx="12" cy="5.5" r="1.7" />
+    <circle cx="12" cy="12" r="1.7" />
+    <circle cx="12" cy="18.5" r="1.7" />
+  </svg>
+)
+
 export const IconChevronDown = (p: P) =>
   svg(<path d="M6 9.5 12 15.5 18 9.5" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
 
@@ -285,18 +293,16 @@ export function Cat3D({ size = 150 }: { size?: number }) {
   )
 }
 
-/** 홈 배너용 장면 — 반짝이 + 밥그릇 앞의 신난 고양이 (목업 배너) */
+/** 홈 배너용 장면 — 왼쪽 반짝이, 큰 냥이 + 왼쪽 앞 밥그릇 (가이드 배치) */
 export function BannerCat({ size = 96 }: { size?: number }) {
   return (
-    <svg width={size} height={size * 0.78} viewBox="0 0 96 75" aria-hidden="true">
-      {/* 반짝이 */}
+    <svg width={size} height={size * 0.72} viewBox="0 0 130 94" aria-hidden="true">
       <g fill="#F2B33D">
-        <path d="M12 8l1.5 4.2L18 13.7l-4.5 1.5L12 19.4l-1.5-4.2L6 13.7l4.5-1.5Z" />
-        <path d="M83 4l1.1 3.1 3.3 1.1-3.3 1.1L83 12.4l-1.1-3.1-3.3-1.1 3.3-1.1Z" />
-        <path d="M88 28l.9 2.5 2.7.9-2.7.9-.9 2.5-.9-2.5-2.7-.9 2.7-.9Z" />
+        <path d="M14 22l1.7 4.8 4.8 1.7-4.8 1.7L14 35l-1.7-4.8L7.5 28.5l4.8-1.7Z" />
+        <path d="M30 8l1.2 3.4 3.4 1.2-3.4 1.2L30 17.2l-1.2-3.4-3.4-1.2 3.4-1.2Z" />
+        <path d="M120 30l1 2.8 2.8 1-2.8 1-1 2.8-1-2.8-2.8-1 2.8-1Z" />
       </g>
-      {/* 고양이 (잘먹음 얼굴) */}
-      <g transform="translate(22 2) scale(2.35)">
+      <g transform="translate(46 2) scale(3.1)">
         <path d={BLOB_HEAD} fill="#F3E3CC" />
         <g fill="none" stroke="#57493B" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
           <path d="M7.4 11.4q1.4-1.6 2.8 0M13.8 11.4q1.4-1.6 2.8 0" />
@@ -304,11 +310,10 @@ export function BannerCat({ size = 96 }: { size?: number }) {
         <path d="M9.3 13.9h5.4c-.3 2.5-1.3 3.9-2.7 3.9s-2.4-1.4-2.7-3.9Z" fill="#57493B" />
         <path d="M10.7 16.6q1.3 1.15 2.6 0c-.3.8-.75 1.2-1.3 1.2s-1-.4-1.3-1.2Z" fill="#F2999E" />
       </g>
-      {/* 밥그릇 */}
       <g>
-        <ellipse cx="24" cy="63" rx="17" ry="5.5" fill="#F3E3CC" />
-        <path d="M8 63h32c0 7-7 11.5-16 11.5S8 70 8 63Z" fill="#E1873F" />
-        <path d="M10.5 66.5h27c-1.6 4.4-6.3 7-13.5 7s-11.9-2.6-13.5-7Z" fill="#C96F2E" opacity=".35" />
+        <ellipse cx="30" cy="76" rx="19" ry="6" fill="#F6E9D4" />
+        <path d="M12 76h36c0 8-8 13-18 13s-18-5-18-13Z" fill="#E1873F" />
+        <ellipse cx="30" cy="76" rx="14" ry="4" fill="#FBEFD9" />
       </g>
     </svg>
   )

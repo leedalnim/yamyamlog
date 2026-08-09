@@ -11,7 +11,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { BannerCat, CatDoodle, IconBell, IconChevronDown, IconPaw, IconTrash, ReactionIcon } from '../components/icons'
+import { BannerCat, CatDoodle, IconBell, IconChevronDown, IconDots, IconPaw, IconTrash, ReactionIcon } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -104,6 +104,8 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         <span className="promo-face"><BannerCat size={104} /></span>
       </button>
 
+      <h2 className="stat-title" style={{ marginTop: 4 }}>최근 기록</h2>
+
       {filtered.length === 0 ? (
         <div className="empty">
           <div className="doodle"><CatDoodle size={116} /></div>
@@ -142,13 +144,13 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
             <div className="snack-name-row">
               <span className="snack-name">{snack.name}</span>
             </div>
+            <div className="snack-date">{formatDate(snack.createdAt)}</div>
             <div className="snack-tags-row">
               {snack.kind && <KindTag v={snack.kind} />}
               {snack.base && <BaseTag v={snack.base} />}
-              <span className="snack-date-top muted">{formatDate(snack.createdAt)}</span>
             </div>
           </div>
-          <span className="snack-chev right"><IconChevronDown size={18} /></span>
+          <span className="snack-dots"><IconDots size={19} /></span>
         </div>
         {/* 아랫줄: 4마리 반응 얼굴 (카드 전체 폭) */}
         <ReactionFaces cats={cats} reactions={snack.reactions} />

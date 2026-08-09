@@ -88,7 +88,7 @@ export default function App() {
     <div className="app">
       {tab === 'feed' && <FeedScreen key={dataVersion} onAdd={() => setTab('add')} onChanged={refresh} />}
       {tab === 'add' && <AddScreen onDone={() => { refresh(); setTab('feed') }} onCancel={() => setTab('feed')} />}
-      {tab === 'stats' && <StatsScreen key={dataVersion} />}
+      {tab === 'stats' && <StatsScreen key={dataVersion} onAdd={() => setTab('add')} />}
       {tab === 'cats' && <CatsScreen />}
       {tab === 'settings' && <SettingsScreen settings={settings} onChange={updateSettings} />}
 

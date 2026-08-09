@@ -3,14 +3,15 @@ import { CatPaw, useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
-import { Cat3D, IconChart, ReactionIcon } from '../components/icons'
+import { IconChart, ReactionIcon } from '../components/icons'
+import cat3dUrl from '../assets/cat3d.png'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
   return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`
 }
 
-export function StatsScreen() {
+export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   const { cats } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [catId, setCatId] = useState<string>('')
@@ -103,16 +104,6 @@ export function StatsScreen() {
   // 피하는 간식 (안먹음)
   const avoid = useMemo(() => records.filter((r) => r.level === 'bad'), [records])
 
-  const heroComment = !counts.total
-    ? '기록이 쌓이면 알려드릴게요'
-    : score >= 80
-      ? '아주 좋은 편이에요!'
-      : score >= 60
-        ? '좋은 편이에요!'
-        : score >= 40
-          ? '보통이에요'
-          : '취향이 아닌가 봐요…'
-
   if (snacks.length === 0) {
     return (
       <div className="screen">
@@ -147,43 +138,53 @@ export function StatsScreen() {
 
       {cat && (
         <>
-          {/* 히어로 — 기호도 요약 카드 */}
+          {/* 히어로 — 냥이 장면 + 오늘 상태 패널 (가이드 구조) */}
           <div className="stat-hero">
-            <div className="stat-hero-info">
-              <div className="stat-hero-label">{cat.name}의 기호도</div>
-              <div className="stat-hero-num tabular">
-                {counts.total ? score : '–'}
-                {counts.total > 0 && <span className="stat-hero-unit">점</span>}
-              </div>
-              <div className="stat-hero-cap">
-                {counts.total
-                  ? `간식 ${counts.total}개 중 잘먹음 ${counts.good} · 보통 ${counts.ok} · 안먹음 ${counts.bad}`
-                  : '아직 기록이 없어요'}
-              </div>
-              <div className="stat-hero-track">
-                <div className="stat-hero-fill" style={{ width: `${Math.max(4, score)}%` }} />
-              </div>
-              <div className="stat-hero-comment">{heroComment}</div>
-            </div>
-            <div className="stat-hero-chara">
+            <div className="stat-hero-scene">
               {counts.total > 0 && (
                 <div className="hero-bubble">
                   {score >= 70 ? '오늘도 잘 먹었냥!' : score >= 40 ? '그럭저럭이었냥' : '입맛이 없었냥…'}
                 </div>
               )}
-              <Cat3D size={148} />
+              <img src={cat3dUrl} alt="" className="cat3d-img" />
+            </div>
+            <div className="stat-hero-panel">
+              <div className="panel-title">{cat.name}의 요즘 상태</div>
+              <div className="panel-row">
+                <ReactionIcon level="good" size={20} />
+                기호도 <b className="tabular">{counts.total ? score + '점' : '－'}</b>
+              </div>
+              <div className="panel-row">
+                <ReactionIcon level="good" size={20} />
+                잘먹음 <b className="tabular">{counts.good}회</b>
+              </div>
+              <div className="panel-row">
+                <ReactionIcon level="bad" size={20} />
+                안먹음 <b className="tabular">{counts.bad}회</b>
+              </div>
+              {onAdd && (
+                <button className="panel-btn" onClick={onAdd}>✎ 기록 남기기</button>
+              )}
             </div>
           </div>
 
           {/* 최근 7일 반응 요약 */}
           {week.total > 0 && (
             <section className="stat-section">
-              <h2 className="stat-title">최근 7일 반응 요약</h2>
+              <h2 className="stat-title week-title">
+                최근 7일 반응 요약
+                <button
+                  className="see-more"
+                  onClick={() => document.getElementById('record-list-sec')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  자세히 보기 →
+                </button>
+              </h2>
               <div className="card week-card">
                 <div className="week-bar">
                   {week.good > 0 && <i style={{ flex: week.good, background: 'var(--primary)' }} />}
                   {week.ok > 0 && <i style={{ flex: week.ok, background: 'var(--ok)' }} />}
-                  {week.bad > 0 && <i style={{ flex: week.bad, background: 'var(--bad)' }} />}
+                  {week.bad > 0 && <i style={{ flex: week.bad, background: '#D8D2C8' }} />}
                 </div>
                 <div className="week-cells">
                   <div className="week-cell">
@@ -256,7 +257,7 @@ export function StatsScreen() {
           )}
 
           {/* 기록 리스트 */}
-          <section className="stat-section">
+          <section className="stat-section" id="record-list-sec">
             <h2 className="stat-title">{cat.name}의 간식 기록</h2>
             <div className="card record-list">
               {records.length === 0 && (
@@ -316,6 +317,7 @@ function Top3Card({ snack, rank }: { snack: Snack; rank: number }) {
         {url ? <img src={url} alt={snack.name} loading="lazy" /> : <ReactionIcon level="good" size={34} />}
       </div>
       <div className="top3-name">{snack.name}</div>
+      <span className="top3-love">♥ 좋아해요</span>
     </div>
   )
 }
