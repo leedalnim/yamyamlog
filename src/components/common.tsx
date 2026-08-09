@@ -2,16 +2,13 @@ import { useEffect, useState } from 'react'
 import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
 import { BASE_PRESETS, KIND_PRESETS, REACTION_META } from '../data/types'
-import { BlobFace, CAT_CREAM, CAT_CREAM_EMPTY, ReactionIcon } from './icons'
+import { FaceNeutral, ReactionIcon } from './icons'
 
-/** 고양이 공통 얼굴색 (표정만으로 반응 구분) */
-export const CAT_BLOB = CAT_CREAM
-
-/** 고양이 얼굴 아이콘 */
+/** 고양이 얼굴 아이콘 (가이드 에셋) */
 export function CatPaw({ size = 18 }: { cat?: Cat; size?: number }) {
   return (
     <span className="cat-paw">
-      <BlobFace color={CAT_CREAM} size={size} />
+      <FaceNeutral size={size} />
     </span>
   )
 }
@@ -70,7 +67,7 @@ export function ReactionFaces({
             {lv ? (
               <ReactionIcon level={lv} size={40} />
             ) : (
-              <BlobFace color={CAT_CREAM_EMPTY} size={40} />
+              <FaceNeutral size={40} dim />
             )}
           </div>
         )

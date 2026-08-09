@@ -3,6 +3,9 @@
 
 import type { ReactNode } from 'react'
 import type { ReactionLevel } from '../data/types'
+import faceGoodUrl from '../assets/face-good.png'
+import faceOkUrl from '../assets/face-ok.png'
+import faceBadUrl from '../assets/face-bad.png'
 
 type P = { size?: number; className?: string; strokeWidth?: number }
 
@@ -397,13 +400,37 @@ export const CAT_CREAM = '#F3E3CC'
 /** 기록 없는 상태의 흐린 얼굴색 */
 export const CAT_CREAM_EMPTY = '#F2ECE2'
 
-/** 반응 아이콘 — 크림색 얼굴 + 표정으로 구분. color로 재정의 가능 */
+const FACE_URLS: Record<ReactionLevel, string> = {
+  good: faceGoodUrl,
+  ok: faceOkUrl,
+  bad: faceBadUrl,
+}
+
+/** 반응 아이콘 — 디자인 가이드에서 추출한 실제 표정 에셋 */
 export const ReactionIcon = ({
   level,
-  size,
-  color,
+  size = 24,
 }: {
   level: ReactionLevel
   size?: number
   color?: string
-}) => <BlobFace color={color ?? CAT_CREAM} level={level} size={size} />
+}) => (
+  <img
+    src={FACE_URLS[level]}
+    alt=""
+    width={size}
+    style={{ height: 'auto', display: 'block' }}
+    draggable={false}
+  />
+)
+
+/** 프로필용 기본 얼굴 (보통 표정 에셋) */
+export const FaceNeutral = ({ size = 24, dim = false }: { size?: number; dim?: boolean }) => (
+  <img
+    src={faceOkUrl}
+    alt=""
+    width={size}
+    style={{ height: 'auto', display: 'block', ...(dim ? { filter: 'grayscale(55%)', opacity: 0.45 } : {}) }}
+    draggable={false}
+  />
+)

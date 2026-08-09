@@ -11,7 +11,8 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { BannerCat, CatDoodle, IconBell, IconChevronDown, IconChevronLeft, IconChevronRight, IconDots, IconPaw, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
+import { CatDoodle, IconBell, IconChevronDown, IconChevronLeft, IconDots, IconPaw, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
+import bannerUrl from '../assets/banner.png'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -97,14 +98,8 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
       </div>
 
       {/* 오늘의 기록 유도 배너 (목업 스타일) */}
-      <button className="promo-banner" onClick={onAdd}>
-        <div className="promo-text">
-          <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
-          <div className="promo-sub">
-            새로운 간식을 기록해보세요 <span className="promo-arrow"><IconChevronRight size={13} /></span>
-          </div>
-        </div>
-        <span className="promo-face"><BannerCat size={104} /></span>
+      <button className="promo-banner promo-img-wrap" onClick={onAdd}>
+        <img src={bannerUrl} alt="오늘은 뭘 먹어볼까요? 새로운 간식을 기록해보세요" className="promo-img" />
       </button>
 
       <h2 className="stat-title" style={{ marginTop: 4 }}>최근 기록</h2>

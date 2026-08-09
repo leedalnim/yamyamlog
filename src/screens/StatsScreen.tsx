@@ -4,7 +4,7 @@ import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
-import cat3dUrl from '../assets/cat3d.png'
+import heroUrl from '../assets/hero.png'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -141,12 +141,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
           {/* 히어로 — 냥이 장면 + 오늘 상태 패널 (가이드 구조) */}
           <div className="stat-hero">
             <div className="stat-hero-scene">
-              {counts.total > 0 && (
-                <div className="hero-bubble">
-                  {score >= 70 ? '오늘도 잘 먹었냥!' : score >= 40 ? '그럭저럭이었냥' : '입맛이 없었냥…'}
-                </div>
-              )}
-              <img src={cat3dUrl} alt="" className="cat3d-img" />
+              <img src={heroUrl} alt="" className="hero-img" />
             </div>
             <div className="stat-hero-panel">
               <div className="panel-title">{cat.name}의 요즘 상태</div>
