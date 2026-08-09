@@ -90,6 +90,15 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         ))}
       </div>
 
+      {/* 오늘의 기록 유도 배너 */}
+      <button className="promo-banner" onClick={onAdd}>
+        <div className="promo-text">
+          <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
+          <div className="promo-sub">새로운 간식을 기록해보세요 →</div>
+        </div>
+        <span className="promo-face"><ReactionIcon level="good" size={64} /></span>
+      </button>
+
       {filtered.length === 0 ? (
         <div className="empty">
           <div className="doodle"><CatDoodle size={116} /></div>
