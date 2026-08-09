@@ -147,6 +147,37 @@ export const IconTrash = (p: P) =>
 export const IconCheck = (p: P) =>
   svg(<path d="M5 12.5 10 17 19 7" />, { ...p, strokeWidth: p.strokeWidth ?? 2.2 })
 
+export const IconHeart = ({ size = 20, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M12 20.5c-.35 0-.7-.12-.98-.35C7.2 17.05 3 13.6 3 9.6 3 6.6 5.3 4.5 8 4.5c1.6 0 3.1.8 4 2.05C12.9 5.3 14.4 4.5 16 4.5c2.7 0 5 2.1 5 5.1 0 4-4.2 7.45-8.02 10.55-.28.23-.63.35-.98.35Z" />
+  </svg>
+)
+
+export const IconPencil = (p: P) =>
+  svg(
+    <>
+      <path d="M4 20l.9-3.6L15.6 5.7a1.6 1.6 0 0 1 2.26 0l.44.44a1.6 1.6 0 0 1 0 2.26L7.6 19.1 4 20Z" />
+      <path d="M14.2 7.1l2.7 2.7" />
+    </>,
+    p,
+  )
+
+export const IconChevronLeft = (p: P) =>
+  svg(<path d="M14.5 6 8.5 12l6 6" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
+
+export const IconChevronRight = (p: P) =>
+  svg(<path d="M9.5 6l6 6-6 6" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
+
+export const IconSliders = (p: P) =>
+  svg(
+    <>
+      <path d="M5 7h8M17 7h2M5 17h2M11 17h8" />
+      <circle cx="15" cy="7" r="2.2" />
+      <circle cx="9" cy="17" r="2.2" />
+    </>,
+    p,
+  )
+
 export const IconDots = ({ size = 20, className }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
     <circle cx="12" cy="5.5" r="1.7" />

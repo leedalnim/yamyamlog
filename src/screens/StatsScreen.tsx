@@ -3,7 +3,7 @@ import { CatPaw, useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
-import { IconChart, ReactionIcon } from '../components/icons'
+import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import cat3dUrl from '../assets/cat3d.png'
 
 function formatDate(ts: number): string {
@@ -163,7 +163,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                 안먹음 <b className="tabular">{counts.bad}회</b>
               </div>
               {onAdd && (
-                <button className="panel-btn" onClick={onAdd}>✎ 기록 남기기</button>
+                <button className="panel-btn" onClick={onAdd}><IconPencil size={15} /> 기록 남기기</button>
               )}
             </div>
           </div>
@@ -177,7 +177,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   className="see-more"
                   onClick={() => document.getElementById('record-list-sec')?.scrollIntoView({ behavior: 'smooth' })}
                 >
-                  자세히 보기 →
+                  자세히 보기 <IconChevronRight size={13} />
                 </button>
               </h2>
               <div className="card week-card">
@@ -249,7 +249,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                     <div className="record-info">
                       <div className="record-name">{r.snack.name}</div>
                     </div>
-                    <span className="avoid-note">{cat.name}가 안 먹어요</span>
+                    <span className="avoid-note"><IconHeart size={13} /> {cat.name}가 안 먹어요</span>
                   </div>
                 ))}
               </div>
@@ -317,7 +317,7 @@ function Top3Card({ snack, rank }: { snack: Snack; rank: number }) {
         {url ? <img src={url} alt={snack.name} loading="lazy" /> : <ReactionIcon level="good" size={34} />}
       </div>
       <div className="top3-name">{snack.name}</div>
-      <span className="top3-love">♥ 좋아해요</span>
+      <span className="top3-love"><IconHeart size={12} /> 좋아해요</span>
     </div>
   )
 }

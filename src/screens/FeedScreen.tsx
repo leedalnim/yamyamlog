@@ -11,7 +11,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { BannerCat, CatDoodle, IconBell, IconChevronDown, IconDots, IconPaw, IconTrash, ReactionIcon } from '../components/icons'
+import { BannerCat, CatDoodle, IconBell, IconChevronDown, IconChevronLeft, IconChevronRight, IconDots, IconPaw, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -91,6 +91,9 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
             {k}
           </button>
         ))}
+        <button className="chip-tab filter-chip" onClick={() => setFilter('all')} aria-label="필터 초기화">
+          <IconSliders size={16} />
+        </button>
       </div>
 
       {/* 오늘의 기록 유도 배너 (목업 스타일) */}
@@ -98,7 +101,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         <div className="promo-text">
           <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
           <div className="promo-sub">
-            새로운 간식을 기록해보세요 <span className="promo-arrow">→</span>
+            새로운 간식을 기록해보세요 <span className="promo-arrow"><IconChevronRight size={13} /></span>
           </div>
         </div>
         <span className="promo-face"><BannerCat size={104} /></span>
@@ -218,7 +221,7 @@ function SnackDetail({
             <ReactionPillFallback entries={entries} />
           </div>
         )}
-        <button className="detail-back" onClick={onBack} aria-label="뒤로">←</button>
+        <button className="detail-back" onClick={onBack} aria-label="뒤로"><IconChevronLeft size={20} /></button>
       </div>
 
       {/* ---- 아래에서 올라오는 흰 시트 ---- */}

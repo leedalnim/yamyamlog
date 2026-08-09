@@ -705,3 +705,14 @@
 
 /* 블렌더 렌더 3D 냥이 */
 .cat3d-img { width: 168px; display: block; margin-bottom: -4px; }
+
+/* 가이드 아이콘 세트 마감 */
+.promo-arrow svg { display: block; }
+.filter-chip { display: inline-flex; align-items: center; padding: 7px 11px; color: var(--muted); }
+.panel-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.panel-btn svg { color: var(--ink); }
+.see-more { display: inline-flex; align-items: center; gap: 2px; }
+.top3-love { display: inline-flex; align-items: center; gap: 4px; }
+.top3-love svg { color: #d95c49; }
+.avoid-note { display: inline-flex; align-items: center; gap: 4px; }
+.avoid-note svg { color: var(--bad); }
