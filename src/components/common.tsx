@@ -67,11 +67,13 @@ export function ReactionFaces({
         return (
           <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')}>
             <span className="face-name">{cat.name}</span>
-            {lv ? (
-              <ReactionIcon level={lv} size={38} />
-            ) : (
-              <BlobFace color={CAT_CREAM_EMPTY} size={38} />
-            )}
+            <span className="face-bub">
+              {lv ? (
+                <ReactionIcon level={lv} size={34} />
+              ) : (
+                <BlobFace color={CAT_CREAM_EMPTY} size={34} />
+              )}
+            </span>
           </div>
         )
       })}

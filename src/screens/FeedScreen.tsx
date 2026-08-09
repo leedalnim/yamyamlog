@@ -145,6 +145,7 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
             <div className="snack-tags-row">
               {snack.kind && <KindTag v={snack.kind} />}
               {snack.base && <BaseTag v={snack.base} />}
+              <span className="snack-date-top muted">{formatDate(snack.createdAt)}</span>
             </div>
           </div>
           <span className="snack-chev right"><IconChevronDown size={18} /></span>

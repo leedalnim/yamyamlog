@@ -166,6 +166,11 @@ export function StatsScreen() {
               <div className="stat-hero-comment">{heroComment}</div>
             </div>
             <div className="stat-hero-chara">
+              {counts.total > 0 && (
+                <div className="hero-bubble">
+                  {score >= 70 ? '오늘도 잘 먹었냥!' : score >= 40 ? '그럭저럭이었냥' : '입맛이 없었냥…'}
+                </div>
+              )}
               <Cat3D size={148} />
             </div>
           </div>

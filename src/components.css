@@ -624,3 +624,35 @@
 .stat-hero-track { background: rgba(255, 255, 255, 0.75); }
 .stat-hero-fill { background: var(--primary); }
 .stat-hero-num { color: var(--ink); }
+
+/* 가이드 상태 배지 톤 */
+.react-pill[data-level="good"] { background: #fbe9c6; color: #c4842a; }
+.react-pill[data-level="ok"] { background: #f8f2e2; color: #9a8f7b; }
+.react-pill[data-level="bad"] { background: #efece7; color: #7a756d; }
+
+/* 얼굴 원형 배경 + 카드 날짜 */
+.face-bub {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+}
+.face-cell.blank .face-bub { background: #f6f4ef; }
+.snack-date-top { font-size: 11.5px; margin-left: auto; }
+.snack-tags-row { width: 100%; }
+
+/* 통계 말풍선 */
+.stat-hero-chara { position: relative; }
+.hero-bubble {
+  position: absolute;
+  top: -6px;
+  left: -26px;
+  background: #fffdf8;
+  border-radius: 14px 14px 14px 4px;
+  padding: 7px 11px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
