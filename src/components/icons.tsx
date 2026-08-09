@@ -43,10 +43,21 @@ export const IconPlus = (p: P) =>
     { ...p, strokeWidth: p.strokeWidth ?? 2 },
   )
 
-export const IconChart = (p: P) =>
+// 목업 'olo' 스타일 — 둥근 막대 3개
+export const IconChart = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <rect x="4" y="10" width="4" height="10" rx="2" />
+    <rect x="10" y="4" width="4" height="16" rx="2" />
+    <rect x="16" y="13" width="4" height="7" rx="2" />
+  </svg>
+)
+
+// 목업 아이콘 세트의 고양이 얼굴 라인 아이콘 (냥이들 탭)
+export const IconCatFace = (p: P) =>
   svg(
     <>
-      <path d="M4 20V10M10 20V4M16 20v-7M4 20h16" />
+      <path d="M4.5 13.2c0-1.9.6-3.6 1.7-4.9l-.5-3.6c-.1-.8.8-1.3 1.4-.8l2.6 2a9 9 0 0 1 4.6 0l2.6-2c.6-.5 1.5 0 1.4.8l-.5 3.6a7.6 7.6 0 0 1 1.7 4.9c0 3.9-3.4 6.3-7.5 6.3s-7.5-2.4-7.5-6.3Z" />
+      <path d="M9.3 12.5v1M14.7 12.5v1" />
     </>,
     p,
   )
@@ -54,9 +65,17 @@ export const IconChart = (p: P) =>
 export const IconSettings = (p: P) =>
   svg(
     <>
-      <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
-      <circle cx="16" cy="7" r="2.4" />
-      <circle cx="8" cy="17" r="2.4" />
+      <circle cx="12" cy="12" r="3.1" />
+      <path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6" />
+    </>,
+    p,
+  )
+
+export const IconBell = (p: P) =>
+  svg(
+    <>
+      <path d="M6 16v-5.5a6 6 0 0 1 12 0V16l1.5 2.2H4.5Z" />
+      <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
     </>,
     p,
   )
@@ -204,6 +223,64 @@ export function BlobFace({
     <svg width={size} height={size} viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path d={BLOB_HEAD} fill={color} />
       {FACES[level]}
+    </svg>
+  )
+}
+
+/** 3D 클레이 느낌 냥이 — 쿠션 위 식빵자세, 그라데이션으로 말랑 입체감 (통계 히어로용) */
+export function Cat3D({ size = 150 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * 0.8} viewBox="0 0 150 120" aria-hidden="true">
+      <defs>
+        <radialGradient id="c3-body" cx="38%" cy="28%" r="85%">
+          <stop offset="0%" stopColor="#FFB668" />
+          <stop offset="45%" stopColor="#F79441" />
+          <stop offset="100%" stopColor="#E0762B" />
+        </radialGradient>
+        <radialGradient id="c3-cushion" cx="50%" cy="30%" r="80%">
+          <stop offset="0%" stopColor="#FAEDD8" />
+          <stop offset="100%" stopColor="#EFD9B8" />
+        </radialGradient>
+        <linearGradient id="c3-ear" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#F79441" />
+          <stop offset="100%" stopColor="#E0762B" />
+        </linearGradient>
+      </defs>
+
+      {/* 쿠션 */}
+      <ellipse cx="75" cy="103" rx="62" ry="14" fill="url(#c3-cushion)" />
+      <ellipse cx="75" cy="99" rx="56" ry="11" fill="#FCF2E1" opacity=".55" />
+
+      {/* 꼬리 */}
+      <path d="M118 92c11-1 16-8 13-15-2-5-8-6-10-2 3 1 4 4 1 6-4 3-9 4-12 4Z" fill="#E87C2E" />
+
+      {/* 몸통(식빵) */}
+      <path
+        d="M28 78c0-24 21-40 47-40s47 16 47 40c0 15-14 24-47 24S28 93 28 78Z"
+        fill="url(#c3-body)"
+      />
+      {/* 귀 */}
+      <path d="M42 45 39 26c-.3-2 1.8-3.3 3.5-2.1L57 34Z" fill="url(#c3-ear)" />
+      <path d="M108 45l3-19c.3-2-1.8-3.3-3.5-2.1L93 34Z" fill="url(#c3-ear)" />
+      <path d="M44.5 41.5 43 30l9 6.5Z" fill="#F7B189" opacity=".8" />
+      <path d="M105.5 41.5 107 30l-9 6.5Z" fill="#F7B189" opacity=".8" />
+
+      {/* 얼굴 */}
+      <g stroke="#5A3A1E" strokeWidth="3" strokeLinecap="round" fill="none">
+        <path d="M56 62q4-4.5 8 0M86 62q4-4.5 8 0" />
+        <path d="M70 70q5 4 10 0" />
+      </g>
+      {/* 수염 */}
+      <g stroke="#5A3A1E" strokeWidth="1.8" strokeLinecap="round" opacity=".85">
+        <path d="M44 64H32M44 69l-11 3M106 64h12M106 69l11 3" />
+      </g>
+      {/* 볼터치 */}
+      <ellipse cx="54" cy="70" rx="5" ry="3" fill="#FCC9A0" opacity=".9" />
+      <ellipse cx="96" cy="70" rx="5" ry="3" fill="#FCC9A0" opacity=".9" />
+
+      {/* 하트 */}
+      <path d="M126 44c2.5-3 7-1.5 7 2 0 2.8-3.6 5.3-7 7-3.4-1.7-7-4.2-7-7 0-3.5 4.5-5 7-2Z" fill="#F26D6D" />
+      <path d="M135 30c1.6-2 4.6-1 4.6 1.3 0 1.9-2.4 3.5-4.6 4.6-2.2-1.1-4.6-2.7-4.6-4.6 0-2.3 3-3.3 4.6-1.3Z" fill="#F58C8C" />
     </svg>
   )
 }

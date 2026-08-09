@@ -3,7 +3,7 @@ import { CatPaw, useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
-import { IconChart, ReactionIcon } from '../components/icons'
+import { Cat3D, IconChart, ReactionIcon } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -166,10 +166,7 @@ export function StatsScreen() {
               <div className="stat-hero-comment">{heroComment}</div>
             </div>
             <div className="stat-hero-chara">
-              <ReactionIcon
-                level={score >= 70 ? 'good' : score >= 40 ? 'ok' : counts.total ? 'bad' : 'ok'}
-                size={86}
-              />
+              <Cat3D size={148} />
             </div>
           </div>
 

@@ -609,3 +609,18 @@
 .promo-banner { background: linear-gradient(115deg, #fdeee0, #fadfc4); overflow: hidden; padding: 18px 8px 0 20px; align-items: flex-end; }
 .promo-text { padding-bottom: 18px; }
 .promo-face { margin-bottom: -6px; }
+
+/* 종 버튼 + 히어로 톤 (목업) */
+.bell-btn { border: none; background: none; color: var(--ink); padding: 8px; line-height: 0; align-self: flex-start; }
+.stat-hero {
+  background: linear-gradient(135deg, #fdeed6, #f9ddb0);
+  color: var(--ink);
+  align-items: flex-end;
+  padding: 20px 8px 0 20px;
+  overflow: hidden;
+}
+.stat-hero-info { padding-bottom: 18px; }
+.stat-hero-chara { margin-bottom: -5px; filter: none; }
+.stat-hero-track { background: rgba(255, 255, 255, 0.75); }
+.stat-hero-fill { background: var(--primary); }
+.stat-hero-num { color: var(--ink); }

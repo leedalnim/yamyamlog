@@ -11,7 +11,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { BannerCat, CatDoodle, IconChevronDown, IconPaw, IconTrash, ReactionIcon } from '../components/icons'
+import { BannerCat, CatDoodle, IconBell, IconChevronDown, IconPaw, IconTrash, ReactionIcon } from '../components/icons'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -75,6 +75,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
           <h1 className="logo">얌로그 <span className="logo-paw"><IconPaw size={17} /></span></h1>
           <div className="sub">우리 냥이들의 간식 기록</div>
         </div>
+        <button className="bell-btn" aria-label="알림"><IconBell size={22} /></button>
       </div>
 
       <div className="tabs">

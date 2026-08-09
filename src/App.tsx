@@ -7,7 +7,7 @@ import { AddScreen } from './screens/AddScreen'
 import { StatsScreen } from './screens/StatsScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { CatsScreen } from './screens/CatsScreen'
-import { IconHome, IconPlus, IconChart, IconSettings, IconPaw } from './components/icons'
+import { IconHome, IconPlus, IconChart, IconSettings, IconPaw, IconCatFace } from './components/icons'
 
 type Tab = 'feed' | 'add' | 'stats' | 'cats' | 'settings'
 
@@ -110,7 +110,7 @@ export default function App() {
         </button>
         <div className="nav-side">
           <button className={'nav-tab' + (tab === 'cats' ? ' active' : '')} onClick={() => setTab('cats')}>
-            <span className="ico"><IconPaw /></span>냥이들
+            <span className="ico"><IconCatFace /></span>냥이들
           </button>
           <button className={'nav-tab' + (tab === 'settings' ? ' active' : '')} onClick={() => setTab('settings')}>
             <span className="ico"><IconSettings /></span>설정
