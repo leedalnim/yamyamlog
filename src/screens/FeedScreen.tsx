@@ -3,7 +3,7 @@ import {
   BaseChooser,
   KindChooser,
   ReactionEditor,
-  ReactionPill,
+  ReactionFaces,
   useCatsAndGroups,
   usePhotoURL,
 } from '../components/common'
@@ -114,29 +114,29 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
 
 function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen: () => void }) {
   const url = usePhotoURL(snack.photoId)
-  const entries = Object.entries(snack.reactions) as [string, ReactionLevel][]
   return (
     <div className="card snack-card">
-      <button className="snack-row" onClick={onOpen}>
-        {url && (
-          <div className="snack-thumb">
-            <img src={url} alt={snack.name} loading="lazy" />
+      <button className="snack-btn" onClick={onOpen}>
+        {/* 윗줄: 썸네일 + 이름/태그 + 화살표 */}
+        <div className="snack-top">
+          {url && (
+            <div className="snack-thumb">
+              <img src={url} alt={snack.name} loading="lazy" />
+            </div>
+          )}
+          <div className="snack-body">
+            <div className="snack-name-row">
+              <span className="snack-name">{snack.name}</span>
+            </div>
+            <div className="snack-tags-row">
+              {snack.kind && <span className="kind-tag">{snack.kind}</span>}
+              {snack.base && <span className="base-tag">{snack.base}</span>}
+            </div>
           </div>
-        )}
-        <div className="snack-body">
-          <div className="snack-name-row">
-            <span className="snack-name">{snack.name}</span>
-          </div>
-          <div className="pills">
-            {entries.length === 0 && <span className="muted" style={{ fontSize: 13 }}>반응 기록 없음</span>}
-            {entries.map(([catId, lv]) => {
-              const cat = cats.find((c) => c.id === catId)
-              if (!cat) return null
-              return <ReactionPill key={catId} cat={cat} level={lv} />
-            })}
-          </div>
+          <span className="snack-chev right"><IconChevronDown size={18} /></span>
         </div>
-        <span className="snack-chev right"><IconChevronDown size={18} /></span>
+        {/* 아랫줄: 4마리 반응 얼굴 (카드 전체 폭) */}
+        <ReactionFaces cats={cats} reactions={snack.reactions} />
       </button>
     </div>
   )
@@ -214,13 +214,9 @@ function SnackDetail({
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>
         {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
-        <div className="pills" style={{ marginTop: 12 }}>
-          {entries.length === 0 && <span className="muted" style={{ fontSize: 13 }}>반응 기록 없음</span>}
-          {entries.map(([catId, lv]) => {
-            const cat = cats.find((c) => c.id === catId)
-            if (!cat) return null
-            return <ReactionPill key={catId} cat={cat} level={lv} />
-          })}
+        <div style={{ marginTop: 14 }}>
+          <div className="field-label muted">고양이별 반응</div>
+          <ReactionFaces cats={cats} reactions={snack.reactions} />
         </div>
 
         {/* ---- 수정 (아코디언) ---- */}

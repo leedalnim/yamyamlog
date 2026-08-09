@@ -248,7 +248,12 @@ export const CatDoodle = ({ size = 120, className }: P) => (
   </svg>
 )
 
-/** 반응 아이콘 — color를 주면 고양이 색으로, 없으면 기호성 기본색 */
+/** 고양이 얼굴 공통 크림색 — 표정만으로 반응을 구분 (레퍼런스 기준) */
+export const CAT_CREAM = '#F0DCC3'
+/** 기록 없는 상태의 흐린 얼굴색 */
+export const CAT_CREAM_EMPTY = '#F1EAE0'
+
+/** 반응 아이콘 — 크림색 얼굴 + 표정으로 구분. color로 재정의 가능 */
 export const ReactionIcon = ({
   level,
   size,
@@ -257,4 +262,4 @@ export const ReactionIcon = ({
   level: ReactionLevel
   size?: number
   color?: string
-}) => <BlobFace color={color ?? `var(--${level})`} level={level} size={size} />
+}) => <BlobFace color={color ?? CAT_CREAM} level={level} size={size} />

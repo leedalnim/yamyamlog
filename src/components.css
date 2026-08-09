@@ -460,3 +460,52 @@
   font-size: 15px;
   font-weight: 700;
 }
+
+/* ---------- 반응 얼굴 그리드 (이름 위 + 얼굴 아래, 카드 전체 폭) ---------- */
+.snack-btn {
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  font-family: inherit;
+  padding: 15px 16px 14px;
+}
+.snack-top { display: flex; align-items: center; gap: 12px; }
+.snack-tags-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.face-grid {
+  display: flex;
+  justify-content: space-around;
+  gap: 6px;
+  margin-top: 13px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.face-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 62px;
+}
+.face-name { font-size: 11.5px; font-weight: 700; color: var(--muted); line-height: 1; }
+.face-cell.blank { opacity: 0.5; }
+
+/* ---------- 도넛 차트 ---------- */
+.donut-card { display: flex; align-items: center; gap: 18px; padding: 16px 18px; }
+.donut { flex: none; }
+.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.donut-leg-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; }
+.donut-leg-row i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.donut-leg-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.donut-leg-pct { color: var(--muted); font-weight: 700; }
+
+/* ---------- 한눈에 보기 타일 ---------- */
+.glance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.glance-tile { padding: 16px 18px; }
+.glance-label { font-size: 12.5px; font-weight: 700; }
+.glance-num { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+
+/* 히어로 코멘트 */
+.stat-hero-comment { font-size: 13px; font-weight: 700; margin-top: 9px; opacity: 0.85; }

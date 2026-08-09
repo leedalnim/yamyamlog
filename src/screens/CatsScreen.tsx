@@ -1,18 +1,33 @@
-import { useMemo } from 'react'
-import { CAT_BLOB, useCatsAndGroups } from '../components/common'
-import { BlobFace } from '../components/icons'
+import { useEffect, useMemo, useState } from 'react'
+import { useCatsAndGroups } from '../components/common'
+import { BlobFace, CAT_CREAM } from '../components/icons'
+import { listSnacks } from '../data/repo'
+import type { Snack } from '../data/types'
 
 export function CatsScreen() {
   const { cats, groups } = useCatsAndGroups()
+  const [snacks, setSnacks] = useState<Snack[]>([])
+
+  useEffect(() => {
+    ;(async () => setSnacks(await listSnacks()))()
+  }, [])
 
   const byGroup = useMemo(
     () => groups.map((g) => ({ group: g, members: cats.filter((c) => c.groupId === g.id) })),
     [cats, groups],
   )
 
+  // 한눈에 보기
+  const monthStart = useMemo(() => {
+    const d = new Date()
+    return new Date(d.getFullYear(), d.getMonth(), 1).getTime()
+  }, [])
+  const totalCount = snacks.length
+  const monthCount = snacks.filter((s) => s.createdAt >= monthStart).length
+
   return (
     <div className="screen">
-      <div className="topbar"><h1>냥이들</h1></div>
+      <div className="topbar"><h1>우리 냥이들</h1></div>
 
       {byGroup.map(({ group, members }) => (
         <section className="stat-section" key={group.id}>
@@ -21,7 +36,7 @@ export function CatsScreen() {
             {members.map((cat) => (
               <div className="record-row" key={cat.id}>
                 <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
-                  <BlobFace color={CAT_BLOB} size={30} />
+                  <BlobFace color={CAT_CREAM} size={30} />
                 </div>
                 <div className="record-info">
                   <div className="record-name">{cat.name}</div>
@@ -32,6 +47,21 @@ export function CatsScreen() {
           </div>
         </section>
       ))}
+
+      {/* 한눈에 보기 */}
+      <section className="stat-section">
+        <h2 className="stat-title">한눈에 보기</h2>
+        <div className="glance-grid">
+          <div className="card glance-tile">
+            <div className="glance-label muted">전체 기록</div>
+            <div className="glance-num tabular">{totalCount}</div>
+          </div>
+          <div className="card glance-tile">
+            <div className="glance-label muted">이번 달 기록</div>
+            <div className="glance-num tabular">{monthCount}</div>
+          </div>
+        </div>
+      </section>
 
       <button
         className="add-cat-btn"

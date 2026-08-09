@@ -2,18 +2,16 @@ import { useEffect, useState } from 'react'
 import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
 import { BASE_PRESETS, KIND_PRESETS, REACTION_META } from '../data/types'
-import { BlobFace, ReactionIcon } from './icons'
+import { BlobFace, CAT_CREAM, CAT_CREAM_EMPTY, ReactionIcon } from './icons'
 
-/** 고양이 공통 블롭 색 (고양이는 색이 아니라 이름으로 구분) */
-export const CAT_BLOB = '#E9B77F'
-/** 반응 없는 상태의 흐린 블롭 색 */
-export const CAT_BLOB_EMPTY = '#DDD5C8'
+/** 고양이 공통 얼굴색 (표정만으로 반응 구분) */
+export const CAT_BLOB = CAT_CREAM
 
 /** 고양이 얼굴 아이콘 */
 export function CatPaw({ size = 18 }: { cat?: Cat; size?: number }) {
   return (
     <span className="cat-paw">
-      <BlobFace color={CAT_BLOB} size={size} />
+      <BlobFace color={CAT_CREAM} size={size} />
     </span>
   )
 }
@@ -52,6 +50,33 @@ export function usePhotoURL(photoId?: string) {
     }
   }, [photoId])
   return url
+}
+
+/** 고양이 4마리 반응 얼굴 그리드 — 이름 위 + 얼굴 아래, 기록 없는 애는 흐리게 */
+export function ReactionFaces({
+  cats,
+  reactions,
+}: {
+  cats: Cat[]
+  reactions: Record<string, ReactionLevel>
+}) {
+  return (
+    <div className="face-grid">
+      {cats.map((cat) => {
+        const lv = reactions[cat.id]
+        return (
+          <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')}>
+            <span className="face-name">{cat.name}</span>
+            {lv ? (
+              <ReactionIcon level={lv} size={38} />
+            ) : (
+              <BlobFace color={CAT_CREAM_EMPTY} size={38} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 /** 반응 pill 하나 */

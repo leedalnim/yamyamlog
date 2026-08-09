@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CatPaw, useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
-import { REACTION_META, REACTION_SCORE } from '../data/types'
+import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { IconChart, ReactionIcon } from '../components/icons'
 
@@ -50,7 +50,7 @@ export function StatsScreen() {
       )
     : 0
 
-  // 선택한 냥이의 베이스별 기호성
+  // 선택한 냥이의 베이스 분포 (잘먹음·보통 위주 = 좋아하는 베이스)
   const perBase = useMemo(() => {
     if (!cat) return []
     const map = new Map<string, { sum: number; n: number }>()
@@ -62,10 +62,26 @@ export function StatsScreen() {
       cur.n += 1
       map.set(base, cur)
     }
+    const total = [...map.values()].reduce((a, v) => a + v.n, 0)
     return [...map.entries()]
-      .map(([base, v]) => ({ base, score: Math.round((v.sum / v.n) * 100), n: v.n }))
-      .sort((a, b) => b.score - a.score)
+      .map(([base, v]) => ({
+        base,
+        score: Math.round((v.sum / v.n) * 100),
+        n: v.n,
+        share: total ? v.n / total : 0,
+      }))
+      .sort((a, b) => b.share - a.share)
   }, [records, cat])
+
+  const heroComment = !counts.total
+    ? '기록이 쌓이면 알려드릴게요'
+    : score >= 80
+      ? '아주 좋은 편이에요!'
+      : score >= 60
+        ? '좋은 편이에요!'
+        : score >= 40
+          ? '보통이에요'
+          : '취향이 아닌가 봐요…'
 
   if (snacks.length === 0) {
     return (
@@ -117,6 +133,7 @@ export function StatsScreen() {
               <div className="stat-hero-track">
                 <div className="stat-hero-fill" style={{ width: `${Math.max(4, score)}%` }} />
               </div>
+              <div className="stat-hero-comment">{heroComment}</div>
             </div>
             <div className="stat-hero-chara">
               <ReactionIcon
@@ -126,25 +143,21 @@ export function StatsScreen() {
             </div>
           </div>
 
-          {/* 베이스별 (선택 냥이 기준) */}
+          {/* 좋아하는 베이스 — 도넛 차트 */}
           {perBase.length > 0 && (
             <section className="stat-section">
               <h2 className="stat-title">{cat.name}가 좋아하는 베이스</h2>
-              <div className="card stat-card">
-                {perBase.map((r) => (
-                  <div key={r.base} className="rank-row">
-                    <div className="base-badge">{r.base}</div>
-                    <div className="rank-info">
-                      <div className="bar-track">
-                        <div
-                          className="bar-fill"
-                          style={{ width: `${Math.max(6, r.score)}%`, background: 'var(--accent-2)' }}
-                        />
-                      </div>
+              <div className="card donut-card">
+                <Donut data={perBase} />
+                <div className="donut-legend">
+                  {perBase.map((r, i) => (
+                    <div key={r.base} className="donut-leg-row">
+                      <i style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                      <span className="donut-leg-name">{r.base}</span>
+                      <span className="donut-leg-pct tabular">{Math.round(r.share * 100)}%</span>
                     </div>
-                    <div className="rank-score tabular" style={{ color: 'var(--accent-2)' }}>{r.score}</div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </section>
           )}
@@ -169,9 +182,40 @@ export function StatsScreen() {
   )
 }
 
+const DONUT_COLORS = ['#E5B958', '#7FA3D7', '#F49CB1', '#93B98C', '#E1873F', '#C9C2B6']
+
+/** 도넛 차트 — 베이스 분포 */
+function Donut({ data }: { data: { base: string; share: number }[] }) {
+  const R = 34
+  const C = 2 * Math.PI * R
+  let acc = 0
+  return (
+    <svg width={110} height={110} viewBox="0 0 100 100" className="donut">
+      {data.map((d, i) => {
+        const dash = d.share * C
+        const el = (
+          <circle
+            key={d.base}
+            cx="50"
+            cy="50"
+            r={R}
+            fill="none"
+            stroke={DONUT_COLORS[i % DONUT_COLORS.length]}
+            strokeWidth="16"
+            strokeDasharray={`${dash} ${C - dash}`}
+            strokeDashoffset={-acc}
+            transform="rotate(-90 50 50)"
+          />
+        )
+        acc += dash
+        return el
+      })}
+    </svg>
+  )
+}
+
 function RecordRow({ snack, level }: { snack: Snack; level: ReactionLevel }) {
   const url = usePhotoURL(snack.photoId)
-  const m = REACTION_META[level]
   return (
     <div className="record-row">
       <div className="record-thumb">
@@ -184,10 +228,7 @@ function RecordRow({ snack, level }: { snack: Snack; level: ReactionLevel }) {
           {snack.base ? ` · ${snack.base}` : ''}
         </div>
       </div>
-      <span className="react-pill" data-level={level}>
-        <ReactionIcon level={level} size={15} />
-        {m.short}
-      </span>
+      <ReactionIcon level={level} size={30} />
     </div>
   )
 }
