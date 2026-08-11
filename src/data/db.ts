@@ -1,7 +1,7 @@
 import { openDB, type DBSchema } from 'idb'
 import type { Settings } from './types'
 
-interface YumlogDB extends DBSchema {
+interface YamyamLogDB extends DBSchema {
   groups: { key: string; value: unknown }
   cats: { key: string; value: unknown; indexes: { byGroup: string } }
   snacks: { key: string; value: unknown; indexes: { byCreatedAt: number } }
@@ -21,7 +21,7 @@ export interface AppDB {
   ): { objectStore(n: string): { put(v: any, k?: IDBValidKey): any }; done: Promise<any> }
 }
 
-const DB_NAME = 'yumlog'
+const DB_NAME = 'yumlog' // 기존 기록 유지를 위해 DB 이름은 그대로 둠
 const DB_VERSION = 1
 const STORES = ['groups', 'cats', 'snacks', 'photos', 'meta']
 
@@ -64,7 +64,7 @@ let dbPromise: Promise<AppDB> | null = null
 async function openReal(): Promise<AppDB> {
   // indexedDB 접근 자체가 동기적으로 throw 될 수 있어(사생활 모드/샌드박스 iframe) 먼저 확인
   if (typeof indexedDB === 'undefined' || !indexedDB) throw new Error('no indexedDB')
-  const db = await openDB<YumlogDB>(DB_NAME, DB_VERSION, {
+  const db = await openDB<YamyamLogDB>(DB_NAME, DB_VERSION, {
     upgrade(db) {
       if (!db.objectStoreNames.contains('groups')) db.createObjectStore('groups', { keyPath: 'id' })
       if (!db.objectStoreNames.contains('cats')) {
@@ -92,7 +92,7 @@ export function getDB(): Promise<AppDB> {
       const finish = (db: AppDB, note?: string) => {
         if (settled) return
         settled = true
-        if (note) console.warn('[얌로그] ' + note + ' → 메모리 저장으로 전환합니다.')
+        if (note) console.warn('[얌얌로그] ' + note + ' → 메모리 저장으로 전환합니다.')
         resolve(db)
       }
       const timer = setTimeout(() => finish(new MemoryDB(), 'IndexedDB 응답 없음'), 2500)

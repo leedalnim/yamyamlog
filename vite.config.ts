@@ -10,7 +10,7 @@ declare const process: { env: Record<string, string | undefined> }
 const single = process.env.SINGLE === '1'
 
 export default defineConfig({
-  base: single ? './' : '/yumlog/',
+  base: single ? './' : '/yamyamlog/',
   plugins: single
     ? [react(), viteSingleFile()]
     : [
@@ -19,8 +19,8 @@ export default defineConfig({
           registerType: 'autoUpdate',
           includeAssets: ['favicon.svg'],
           manifest: {
-            name: '얌로그 - 고양이 기호성 체크',
-            short_name: '얌로그',
+            name: '얌얌로그 - 고양이 기호성 체크',
+            short_name: '얌얌로그',
             description: '우리집 고양이들이 어떤 간식을 잘 먹는지 기록하는 앱',
             theme_color: '#E8674A',
             background_color: '#F5F2EE',

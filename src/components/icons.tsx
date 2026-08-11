@@ -1,4 +1,4 @@
-// 얌로그 라인 아이콘 세트 (이모지 대신 사용)
+// 얌얌로그 라인 아이콘 세트 (이모지 대신 사용)
 // 24x24 뷰박스, stroke=currentColor 기반의 선 아이콘.
 
 import type { ReactNode } from 'react'

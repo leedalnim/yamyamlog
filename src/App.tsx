@@ -46,7 +46,7 @@ export default function App() {
         setSettings(s)
         applyTheme(s)
       } catch (err) {
-        console.error('[얌로그] 초기화 실패, 기본값으로 시작합니다.', err)
+        console.error('[얌얌로그] 초기화 실패, 기본값으로 시작합니다.', err)
         applyTheme(DEFAULT_SETTINGS)
       } finally {
         clearTimeout(safety)

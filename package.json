@@ -1,9 +1,9 @@
 {
-  "name": "yumlog",
+  "name": "yamyamlog",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "얌로그 - 고양이 기호성 체크 앱",
+  "description": "얌얌로그 - 고양이 기호성 체크 앱",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
