@@ -25,6 +25,10 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [filter, setFilter] = useState<string>('all') // 'all' | 종류(kind) | '기타'
   const [viewing, setViewing] = useState<Snack | null>(null)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [catId, setCatId] = useState<string>('') // '' = 전체 냥이
+  const [level, setLevel] = useState<'' | ReactionLevel>('') // '' = 반응 무관
+  const [sort, setSort] = useState<'recent' | 'name'>('recent')
 
   async function reload() {
     setSnacks(await listSnacks())
@@ -46,11 +50,27 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     return list
   }, [snacks])
 
+  const activeCount = (catId ? 1 : 0) + (level ? 1 : 0) + (sort !== 'recent' ? 1 : 0)
+
   const filtered = useMemo(() => {
-    if (filter === 'all') return snacks
-    if (filter === '기타') return snacks.filter((s) => !s.kind)
-    return snacks.filter((s) => s.kind === filter)
-  }, [snacks, filter])
+    let list = snacks
+    if (filter === '기타') list = list.filter((s) => !s.kind)
+    else if (filter !== 'all') list = list.filter((s) => s.kind === filter)
+
+    if (catId) list = list.filter((s) => !!s.reactions[catId])
+    if (level) {
+      list = list.filter((s) =>
+        catId
+          ? s.reactions[catId] === level
+          : Object.values(s.reactions).some((lv) => lv === level),
+      )
+    }
+
+    const sorted = [...list]
+    if (sort === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+    else sorted.sort((a, b) => b.createdAt - a.createdAt)
+    return sorted
+  }, [snacks, filter, catId, level, sort])
 
   // ---- 상세 페이지 ----
   if (viewing) {
@@ -93,8 +113,13 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
             {k}
           </button>
         ))}
-        <button className="chip-tab filter-chip" onClick={() => setFilter('all')} aria-label="필터 초기화">
+        <button
+          className={'chip-tab filter-chip' + (activeCount > 0 ? ' on' : '')}
+          onClick={() => setFilterOpen(true)}
+          aria-label="필터"
+        >
           <IconSliders size={16} />
+          {activeCount > 0 && <span className="filter-dot">{activeCount}</span>}
         </button>
       </div>
 
@@ -128,6 +153,71 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
           {filtered.map((s) => (
             <SnackCard key={s.id} snack={s} cats={cats} onOpen={() => setViewing(s)} />
           ))}
+        </div>
+      )}
+
+      {filterOpen && (
+        <div className="sheet-backdrop" onClick={() => setFilterOpen(false)}>
+          <div className="sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet-handle" />
+            <h2 className="sheet-title">필터</h2>
+
+            <div className="filter-sec">
+              <div className="filter-label">냥이</div>
+              <div className="chip-row">
+                <button className={'sel-chip' + (catId === '' ? ' on' : '')} data-accent="kind" onClick={() => setCatId('')}>전체</button>
+                {cats.map((c) => (
+                  <button
+                    key={c.id}
+                    className={'sel-chip' + (catId === c.id ? ' on' : '')}
+                    data-accent="kind"
+                    onClick={() => setCatId(c.id)}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="filter-sec">
+              <div className="filter-label">반응</div>
+              <div className="chip-row">
+                <button className={'sel-chip' + (level === '' ? ' on' : '')} data-accent="kind" onClick={() => setLevel('')}>전체</button>
+                {(['good', 'ok', 'bad'] as ReactionLevel[]).map((lv) => (
+                  <button
+                    key={lv}
+                    className={'sel-chip lv-chip' + (level === lv ? ' on' : '')}
+                    data-accent="kind"
+                    onClick={() => setLevel(lv)}
+                  >
+                    <ReactionIcon level={lv} size={18} />
+                    {lv === 'good' ? '잘먹음' : lv === 'ok' ? '보통' : '안먹음'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="filter-sec">
+              <div className="filter-label">정렬</div>
+              <div className="chip-row">
+                <button className={'sel-chip' + (sort === 'recent' ? ' on' : '')} data-accent="kind" onClick={() => setSort('recent')}>최신순</button>
+                <button className={'sel-chip' + (sort === 'name' ? ' on' : '')} data-accent="kind" onClick={() => setSort('name')}>이름순</button>
+              </div>
+            </div>
+
+            <div className="sheet-actions">
+              <button
+                className="btn"
+                style={{ flex: 1 }}
+                onClick={() => { setCatId(''); setLevel(''); setSort('recent'); setFilter('all') }}
+              >
+                초기화
+              </button>
+              <button className="btn btn-primary" style={{ flex: 2 }} onClick={() => setFilterOpen(false)}>
+                {filtered.length}개 보기
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
