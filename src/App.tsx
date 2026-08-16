@@ -92,7 +92,7 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
           <button className="update-btn" onClick={onApplyUpdate}>업데이트</button>
         </div>
       )}
-      {tab === 'feed' && <FeedScreen key={dataVersion} onAdd={() => setTab('add')} onChanged={refresh} />}
+      {tab === 'feed' && <FeedScreen onAdd={() => setTab('add')} onChanged={refresh} />}
       {tab === 'add' && <AddScreen onDone={() => { refresh(); setTab('feed') }} onCancel={() => setTab('feed')} />}
       {tab === 'stats' && <StatsScreen key={dataVersion} onAdd={() => setTab('add')} />}
       {tab === 'cats' && <CatsScreen />}
