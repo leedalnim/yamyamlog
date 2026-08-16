@@ -19,7 +19,7 @@ export default defineConfig({
     : [
         react(),
         VitePWA({
-          registerType: 'autoUpdate',
+          registerType: 'prompt',
           includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
           manifest: {
             name: '얌얌로그 - 고양이 기호성 체크',
@@ -40,14 +40,16 @@ export default defineConfig({
             maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
             cleanupOutdatedCaches: true,
             navigateFallback: 'index.html',
-            // skipWaiting/clientsClaim은 쓰지 않는다.
-            // 새 서비스워커가 즉시 활성화되면 열려 있던 화면이 참조하던
-            // 이전 해시 파일이 캐시에서 지워져 이미지가 깨진다.
-            // 대기시켜 두면 앱을 완전히 닫았다 열 때 새 버전이 적용된다.
           },
         }),
       ],
   build: single
-    ? { outDir: 'dist-single', cssCodeSplit: false, assetsInlineLimit: 100_000_000 }
+    ? {
+        outDir: 'dist-single',
+        cssCodeSplit: false,
+        assetsInlineLimit: 100_000_000,
+        // 단일 파일 빌드에는 서비스워커가 없다 (런타임에서 try/catch로 무시)
+        rollupOptions: { external: ['virtual:pwa-register'] },
+      }
     : {},
 })

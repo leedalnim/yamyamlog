@@ -23,7 +23,7 @@ function applyTheme(s: Settings) {
   root.dataset.mode = mode
 }
 
-export default function App() {
+export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
   const [ready, setReady] = useState(false)
   const [tab, setTab] = useState<Tab>('feed')
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
@@ -86,6 +86,12 @@ export default function App() {
 
   return (
     <div className="app">
+      {onApplyUpdate && (
+        <div className="update-bar">
+          새 버전이 준비됐어요
+          <button className="update-btn" onClick={onApplyUpdate}>업데이트</button>
+        </div>
+      )}
       {tab === 'feed' && <FeedScreen key={dataVersion} onAdd={() => setTab('add')} onChanged={refresh} />}
       {tab === 'add' && <AddScreen onDone={() => { refresh(); setTab('feed') }} onCancel={() => setTab('feed')} />}
       {tab === 'stats' && <StatsScreen key={dataVersion} onAdd={() => setTab('add')} />}
