@@ -33,7 +33,14 @@ export default defineConfig({
               { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
             ],
           },
-          workbox: { maximumFileSizeToCacheInBytes: 6 * 1024 * 1024 },
+          workbox: {
+            maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+            // 이전 버전 캐시가 화면을 붙잡지 않도록 즉시 교체
+            cleanupOutdatedCaches: true,
+            skipWaiting: true,
+            clientsClaim: true,
+            navigateFallback: 'index.html',
+          },
         }),
       ],
   build: single
