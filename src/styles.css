@@ -225,3 +225,12 @@ html[data-theme] .empty .big { color: color-mix(in srgb, var(--muted) 55%, trans
 
 .muted { color: var(--muted); }
 .tabular { font-variant-numeric: tabular-nums; }
+
+/* 하단 네비는 항상 화면 최하단에 고정되어야 한다.
+   조상 요소에 transform/filter/perspective가 생기면 position:fixed가
+   그 요소 기준으로 바뀌어 네비가 화면 중간에 떠 버리므로 명시적으로 금지한다. */
+.app, .screen, .detail-page {
+  transform: none;
+  filter: none;
+  perspective: none;
+}
