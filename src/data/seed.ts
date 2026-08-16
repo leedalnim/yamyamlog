@@ -15,7 +15,7 @@ export const SEED_CATS: Cat[] = [
 ]
 
 /** 시드 버전 — 올리면 기존 사용자에게도 시드를 한 번 다시 적용 */
-export const SEED_VERSION = 3
+export const SEED_VERSION = 4
 
 /** 사진이 있는 시드 기록의 photoId */
 export const SEED_PHOTO_ID = 'p-churu-1'
@@ -40,5 +40,22 @@ export const SEED_SNACKS: SeedSnack[] = [
     base: '연어',
     reactions: { 'c-tangja': 'good', 'c-yuja': 'good' },
     agoMs: 1000 * 60 * 60 * 24, // 하루 전
+  },
+  {
+    id: 's-jogong-green-hoki',
+    name: '조공 그린 호키',
+    kind: '간식',
+    base: '호키',
+    memo: '탱자·유자 둘 다 기호성이 좋지 않음',
+    reactions: { 'c-tangja': 'bad', 'c-yuja': 'bad' },
+    agoMs: 1000 * 60 * 60 * 3, // 3시간 전
+  },
+  {
+    id: 's-jogong-yellow',
+    name: '조공 옐로우',
+    kind: '간식',
+    memo: '잘 먹지도, 안 먹지도 않는 중간 반응',
+    reactions: { 'c-tangja': 'ok' },
+    agoMs: 1000 * 60 * 60 * 2, // 2시간 전
   },
 ]
