@@ -53,22 +53,25 @@ export function usePhotoURL(photoId?: string) {
 export function ReactionFaces({
   cats,
   reactions,
+  variant = 'chip',
 }: {
   cats: Cat[]
   reactions: Record<string, ReactionLevel>
+  /** chip: 피드 카드용 작은 칩 · large: 상세용 큰 얼굴 */
+  variant?: 'chip' | 'large'
 }) {
   return (
-    <div className="face-grid">
+    <div className={'face-grid face-grid--' + variant}>
       {cats.map((cat) => {
         const lv = reactions[cat.id]
         return (
           <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')}>
-            <span className="face-name">{cat.name}</span>
             {lv ? (
-              <ReactionIcon level={lv} size={40} />
+              <ReactionIcon level={lv} size={variant === 'large' ? 46 : 40} />
             ) : (
-              <FaceNeutral size={40} dim />
+              <FaceNeutral size={variant === 'large' ? 46 : 40} dim />
             )}
+            <span className="face-name">{cat.name}</span>
           </div>
         )
       })}

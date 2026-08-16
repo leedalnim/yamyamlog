@@ -240,10 +240,6 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
             <div className="snack-name-row">
               <span className="snack-name">{snack.name}</span>
             </div>
-            <div className="snack-tags-row">
-              {snack.kind && <KindTag v={snack.kind} />}
-              {snack.base && <BaseTag v={snack.base} />}
-            </div>
           </div>
           <span className="snack-dots"><IconDots size={19} /></span>
         </div>
@@ -328,7 +324,7 @@ function SnackDetail({
         {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
         <div style={{ marginTop: 14 }}>
           <div className="field-label muted">고양이별 반응</div>
-          <ReactionFaces cats={cats} reactions={snack.reactions} />
+          <ReactionFaces cats={cats} reactions={snack.reactions} variant="large" />
         </div>
 
         {/* ---- 수정 (아코디언) ---- */}

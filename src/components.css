@@ -892,3 +892,24 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .face-name { font-size: 11.5px; font-weight: 700; color: #d9782e; }
 /* 반응이 없는 냥이는 표시하지 않음 */
 .face-cell.blank { display: none; }
+
+/* ===== 칩 좌우 여백 균형 ===== */
+.face-grid--chip .face-cell { padding: 3px 11px 3px 7px; gap: 6px; }
+
+/* ===== 상세 화면: 큰 얼굴 + 아래 이름 ===== */
+.face-grid--large {
+  justify-content: space-around;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+.face-grid--large .face-cell {
+  flex-direction: column;
+  width: 62px;
+  gap: 5px;
+  padding: 0;
+  background: none;
+  border: none;
+}
+.face-grid--large .face-cell img { width: 46px !important; }
+.face-grid--large .face-name { color: var(--muted); font-size: 12px; }
+.face-grid--large .face-cell.blank { display: flex; opacity: 0.45; }
