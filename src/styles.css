@@ -2,20 +2,20 @@
 
 /* Headspace풍 팔레트 — 포근한 크림 바탕 + 소프트 블루/샌드/오렌지, 외곽선 없는 말랑한 면 */
 :root {
-  --bg: #ffffff;
+  --bg: #fffdfb;
   --surface: #ffffff;
   --surface-2: #f6f1e7;
-  --ink: #4a4440;
-  --muted: #98897a;
-  --line: #f0eadf;
-  --primary: #e1873f;
+  --ink: #33292a;
+  --muted: #8e8781;
+  --line: #f1ece5;
+  --primary: #fa7f38;
   --primary-ink: #ffffff;
-  --accent-2: #7fa3d7;
-  --good: #e1873f;
+  --accent-2: #7fb3e8;
+  --good: #fa7f38;
   --good-bg: #f9e4cb;
-  --ok: #e5b958;
+  --ok: #f2bc57;
   --ok-bg: #f8efd2;
-  --bad: #7fa3d7;
+  --bad: #7fb3e8;
   --bad-bg: #e3edf9;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -25,6 +25,11 @@
   /* 본문은 잘 읽히는 일반체, 손글씨(Gaegu)는 제목·포인트에만 */
   --font: 'Pretendard Variable', 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, -apple-system, sans-serif;
   --font-hand: var(--font);
+  --logo: #e97c3b;
+  --hero: #fdebcf;
+  --react-tile: #fff4e2;
+  --line-soft: #f3e7d6;
+  --heart: #f1503c;
   --nav-h: 64px;
 }
 

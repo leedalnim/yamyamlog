@@ -270,7 +270,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   )
 }
 
-const DONUT_COLORS = ['#E5B958', '#7FA3D7', '#F49CB1', '#93B98C', '#E1873F', '#C9C2B6']
+const DONUT_COLORS = ['#7FB3E8', '#FBC15E', '#F9A8C4', '#DCD8D3', '#FA7F38', '#F2BC57']
 
 /** 도넛 차트 — 베이스 분포 */
 function Donut({ data }: { data: { base: string; share: number }[] }) {
