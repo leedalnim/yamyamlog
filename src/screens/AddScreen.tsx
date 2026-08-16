@@ -150,7 +150,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
       </div>
 
       {/* 저장 — 맨 하단 */}
-      <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>
+      <button className="btn btn-primary btn-block" style={{ marginTop: 22 }} disabled={!canSave || saving} onClick={save}>
         {saving ? '저장중…' : '기록 저장하기'}
       </button>
     </div>

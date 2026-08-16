@@ -7,18 +7,13 @@ import type { Snack } from '../data/types'
 const CALC_URL = 'https://leedalnim.github.io/pet-food-calc/'
 
 export function CatsScreen() {
-  const { cats, groups } = useCatsAndGroups()
+  const { cats } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [calcOpen, setCalcOpen] = useState(false)
 
   useEffect(() => {
     ;(async () => setSnacks(await listSnacks()))()
   }, [])
-
-  const byGroup = useMemo(
-    () => groups.map((g) => ({ group: g, members: cats.filter((c) => c.groupId === g.id) })),
-    [cats, groups],
-  )
 
   // 한눈에 보기
   const monthStart = useMemo(() => {
@@ -34,19 +29,14 @@ export function CatsScreen() {
 
       <section className="stat-section">
         <div className="card record-list">
-          {byGroup.map(({ group, members }) => (
-            <div className="cat-group" key={group.id}>
-              <div className="cat-group-label">{group.name}</div>
-              {members.map((cat) => (
-                <div className="record-row" key={cat.id}>
-                  <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
-                    <BlobFace color={CAT_CREAM} size={30} />
-                  </div>
-                  <div className="record-info">
-                    <div className="record-name">{cat.name}</div>
-                  </div>
-                </div>
-              ))}
+          {cats.map((cat) => (
+            <div className="record-row" key={cat.id}>
+              <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
+                <BlobFace color={CAT_CREAM} size={30} />
+              </div>
+              <div className="record-info">
+                <div className="record-name">{cat.name}</div>
+              </div>
             </div>
           ))}
         </div>
