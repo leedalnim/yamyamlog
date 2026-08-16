@@ -913,3 +913,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .face-grid--large .face-cell img { width: 46px !important; }
 .face-grid--large .face-name { color: var(--muted); font-size: 12px; }
 .face-grid--large .face-cell.blank { display: flex; opacity: 0.45; }
+
+/* 반응 편집: 그룹 없이 한 목록 — 행 간격만 유지 */
+.react-editor { gap: 10px; }
+.chooser { margin-bottom: 0; }

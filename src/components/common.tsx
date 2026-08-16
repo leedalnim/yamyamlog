@@ -188,12 +188,11 @@ export function BaseChooser(p: { value: string; onChange: (v: string) => void })
 /** 그룹별로 고양이를 나눠서 반응을 선택하는 편집기 */
 export function ReactionEditor({
   cats,
-  groups,
   value,
   onChange,
 }: {
   cats: Cat[]
-  groups: Group[]
+  groups?: Group[]
   value: Record<string, ReactionLevel>
   onChange: (next: Record<string, ReactionLevel>) => void
 }) {
@@ -205,23 +204,14 @@ export function ReactionEditor({
   }
   return (
     <div className="react-editor">
-      {groups.map((g) => {
-        const members = cats.filter((c) => c.groupId === g.id)
-        if (members.length === 0) return null
-        return (
-          <div key={g.id} className="react-group">
-            <div className="react-group-title">{g.name}</div>
-            {members.map((cat) => (
-              <ReactionChooser
-                key={cat.id}
-                cat={cat}
-                value={value[cat.id]}
-                onChange={(lv) => setOne(cat.id, lv)}
-              />
-            ))}
-          </div>
-        )
-      })}
+      {cats.map((cat) => (
+        <ReactionChooser
+          key={cat.id}
+          cat={cat}
+          value={value[cat.id]}
+          onChange={(lv) => setOne(cat.id, lv)}
+        />
+      ))}
     </div>
   )
 }
