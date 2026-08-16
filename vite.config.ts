@@ -38,11 +38,12 @@ export default defineConfig({
           },
           workbox: {
             maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
-            // 이전 버전 캐시가 화면을 붙잡지 않도록 즉시 교체
             cleanupOutdatedCaches: true,
-            skipWaiting: true,
-            clientsClaim: true,
             navigateFallback: 'index.html',
+            // skipWaiting/clientsClaim은 쓰지 않는다.
+            // 새 서비스워커가 즉시 활성화되면 열려 있던 화면이 참조하던
+            // 이전 해시 파일이 캐시에서 지워져 이미지가 깨진다.
+            // 대기시켜 두면 앱을 완전히 닫았다 열 때 새 버전이 적용된다.
           },
         }),
       ],
