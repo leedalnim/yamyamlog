@@ -869,3 +869,26 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 냥이 정보 행 ===== */
 .cat-kcal { font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+
+/* ===== 반응 얼굴: 칩 형태 (기록된 냥이만, 주황 라인) ===== */
+.face-grid {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 9px;
+  padding-top: 10px;
+}
+.face-cell {
+  width: auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  padding: 3px 11px 3px 4px;
+  background: var(--surface);
+  border: 1.5px solid var(--primary);
+}
+.face-cell img { width: 24px !important; }
+.face-name { font-size: 11.5px; font-weight: 700; color: #d9782e; }
+/* 반응이 없는 냥이는 표시하지 않음 */
+.face-cell.blank { display: none; }
