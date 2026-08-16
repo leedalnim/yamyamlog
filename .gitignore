@@ -8,3 +8,4 @@ dist-ssr
 
 tsconfig.tsbuildinfo
 dist-single
+*.mjs
