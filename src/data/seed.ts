@@ -8,14 +8,14 @@ export const SEED_GROUPS: Group[] = [
 ]
 
 export const SEED_CATS: Cat[] = [
-  { id: 'c-tangja', name: '탱자', groupId: 'g-a', color: '#E1873F', order: 0 },
-  { id: 'c-yuja', name: '유자', groupId: 'g-a', color: '#E8C05C', order: 1 },
-  { id: 'c-kong', name: '콩이', groupId: 'g-b', color: '#A98868', order: 2 },
-  { id: 'c-namul', name: '나물이', groupId: 'g-b', color: '#93B98C', order: 3 },
+  { id: 'c-tangja', name: '탱자', groupId: 'g-a', color: '#E1873F', order: 0, weightKg: 3, ageYears: 5 },
+  { id: 'c-yuja', name: '유자', groupId: 'g-a', color: '#E8C05C', order: 1, weightKg: 3, ageYears: 5 },
+  { id: 'c-kong', name: '콩이', groupId: 'g-b', color: '#A98868', order: 2, weightKg: 7, ageYears: 9 },
+  { id: 'c-namul', name: '나물이', groupId: 'g-b', color: '#93B98C', order: 3, weightKg: 6.5, ageYears: 6.5 },
 ]
 
 /** 시드 버전 — 올리면 기존 사용자에게도 시드를 한 번 다시 적용 */
-export const SEED_VERSION = 4
+export const SEED_VERSION = 5
 
 /** 사진이 있는 시드 기록의 photoId */
 export const SEED_PHOTO_ID = 'p-churu-1'

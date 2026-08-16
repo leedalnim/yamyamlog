@@ -21,6 +21,10 @@ export interface Cat {
   /** 아이콘 색상 포인트 */
   color: string
   order: number
+  /** 몸무게(kg) */
+  weightKg?: number
+  /** 나이(년) */
+  ageYears?: number
 }
 
 /** 간식 기록 1건 */

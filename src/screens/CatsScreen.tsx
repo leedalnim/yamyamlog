@@ -36,7 +36,22 @@ export function CatsScreen() {
               </div>
               <div className="record-info">
                 <div className="record-name">{cat.name}</div>
+                {(cat.ageYears != null || cat.weightKg != null) && (
+                  <div className="record-sub muted">
+                    {[
+                      cat.ageYears != null ? `${cat.ageYears}살` : null,
+                      cat.weightKg != null ? `${cat.weightKg}kg` : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </div>
+                )}
               </div>
+              {cat.weightKg != null && (
+                <span className="cat-kcal muted">
+                  하루 {Math.round(70 * Math.pow(cat.weightKg, 0.75) * 1.0)}kcal
+                </span>
+              )}
             </div>
           ))}
         </div>
