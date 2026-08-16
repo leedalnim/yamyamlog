@@ -967,3 +967,11 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 }
 .detail-edit-btn.open { border-color: var(--primary); color: var(--primary); }
 .detail-edit-body { padding-top: 18px; }
+
+/* ===== 냥이 행: 눌러서 수정 ===== */
+.cat-row { width: 100%; background: none; border: none; font-family: inherit; color: inherit; cursor: pointer; }
+.cat-row .record-info { text-align: left; }
+.cat-row-edit { color: var(--muted); line-height: 0; flex: none; margin-left: 8px; }
+.cat-edit-row { display: flex; gap: 12px; }
+.cat-edit-row .field { flex: 1; }
+.cat-edit-hint { font-size: 12.5px; margin: -6px 0 16px; }

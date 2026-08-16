@@ -55,6 +55,11 @@ export async function listCats(): Promise<Cat[]> {
   return all.sort((a, b) => a.order - b.order)
 }
 
+export async function updateCat(cat: Cat): Promise<void> {
+  const db = await getDB()
+  await db.put('cats', cat)
+}
+
 // ---------- 사진 ----------
 export async function savePhoto(blob: Blob): Promise<string> {
   const db = await getDB()

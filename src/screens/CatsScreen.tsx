@@ -1,19 +1,29 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useCatsAndGroups } from '../components/common'
-import { BlobFace, CAT_CREAM, IconChevronRight } from '../components/icons'
-import { listSnacks } from '../data/repo'
-import type { Snack } from '../data/types'
+import { BlobFace, CAT_CREAM, IconChevronRight, IconPencil } from '../components/icons'
+import { listCats, listSnacks, updateCat } from '../data/repo'
+import type { Cat, Snack } from '../data/types'
 
 const CALC_URL = 'https://leedalnim.github.io/pet-food-calc/'
 
+/** 몸무게 기반 하루 권장 칼로리 (RER = 70 × kg^0.75) */
+function dailyKcal(weightKg: number): number {
+  return Math.round(70 * Math.pow(weightKg, 0.75))
+}
+
 export function CatsScreen() {
-  const { cats } = useCatsAndGroups()
+  const { cats: initialCats } = useCatsAndGroups()
+  const [cats, setCats] = useState<Cat[]>([])
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [calcOpen, setCalcOpen] = useState(false)
+  const [editing, setEditing] = useState<Cat | null>(null)
 
   useEffect(() => {
     ;(async () => setSnacks(await listSnacks()))()
   }, [])
+  useEffect(() => {
+    setCats(initialCats)
+  }, [initialCats])
 
   // 한눈에 보기
   const monthStart = useMemo(() => {
@@ -30,7 +40,7 @@ export function CatsScreen() {
       <section className="stat-section">
         <div className="card record-list">
           {cats.map((cat) => (
-            <div className="record-row" key={cat.id}>
+            <button className="record-row cat-row" key={cat.id} onClick={() => setEditing(cat)}>
               <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
                 <BlobFace color={CAT_CREAM} size={30} />
               </div>
@@ -48,11 +58,10 @@ export function CatsScreen() {
                 )}
               </div>
               {cat.weightKg != null && (
-                <span className="cat-kcal muted">
-                  하루 {Math.round(70 * Math.pow(cat.weightKg, 0.75) * 1.0)}kcal
-                </span>
+                <span className="cat-kcal muted">하루 {dailyKcal(cat.weightKg)}kcal</span>
               )}
-            </div>
+              <span className="cat-row-edit"><IconPencil size={15} /></span>
+            </button>
           ))}
         </div>
       </section>
@@ -94,6 +103,18 @@ export function CatsScreen() {
         + 냥이 추가하기
       </button>
 
+      {/* 냥이 정보 수정 */}
+      {editing && (
+        <CatEditSheet
+          cat={editing}
+          onClose={() => setEditing(null)}
+          onSaved={async () => {
+            setEditing(null)
+            setCats(await listCats())
+          }}
+        />
+      )}
+
       {/* 계산기 레이어 팝업 */}
       {calcOpen && (
         <div className="sheet-backdrop" onClick={() => setCalcOpen(false)}>
@@ -108,6 +129,97 @@ export function CatsScreen() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+function CatEditSheet({
+  cat,
+  onClose,
+  onSaved,
+}: {
+  cat: Cat
+  onClose: () => void
+  onSaved: () => void
+}) {
+  const [name, setName] = useState(cat.name)
+  const [weight, setWeight] = useState(cat.weightKg != null ? String(cat.weightKg) : '')
+  const [age, setAge] = useState(cat.ageYears != null ? String(cat.ageYears) : '')
+  const [saving, setSaving] = useState(false)
+
+  const weightNum = Number(weight)
+  const ageNum = Number(age)
+  const validWeight = weight.trim() !== '' && !Number.isNaN(weightNum) && weightNum > 0
+  const validAge = age.trim() !== '' && !Number.isNaN(ageNum) && ageNum >= 0
+
+  async function save() {
+    setSaving(true)
+    try {
+      await updateCat({
+        ...cat,
+        name: name.trim() || cat.name,
+        weightKg: validWeight ? weightNum : undefined,
+        ageYears: validAge ? ageNum : undefined,
+      })
+      onSaved()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="sheet-backdrop" onClick={onClose}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="sheet-handle" />
+        <h2 className="sheet-title">{cat.name} 정보</h2>
+
+        <div className="field">
+          <label>이름</label>
+          <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+        </div>
+
+        <div className="cat-edit-row">
+          <div className="field">
+            <label>나이 (살)</label>
+            <input
+              className="input"
+              type="number"
+              inputMode="decimal"
+              step="0.5"
+              min="0"
+              placeholder="예: 5"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>몸무게 (kg)</label>
+            <input
+              className="input"
+              type="number"
+              inputMode="decimal"
+              step="0.1"
+              min="0"
+              placeholder="예: 3.5"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {validWeight && (
+          <p className="cat-edit-hint muted">
+            하루 권장 칼로리 약 <b>{dailyKcal(weightNum)}kcal</b> (중성화한 실내묘 기준)
+          </p>
+        )}
+
+        <div className="sheet-actions">
+          <button className="btn" style={{ flex: 1 }} onClick={onClose}>취소</button>
+          <button className="btn btn-primary" style={{ flex: 2 }} disabled={saving} onClick={save}>
+            {saving ? '저장중…' : '저장하기'}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
