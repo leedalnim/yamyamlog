@@ -949,3 +949,21 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-weight: 800;
   font-family: inherit;
 }
+
+/* ===== 상세 화면 수정 버튼 ===== */
+.detail-edit { margin-top: 22px; }
+.btn-outline {
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+}
+.detail-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 13px 18px;
+  font-size: 14.5px;
+}
+.detail-edit-btn.open { border-color: var(--primary); color: var(--primary); }
+.detail-edit-body { padding-top: 18px; }

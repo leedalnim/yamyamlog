@@ -11,7 +11,7 @@ import {
 } from '../components/common'
 import type { Cat, Group, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { CatDoodle, IconBell, IconChevronDown, IconChevronLeft, IconChevronRight, IconDots, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
+import { CatDoodle, IconBell, IconChevronLeft, IconChevronRight, IconDots, IconPencil, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
 import bannerCatUrl from '../assets/banner-cat.png'
 import logoUrl from '../assets/logo.svg'
 
@@ -327,14 +327,18 @@ function SnackDetail({
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="large" />
         </div>
 
-        {/* ---- 수정 (아코디언) ---- */}
-      <div className="card edit-acc">
-        <button className="edit-acc-head" onClick={() => setEditOpen((v) => !v)} aria-expanded={editOpen}>
-          수정하기
-          <span className={'snack-chev' + (editOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
+        {/* ---- 수정 ---- */}
+      <div className="detail-edit">
+        <button
+          className={'btn btn-outline btn-block detail-edit-btn' + (editOpen ? ' open' : '')}
+          onClick={() => setEditOpen((v) => !v)}
+          aria-expanded={editOpen}
+        >
+          <IconPencil size={17} />
+          {editOpen ? '수정 닫기' : '수정하기'}
         </button>
         {editOpen && (
-          <div className="edit-acc-body">
+          <div className="detail-edit-body">
             <div className="field">
               <label>제품 이름</label>
               <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
