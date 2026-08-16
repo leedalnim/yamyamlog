@@ -32,24 +32,25 @@ export function CatsScreen() {
     <div className="screen">
       <div className="topbar"><h1>우리 냥이들</h1></div>
 
-      {byGroup.map(({ group, members }) => (
-        <section className="stat-section" key={group.id}>
-          <h2 className="stat-title">{group.name}</h2>
-          <div className="card record-list">
-            {members.map((cat) => (
-              <div className="record-row" key={cat.id}>
-                <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
-                  <BlobFace color={CAT_CREAM} size={30} />
+      <section className="stat-section">
+        <div className="card record-list">
+          {byGroup.map(({ group, members }) => (
+            <div className="cat-group" key={group.id}>
+              <div className="cat-group-label">{group.name}</div>
+              {members.map((cat) => (
+                <div className="record-row" key={cat.id}>
+                  <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
+                    <BlobFace color={CAT_CREAM} size={30} />
+                  </div>
+                  <div className="record-info">
+                    <div className="record-name">{cat.name}</div>
+                  </div>
                 </div>
-                <div className="record-info">
-                  <div className="record-name">{cat.name}</div>
-                  <div className="record-sub muted">{group.name}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* 한눈에 보기 */}
       <section className="stat-section">

@@ -71,38 +71,14 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         <h1 style={{ fontSize: 19 }}>간식 기록</h1>
       </div>
 
-      {/* 사진 — 입력 위 */}
-      <div className="field">
-        <label>사진 (선택)</label>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          hidden
-          onChange={onPickPhoto}
-        />
-        {photoPreview ? (
-          <div className="photo-box">
-            <img src={photoPreview} alt="간식 사진" />
-            <div className="photo-actions">
-              <button className="mini-btn" onClick={() => fileRef.current?.click()}>다시 찍기</button>
-              <button className="mini-btn" onClick={runOCR} disabled={ocrState === 'running'}>
-                {ocrState === 'running' ? (
-                  `읽는 중 ${Math.round(ocrProgress * 100)}%`
-                ) : (
-                  <><IconScan size={16} />사진에서 제목 읽기</>
-                )}
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button className="photo-drop slim" onClick={() => fileRef.current?.click()}>
-            <IconCamera size={20} />
-            사진 추가하기
-          </button>
-        )}
-      </div>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+        onChange={onPickPhoto}
+      />
 
       {/* 제목 — 가장 중요 */}
       <div className="field">
@@ -122,13 +98,36 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
       </div>
 
       {/* 선택 정보 — 접어서 짧게 */}
-      <div className="card edit-acc" style={{ marginTop: 4 }}>
+      <div className="card edit-acc add-screen-acc" style={{ marginTop: 4 }}>
         <button className="edit-acc-head" onClick={() => setMoreOpen((v) => !v)} aria-expanded={moreOpen}>
-          자세히 입력하기 (선택)
+          {'자세히 입력하기 (사진 · 종류 · 베이스 · 메모)'}
           <span className={'snack-chev' + (moreOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
         </button>
         {moreOpen && (
           <div className="edit-acc-body">
+            <div className="field">
+              <label>사진</label>
+              {photoPreview ? (
+                <div className="photo-box">
+                  <img src={photoPreview} alt="간식 사진" />
+                  <div className="photo-actions">
+                    <button className="mini-btn" onClick={() => fileRef.current?.click()}>다시 찍기</button>
+                    <button className="mini-btn" onClick={runOCR} disabled={ocrState === 'running'}>
+                      {ocrState === 'running' ? (
+                        `읽는 중 ${Math.round(ocrProgress * 100)}%`
+                      ) : (
+                        <><IconScan size={16} />사진에서 제목 읽기</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button className="photo-drop slim" onClick={() => fileRef.current?.click()}>
+                  <IconCamera size={20} />
+                  사진 추가하기
+                </button>
+              )}
+            </div>
             <div className="field">
               <label>종류</label>
               <KindChooser value={kind} onChange={setKind} />
@@ -149,8 +148,6 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
           </div>
         )}
       </div>
-
-      <p className="add-hint muted">이름과 반응만으로 저장돼요. 나머지는 나중에 수정해도 괜찮아요.</p>
 
       {/* 저장 — 맨 하단 */}
       <button className="btn btn-primary btn-block" disabled={!canSave || saving} onClick={save}>

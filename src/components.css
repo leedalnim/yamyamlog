@@ -852,3 +852,17 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .filter-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
 .lv-chip { display: inline-flex; align-items: center; gap: 6px; }
 .lv-chip img { display: block; }
+
+/* ===== 기록 화면 아코디언 헤더: 텍스트 축소 ===== */
+.add-screen-acc .edit-acc-head { font-size: 14.5px; font-weight: 700; padding: 13px 16px; }
+
+/* ===== 냥이들: 그룹을 한 카드 안에서 라벨로 구분 ===== */
+.cat-group + .cat-group { border-top: 1px solid var(--line); }
+.cat-group-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  padding: 13px 16px 4px;
+}
+.cat-group .record-row:first-of-type { padding-top: 4px; }
