@@ -894,7 +894,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .face-cell.blank { display: none; }
 
 /* ===== 칩 좌우 여백 균형 ===== */
-.face-grid--chip .face-cell { padding: 3px 11px 3px 7px; gap: 6px; }
+.face-grid--chip .face-cell { padding: 3px 11px 3px 10px; gap: 6px; }
 
 /* ===== 상세 화면: 큰 얼굴 + 아래 이름 ===== */
 .face-grid--large {
