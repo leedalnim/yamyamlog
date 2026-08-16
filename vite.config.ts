@@ -9,7 +9,10 @@ declare const process: { env: Record<string, string | undefined> }
 // (아티팩트/오프라인 미리보기용). 기본 빌드는 PWA + GitHub Pages 배포용.
 const single = process.env.SINGLE === '1'
 
+const BUILD_ID = new Date().toISOString().slice(0, 16).replace('T', ' ')
+
 export default defineConfig({
+  define: { __BUILD_ID__: JSON.stringify(BUILD_ID) },
   base: single ? './' : '/yamyamlog/',
   plugins: single
     ? [react(), viteSingleFile()]

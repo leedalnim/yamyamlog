@@ -38,7 +38,7 @@ export function SettingsScreen({
         </div>
       </section>
 
-      <div className="app-foot muted">얌얌로그 v0.1 · 콩이 · 나물이 · 탱자 · 유자</div>
+      <div className="app-foot muted">얌얌로그 v0.1 · 콩이 · 나물이 · 탱자 · 유자<br />빌드 {__BUILD_ID__}</div>
     </div>
   )
 }
