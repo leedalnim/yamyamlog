@@ -4,7 +4,7 @@ import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
-import heroUrl from '../assets/hero.png'
+import heroUrl from '../assets/cat-cushion.png'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)

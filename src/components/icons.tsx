@@ -3,9 +3,9 @@
 
 import type { ReactNode } from 'react'
 import type { ReactionLevel } from '../data/types'
-import faceGoodUrl from '../assets/face-good.png'
-import faceOkUrl from '../assets/face-ok.png'
-import faceBadUrl from '../assets/face-bad.png'
+import faceGoodUrl from '../assets/faces/good.svg'
+import faceOkUrl from '../assets/faces/ok.svg'
+import faceBadUrl from '../assets/faces/bad.svg'
 
 type P = { size?: number; className?: string; strokeWidth?: number }
 
@@ -28,15 +28,80 @@ function svg(children: ReactNode, { size = 24, className, strokeWidth = 1.8 }: P
   )
 }
 
-export const IconHome = (p: P) =>
-  svg(
-    <>
-      <path d="M3 10.5 12 3l9 7.5" />
-      <path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5" />
-      <path d="M9.5 21v-6h5v6" />
-    </>,
-    p,
-  )
+/* ===== 피그마에서 내보낸 아이콘 ===== */
+export const IconHome = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M2.45001 9.24998L11.05 2.34998L19.65 9.24998V18.35C19.65 19.25 18.95 19.95 18.05 19.95H4.05001C3.15001 19.95 2.45001 19.25 2.45001 18.35V9.24998Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconChart = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M4.90002 6.59998V7.19998" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4.90002 11.3V18.3" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M10.7 4.30005V18.3" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M16.5 8.90002V18.3" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconCatFace = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M3.75 7.75V2.75L8.15 5.55C9.05 5.25 10.05 5.15 11.05 5.15C12.05 5.15 13.05 5.25 13.95 5.55L18.35 2.75V7.75C19.65 9.25 20.35 10.95 20.35 12.85C20.35 17.05 16.25 20.35 11.05 20.35C5.85 20.35 1.75 17.05 1.75 12.85C1.75 10.95 2.45 9.25 3.75 7.75Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="7.50002" cy="10.5" r="1.1" fill="currentColor"/>
+    <circle cx="14.5" cy="10.5" r="1.1" fill="currentColor"/>
+    <path d="M9.59998 13.2C10.1 14 10.6 14.3 11.2 14.3C11.8 14.3 12.3 14 12.8 13.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconSettings = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M9.35 3.95006L9.55 1.06006H12.55L12.75 3.95006L14.86 4.83006L17.05 2.93006L19.17 5.05006L17.27 7.24006L18.15 9.35006L21.04 9.55006V12.5501L18.15 12.7501L17.27 14.8601L19.17 17.0501L17.05 19.1701L14.86 17.2701L12.75 18.1501L12.55 21.0401H9.55L9.35 18.1501L7.24 17.2701L5.05 19.1701L2.93 17.0501L4.83 14.8601L3.95 12.7501L1.06 12.5501V9.55006L3.95 9.35006L4.83 7.24006L2.93 5.05006L5.05 2.93006L7.24 4.83006L9.35 3.95006Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="11" cy="11" r="2.35" stroke="currentColor" strokeWidth="1.9"/>
+  </svg>
+)
+export const IconBell = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M17.15 8.64995C17.15 5.24995 14.45 2.44995 11.05 2.44995C7.64998 2.44995 4.94998 5.24995 4.94998 8.64995V13.25L2.84998 16.25H19.25L17.15 13.25V8.64995Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8.84998 18.25C9.24998 19.45 10.15 20.15 11.15 20.15C12.15 20.15 13.05 19.45 13.45 18.25" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconHeart = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 20.6C12 20.6 2.40002 14.6 2.40002 8.40005C2.40002 5.20005 4.80002 2.80005 7.70002 2.80005C9.60002 2.80005 11.2 3.90005 12 5.20005C12.8 3.90005 14.4 2.80005 16.3 2.80005C19.2 2.80005 21.6 5.20005 21.6 8.40005C21.6 14.6 12 20.6 12 20.6Z" fill="#F1503C"/>
+  </svg>
+)
+export const IconPencil = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M19.45 11.65V18.45C19.45 19.35 18.75 20.05 17.85 20.05H4.25002C3.35002 20.05 2.65002 19.35 2.65002 18.45V4.44998C2.65002 3.54998 3.35002 2.84998 4.25002 2.84998H11.45" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9.15002 14.05L9.95002 10.85L18.05 2.75L20.35 5.05L12.25 13.15L9.15002 14.05Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconCamera = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="3.95" y="5.25005" width="16.1" height="13.5" rx="2.25" stroke="currentColor" strokeWidth="1.9"/>
+    <circle cx="8.3" cy="8.3" r="1.3" fill="currentColor"/>
+    <path d="M4.65002 17L8.88687 12L12.2027 15.4615L14.9658 12.7692L18.65 17" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconCalendar = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <rect x="3.95" y="5.54998" width="16.1" height="14.7" rx="2.25" stroke="currentColor" strokeWidth="1.9"/>
+    <path d="M4.15002 9.34998L20.15 9.34997" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M6.65002 1.84998V5.24998" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M15.45 1.84998V5.24998" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="9.40002" cy="14.6" r="1" fill="currentColor"/>
+    <circle cx="14.6" cy="14.6" r="1" fill="currentColor"/>
+  </svg>
+)
+export const IconChevronRight = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M8 4L14.4 10.8L8 17.6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+export const IconDots = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="6" cy="12" r="2" fill="currentColor"/>
+    <circle cx="12.6" cy="12" r="2" fill="currentColor"/>
+    <circle cx="19.2" cy="12" r="2" fill="currentColor"/>
+  </svg>
+)
 
 export const IconPlus = (p: P) =>
   svg(
@@ -47,43 +112,6 @@ export const IconPlus = (p: P) =>
   )
 
 // 목업 'olo' 스타일 — 둥근 막대 3개
-export const IconChart = ({ size = 24, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <rect x="4" y="10" width="4" height="10" rx="2" />
-    <rect x="10" y="4" width="4" height="16" rx="2" />
-    <rect x="16" y="13" width="4" height="7" rx="2" />
-  </svg>
-)
-
-// 목업 아이콘 세트의 고양이 얼굴 라인 아이콘 (냥이들 탭)
-export const IconCatFace = (p: P) =>
-  svg(
-    <>
-      <path d="M4.5 13.2c0-1.9.6-3.6 1.7-4.9l-.5-3.6c-.1-.8.8-1.3 1.4-.8l2.6 2a9 9 0 0 1 4.6 0l2.6-2c.6-.5 1.5 0 1.4.8l-.5 3.6a7.6 7.6 0 0 1 1.7 4.9c0 3.9-3.4 6.3-7.5 6.3s-7.5-2.4-7.5-6.3Z" />
-      <path d="M9.3 12.5v1M14.7 12.5v1" />
-    </>,
-    p,
-  )
-
-export const IconSettings = (p: P) =>
-  svg(
-    <>
-      <circle cx="12" cy="12" r="3.1" />
-      <path d="M12 3.5v2.2M12 18.3v2.2M20.5 12h-2.2M5.7 12H3.5M18 6l-1.6 1.6M7.6 16.4 6 18M18 18l-1.6-1.6M7.6 7.6 6 6" />
-    </>,
-    p,
-  )
-
-export const IconBell = (p: P) =>
-  svg(
-    <>
-      <path d="M6 16v-5.5a6 6 0 0 1 12 0V16l1.5 2.2H4.5Z" />
-      <path d="M10 20.5a2.2 2.2 0 0 0 4 0" />
-    </>,
-    p,
-  )
-
-// 꽉 찬(fill) 발바닥 — 메인 패드 + 발가락 4개
 export const IconPaw = ({ size = 24, className }: P) => (
   <svg
     width={size}
@@ -120,15 +148,6 @@ export const IconTag = (p: P) =>
     p,
   )
 
-export const IconCamera = (p: P) =>
-  svg(
-    <>
-      <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2L8 5h8l1.5 2h2A1.5 1.5 0 0 1 21 8.5V18a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18Z" />
-      <circle cx="12" cy="13" r="3.4" />
-    </>,
-    p,
-  )
-
 export const IconScan = (p: P) =>
   svg(
     <>
@@ -150,26 +169,8 @@ export const IconTrash = (p: P) =>
 export const IconCheck = (p: P) =>
   svg(<path d="M5 12.5 10 17 19 7" />, { ...p, strokeWidth: p.strokeWidth ?? 2.2 })
 
-export const IconHeart = ({ size = 20, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <path d="M12 20.5c-.35 0-.7-.12-.98-.35C7.2 17.05 3 13.6 3 9.6 3 6.6 5.3 4.5 8 4.5c1.6 0 3.1.8 4 2.05C12.9 5.3 14.4 4.5 16 4.5c2.7 0 5 2.1 5 5.1 0 4-4.2 7.45-8.02 10.55-.28.23-.63.35-.98.35Z" />
-  </svg>
-)
-
-export const IconPencil = (p: P) =>
-  svg(
-    <>
-      <path d="M4 20l.9-3.6L15.6 5.7a1.6 1.6 0 0 1 2.26 0l.44.44a1.6 1.6 0 0 1 0 2.26L7.6 19.1 4 20Z" />
-      <path d="M14.2 7.1l2.7 2.7" />
-    </>,
-    p,
-  )
-
 export const IconChevronLeft = (p: P) =>
   svg(<path d="M14.5 6 8.5 12l6 6" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
-
-export const IconChevronRight = (p: P) =>
-  svg(<path d="M9.5 6l6 6-6 6" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
 
 export const IconSliders = (p: P) =>
   svg(
@@ -180,14 +181,6 @@ export const IconSliders = (p: P) =>
     </>,
     p,
   )
-
-export const IconDots = ({ size = 20, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-    <circle cx="12" cy="5.5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="18.5" r="1.7" />
-  </svg>
-)
 
 export const IconChevronDown = (p: P) =>
   svg(<path d="M6 9.5 12 15.5 18 9.5" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })

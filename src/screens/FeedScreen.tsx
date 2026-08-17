@@ -12,7 +12,7 @@ import {
 import type { Cat, ReactionLevel, Snack } from '../data/types'
 import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
 import { CatDoodle, IconBell, IconChevronLeft, IconChevronRight, IconDots, IconPencil, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
-import bannerCatUrl from '../assets/banner-cat.png'
+import bannerCatUrl from '../assets/cat-bowl.png'
 import logoUrl from '../assets/logo.svg'
 
 function formatDate(ts: number): string {

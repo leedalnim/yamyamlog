@@ -20,13 +20,13 @@ export default defineConfig({
         react(),
         VitePWA({
           registerType: 'prompt',
-          includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+          includeAssets: ['apple-touch-icon.png'],
           manifest: {
             name: '얌얌로그 - 고양이 기호성 체크',
             short_name: '얌얌로그',
             description: '우리집 고양이들이 어떤 간식을 잘 먹는지 기록하는 앱',
             lang: 'ko',
-            theme_color: '#E1873F',
+            theme_color: '#FA7F38',
             background_color: '#FFFFFF',
             display: 'standalone',
             orientation: 'portrait',

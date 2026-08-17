@@ -988,3 +988,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .lv-btn.active[data-level="good"] { border-color: var(--primary); color: #d9782e; }
 .lv-btn.active[data-level="ok"] { border-color: #e5ab3c; color: #b07f22; }
 .lv-btn.active[data-level="bad"] { border-color: var(--bad); color: #3d7bb5; }
+
+/* ===== 배너 마스코트 크기 보정 (새 3D 에셋) ===== */
+.promo2 .promo-text { flex: 1 1 auto; min-width: 0; }
+.promo-cat { height: 128px; width: auto; object-fit: contain; flex: none; margin-right: -4px; }
