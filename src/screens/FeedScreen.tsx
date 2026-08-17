@@ -97,10 +97,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   return (
     <div className="screen">
       <div className="topbar">
-        <div>
-          <h1 className="logo"><img src={logoUrl} alt="얌얌로그" className="logo-img" /></h1>
-          <div className="sub">우리 냥이들의 간식 기록</div>
-        </div>
+        <h1 className="logo"><img src={logoUrl} alt="얌얌로그" className="logo-img" /></h1>
         <button className="bell-btn" aria-label="알림"><IconBell size={22} /></button>
       </div>
 
@@ -131,10 +128,10 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
       <button className="promo-banner promo2" onClick={onAdd}>
         <div className="promo-text">
           <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
-          <span className="promo-sub-pill">
-            새로운 간식을 기록해보세요
+          <div className="promo-sub-row">
+            <span className="promo-sub">새로운 간식을 기록해보세요</span>
             <span className="promo-arrow-dot"><IconChevronRight size={12} /></span>
-          </span>
+          </div>
         </div>
         <img src={bannerCatUrl} alt="" className="promo-cat" />
       </button>

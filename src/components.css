@@ -992,3 +992,37 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 /* ===== 배너 마스코트 크기 보정 (새 3D 에셋) ===== */
 .promo2 .promo-text { flex: 1 1 auto; min-width: 0; }
 .promo-cat { height: 128px; width: auto; object-fit: contain; flex: none; margin-right: -4px; }
+
+/* ===== 배너: 피그마 스펙 (366x116, r20, 그라디언트) ===== */
+.promo2 {
+  height: 116px;
+  padding: 0 0 0 22px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #fff5e9, #fdf0e0);
+  align-items: center;
+  overflow: hidden;
+}
+.promo2 .promo-text { align-self: center; padding: 0; }
+.promo2 .promo-title { font-size: 19px; font-weight: 700; line-height: 27px; color: #33292a; }
+.promo-sub-row { display: flex; align-items: center; gap: 8px; margin-top: 9px; }
+.promo-sub { font-size: 12px; font-weight: 500; color: #8e8781; white-space: nowrap; }
+.promo-arrow-dot { width: 22px; height: 22px; }
+.promo-cat { height: 153px; margin: -9px -10px -28px 0; align-self: flex-start; }
+
+/* 배너 레이아웃을 피그마 좌표대로 (겹침 배치) */
+.promo2 { position: relative; display: block; padding: 0; }
+.promo2 .promo-text { position: absolute; left: 22px; top: 20px; z-index: 1; text-align: left; }
+.promo2 .promo-title { white-space: nowrap; }
+.promo-cat {
+  position: absolute;
+  right: 21px;
+  top: -9px;
+  width: 230px;
+  height: 153px;
+  object-fit: contain;
+  margin: 0;
+}
+
+/* ===== 주간 그래프 막대: 피그마 스펙 (10px, 각 구간 라운드) ===== */
+.week-bar { height: 10px; background: none; overflow: visible; gap: 3px; }
+.week-bar i { border-radius: 5px; }

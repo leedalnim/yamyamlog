@@ -30,6 +30,10 @@
   --react-tile: #fff4e2;
   --line-soft: #f3e7d6;
   --heart: #f1503c;
+  /* 그래프 막대 (피그마 bar/*) */
+  --bar-good: #fa8035;
+  --bar-ok: #fee0a1;
+  --bar-bad: #dcd8d3;
   --nav-h: 64px;
 }
 

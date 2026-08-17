@@ -176,9 +176,9 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               </h2>
               <div className="card week-card">
                 <div className="week-bar">
-                  {week.good > 0 && <i style={{ flex: week.good, background: 'var(--primary)' }} />}
-                  {week.ok > 0 && <i style={{ flex: week.ok, background: 'var(--ok)' }} />}
-                  {week.bad > 0 && <i style={{ flex: week.bad, background: '#D8D2C8' }} />}
+                  {week.good > 0 && <i style={{ flex: week.good, background: 'var(--bar-good)' }} />}
+                  {week.ok > 0 && <i style={{ flex: week.ok, background: 'var(--bar-ok)' }} />}
+                  {week.bad > 0 && <i style={{ flex: week.bad, background: 'var(--bar-bad)' }} />}
                 </div>
                 <div className="week-cells">
                   <div className="week-cell">
