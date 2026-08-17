@@ -368,8 +368,7 @@ function SnackDetail({
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>
         {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
-        <div style={{ marginTop: 14 }}>
-          <div className="field-label muted">고양이별 반응</div>
+        <div style={{ marginTop: 16 }}>
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="large" />
         </div>
 
