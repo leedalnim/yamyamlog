@@ -1040,3 +1040,13 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 상세 반응: 라벨 위 구분선 제거 ===== */
 .face-grid--large { border-top: none; padding-top: 0; margin-top: 0; }
+
+/* ===== 통계 히어로 v2: 마스코트 확대 + 세로 가운데 정렬 ===== */
+.stat-hero {
+  align-items: center;
+  padding: 14px 14px 14px 6px;
+  gap: 4px;
+}
+.stat-hero-scene { width: 200px; margin: 0; }
+.stat-hero-chara { margin-bottom: 0; }
+.stat-hero-panel { margin-bottom: 0; }

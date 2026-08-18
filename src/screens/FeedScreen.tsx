@@ -337,7 +337,7 @@ function SnackDetail({
         <button className="btn btn-primary btn-block" style={{ marginTop: 4 }} disabled={saving} onClick={save}>
           {saving ? '저장중…' : '저장하기'}
         </button>
-        <button className="btn btn-icon btn-block" onClick={remove} style={{ color: 'var(--danger)', marginTop: 10 }}>
+        <button className="btn btn-icon btn-block" onClick={remove} style={{ color: 'var(--muted)', marginTop: 10 }}>
           <IconTrash size={18} />이 기록 삭제
         </button>
       </div>
