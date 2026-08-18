@@ -1117,3 +1117,15 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   margin: 0;
 }
 .stat-hero-panel { position: relative; z-index: 1; }
+
+/* ===== 순위 뱃지: 피그마 3D 메달 이미지 ===== */
+.top3-medal {
+  position: absolute;
+  top: 4px;
+  left: 5px;
+  width: auto;
+  height: 30px;
+  border-radius: 0;
+  background: none;
+  display: block;
+}

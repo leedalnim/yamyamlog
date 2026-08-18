@@ -89,6 +89,7 @@ const KIND_TAG_COLORS: Record<string, [string, string]> = {
   '건식': ['#EFEDE9', '#4A4440'],
   '트릿': ['#FDE7D3', '#D9782E'],
   '동결건조': ['#D9F0D5', '#4C8A4A'],
+  '주식': ['#E7E3F8', '#6B57A8'],
 }
 const BASE_TAG_COLORS: Record<string, [string, string]> = {
   // 피그마 디자인 토큰 (해산물/육류/기능성/유산균)
@@ -98,6 +99,10 @@ const BASE_TAG_COLORS: Record<string, [string, string]> = {
   '게살': ['#D9E9FA', '#3D7BB5'],
   '새우': ['#D9E9FA', '#3D7BB5'],
   '가리비': ['#D9E9FA', '#3D7BB5'],
+  '명태': ['#D9E9FA', '#3D7BB5'],
+  '정어리': ['#D9E9FA', '#3D7BB5'],
+  '갈치': ['#D9E9FA', '#3D7BB5'],
+  '호키': ['#D9E9FA', '#3D7BB5'],
   '북어': ['#D9E9FA', '#3D7BB5'],
   '닭가슴살': ['#FDE3E8', '#C06077'],
   '소고기': ['#FDE3E8', '#C06077'],

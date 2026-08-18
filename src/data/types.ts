@@ -68,7 +68,7 @@ export const REACTION_META: Record<ReactionLevel, { label: string; short: string
 }
 
 /** 간식 종류(형태) 프리셋 */
-export const KIND_PRESETS = ['츄르', '캔', '파우치(습식)', '건식', '트릿', '양갱', '동결건조'] as const
+export const KIND_PRESETS = ['츄르', '캔', '파우치(습식)', '건식', '트릿', '양갱', '동결건조', '주식'] as const
 
 /** 자주 쓰는 베이스(주재료) 프리셋 */
 export const BASE_PRESETS = [
@@ -80,6 +80,11 @@ export const BASE_PRESETS = [
   '가리비',
   '소고기',
   '북어',
+  '명태',
+  '정어리',
+  '갈치',
+  '호키',
+  '산양유',
 ] as const
 
 /** 기호성 점수화 (통계용): good=1, ok=0.5, bad=0 */

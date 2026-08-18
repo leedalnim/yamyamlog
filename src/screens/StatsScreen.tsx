@@ -7,6 +7,11 @@ import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
 import noPhotoUrl from '../assets/no-photo.svg'
+import rank1Url from '../assets/badges/rank1.png'
+import rank2Url from '../assets/badges/rank2.png'
+import rank3Url from '../assets/badges/rank3.png'
+
+const RANK_BADGES = [rank1Url, rank2Url, rank3Url]
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -311,7 +316,7 @@ function Top3Card({ snack, rank }: { snack: Snack; rank: number }) {
   const url = usePhotoURL(snack.photoId)
   return (
     <div className="card top3-card">
-      <span className={'top3-medal rank-' + rank}>{rank}</span>
+      <img src={RANK_BADGES[rank - 1] ?? rank3Url} alt={rank + "위"} className="top3-medal" />
       <div className="top3-thumb">
         {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
       </div>
