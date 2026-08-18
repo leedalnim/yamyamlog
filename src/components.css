@@ -1129,3 +1129,22 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   background: none;
   display: block;
 }
+
+/* ===== 홈 반응 칩: 반응 단계별 색 (A안) ===== */
+.face-grid--chip .face-cell[data-level='good'] {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+.face-grid--chip .face-cell[data-level='good'] .face-name { color: #fff; }
+
+.face-grid--chip .face-cell[data-level='ok'] {
+  background: #fee0a1;
+  border-color: #fee0a1;
+}
+.face-grid--chip .face-cell[data-level='ok'] .face-name { color: #8a6b2e; }
+
+.face-grid--chip .face-cell[data-level='bad'] {
+  background: #ece8e3;
+  border-color: #ece8e3;
+}
+.face-grid--chip .face-cell[data-level='bad'] .face-name { color: var(--muted); }
