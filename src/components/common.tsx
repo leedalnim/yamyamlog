@@ -67,11 +67,7 @@ export function ReactionFaces({
         return (
           <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')} data-level={lv}>
             {lv ? (
-              <ReactionIcon
-                level={lv}
-                size={variant === 'large' ? 46 : 40}
-                white={variant === 'chip' && lv !== 'good'}
-              />
+              <ReactionIcon level={lv} size={variant === 'large' ? 46 : 40} />
             ) : (
               <FaceNeutral size={variant === 'large' ? 46 : 40} dim />
             )}
