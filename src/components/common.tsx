@@ -65,7 +65,7 @@ export function ReactionFaces({
       {cats.map((cat) => {
         const lv = reactions[cat.id]
         return (
-          <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')}>
+          <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')} data-level={lv}>
             {lv ? (
               <ReactionIcon level={lv} size={variant === 'large' ? 46 : 40} />
             ) : (
