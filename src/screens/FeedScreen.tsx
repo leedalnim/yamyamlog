@@ -238,6 +238,12 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
             </div>
           )}
           <div className="snack-body">
+            {(snack.kind || snack.base) && (
+              <div className="snack-tag-row">
+                {snack.kind && <KindTag v={snack.kind} />}
+                {snack.base && <BaseTag v={snack.base} />}
+              </div>
+            )}
             <div className="snack-name-row">
               <span className="snack-name">{snack.name}</span>
             </div>
