@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useCatsAndGroups } from '../components/common'
-import { BlobFace, CAT_CREAM, IconCalculator, IconChevronRight, IconPencil } from '../components/icons'
+import { IconCalculator, IconChevronRight, IconPencil } from '../components/icons'
+import catFaceUrl from '../assets/faces/good-white.svg'
 
 /** 냥이별 아바타 원 배경 — 크림색 얼굴과 확실히 구분되는 파스텔 */
 const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC93']
@@ -45,7 +46,7 @@ export function CatsScreen() {
           {cats.map((cat, i) => (
             <button className="record-row cat-row" key={cat.id} onClick={() => setEditing(cat)}>
               <div className="cat-avatar" style={{ background: AVATAR_BG[i % AVATAR_BG.length] }}>
-                <BlobFace color={CAT_CREAM} size={30} />
+                <img src={catFaceUrl} alt="" className="cat-avatar-face" />
               </div>
               <div className="record-info">
                 <div className="record-name">{cat.name}</div>

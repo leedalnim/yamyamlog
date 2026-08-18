@@ -1097,3 +1097,9 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 히어로 기호도 점수 강조 ===== */
 .panel-score { font-size: 15px; margin: 2px 0 4px; letter-spacing: -0.01em; }
+
+/* ===== 냥이 아바타: 흰 얼굴 SVG ===== */
+.cat-avatar-face { width: 30px; height: auto; display: block; }
+
+/* ===== 통계 히어로: 마스코트 왼쪽 여백 제거 ===== */
+.stat-hero-scene .hero-img { width: 268px; margin-left: -80px; }
