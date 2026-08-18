@@ -1091,3 +1091,9 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 /* ===== 히어로 패널: 잘먹음·보통·안먹음 3행 + 기호도 ===== */
 .panel-title { display: block; margin-bottom: 0; }
 .panel-score { display: block; margin: 1px 0 3px; font-size: 11.5px; font-weight: 800; color: var(--primary); }
+
+/* ===== 도구 아이콘: 라인 아이콘 정렬 ===== */
+.tool-ico { display: inline-flex; align-items: center; justify-content: center; color: var(--ink); line-height: 0; }
+
+/* ===== 히어로 기호도 점수 강조 ===== */
+.panel-score { font-size: 15px; margin: 2px 0 4px; letter-spacing: -0.01em; }

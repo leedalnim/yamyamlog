@@ -182,6 +182,17 @@ export const IconSliders = (p: P) =>
     p,
   )
 
+/** 계산기 (도구 — 최저가·몸무게) */
+export const IconCalculator = (p: P) =>
+  svg(
+    <>
+      <rect x="4" y="2.5" width="16" height="19" rx="3" />
+      <path d="M7.6 6.6h8.8v3.2H7.6z" />
+      <path d="M8 13.6h.01M12 13.6h.01M16 13.6h.01M8 17.6h.01M12 17.6h.01M16 17.6h.01" />
+    </>,
+    p,
+  )
+
 export const IconChevronDown = (p: P) =>
   svg(<path d="M6 9.5 12 15.5 18 9.5" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
 

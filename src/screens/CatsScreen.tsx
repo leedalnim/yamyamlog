@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useCatsAndGroups } from '../components/common'
-import { BlobFace, CAT_CREAM, IconChevronRight, IconPencil } from '../components/icons'
+import { BlobFace, CAT_CREAM, IconCalculator, IconChevronRight, IconPencil } from '../components/icons'
+
+/** 냥이별 아바타 원 배경 — 크림색 얼굴과 확실히 구분되는 파스텔 */
+const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC93']
 import { listCats, listSnacks, updateCat } from '../data/repo'
 import type { Cat, Snack } from '../data/types'
 
@@ -39,9 +42,9 @@ export function CatsScreen() {
 
       <section className="stat-section">
         <div className="card record-list">
-          {cats.map((cat) => (
+          {cats.map((cat, i) => (
             <button className="record-row cat-row" key={cat.id} onClick={() => setEditing(cat)}>
-              <div className="cat-avatar" style={{ background: 'var(--surface-2)' }}>
+              <div className="cat-avatar" style={{ background: AVATAR_BG[i % AVATAR_BG.length] }}>
                 <BlobFace color={CAT_CREAM} size={30} />
               </div>
               <div className="record-info">
@@ -86,7 +89,7 @@ export function CatsScreen() {
         <h2 className="stat-title">도구</h2>
         <div className="card record-list">
           <button className="record-row tool-row" onClick={() => setCalcOpen(true)}>
-            <span className="tool-ico">🧮</span>
+            <span className="tool-ico"><IconCalculator size={22} /></span>
             <div className="record-info">
               <div className="record-name">용품 최저가 · 몸무게 계산기</div>
               <div className="record-sub muted">직접 만든 계산기를 앱에서 바로</div>
