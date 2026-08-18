@@ -1103,3 +1103,17 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 통계 히어로: 마스코트 왼쪽 여백 제거 ===== */
 .stat-hero-scene .hero-img { width: 268px; margin-left: -80px; }
+
+/* ===== 통계 히어로: 마스코트를 카드 왼쪽 하단에 붙여 여백 제거 ===== */
+.stat-hero { position: relative; }
+.stat-hero-scene { position: static; flex: none; width: 190px; margin: 0; overflow: visible; }
+.stat-hero-scene .hero-img {
+  position: absolute;
+  left: -76px;
+  bottom: 0;
+  width: 272px;
+  height: auto;
+  max-width: none;
+  margin: 0;
+}
+.stat-hero-panel { position: relative; z-index: 1; }
