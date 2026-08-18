@@ -84,7 +84,7 @@ export function ReactionFaces({
  * 값마다 색을 다르게 주지 않고 "종류냐 / 재료냐"만 색으로 구분합니다.
  * 색으로 의미를 갖는 건 반응(주황)뿐이므로, 태그는 조용한 두 톤으로만 둡니다.
  */
-const KIND_TAG = { background: '#F2E9DA', color: '#8A7350' } as const
+const KIND_TAG = { background: '#FDEEDD', color: '#D9782E' } as const
 const BASE_TAG = { background: '#E1EBF6', color: '#547FA8' } as const
 
 export function KindTag({ v }: { v: string }) {
