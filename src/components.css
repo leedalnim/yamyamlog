@@ -1055,3 +1055,6 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .snack-tag-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 5px; }
 .snack-tag-row .kind-tag,
 .snack-tag-row .base-tag { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+
+/* ===== 홈 카드: 반응 칩 위 구분선 제거 ===== */
+.snack-card .face-grid { border-top: none; padding-top: 0; margin-top: 11px; }
