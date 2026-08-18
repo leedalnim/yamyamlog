@@ -1058,3 +1058,14 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 홈 카드: 반응 칩 위 구분선 제거 ===== */
 .snack-card .face-grid { border-top: none; padding-top: 0; margin-top: 11px; }
+
+/* ===== 통계 히어로: 실내 배경 + 마스코트 확대(왼쪽 살짝 크롭) ===== */
+.stat-hero {
+  background-color: #fdf0dc;
+  background-repeat: no-repeat;
+  background-size: 125% auto;
+  background-position: 0% 46%;
+  overflow: hidden;
+}
+.stat-hero-scene { width: 205px; overflow: hidden; }
+.stat-hero-scene .hero-img { width: 252px; max-width: none; margin-left: -47px; }

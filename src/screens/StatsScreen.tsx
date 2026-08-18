@@ -5,6 +5,7 @@ import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
+import roomBgUrl from '../assets/room-bg.jpg'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -138,7 +139,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
       {cat && (
         <>
           {/* 히어로 — 냥이 장면 + 오늘 상태 패널 (가이드 구조) */}
-          <div className="stat-hero">
+          <div className="stat-hero" style={{ backgroundImage: `url(${roomBgUrl})` }}>
             <div className="stat-hero-scene">
               <img src={heroUrl} alt="" className="hero-img" />
             </div>
