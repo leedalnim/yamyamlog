@@ -79,47 +79,20 @@ export function ReactionFaces({
   )
 }
 
-/** 태그 파스텔 컬러 (목업 컬러코딩) — [배경, 글자] */
-const KIND_TAG_COLORS: Record<string, [string, string]> = {
-  // 피그마 디자인 토큰 (tag/*-bg, tag/*-text)
-  '츄르': ['#FDE7D3', '#D9782E'],
-  '캔': ['#EFEDE9', '#4A4440'],
-  '양갱': ['#FDE4EA', '#4A4440'],
-  '파우치(습식)': ['#D9E9FA', '#3D7BB5'],
-  '건식': ['#EFEDE9', '#4A4440'],
-  '트릿': ['#FDE7D3', '#D9782E'],
-  '동결건조': ['#D9F0D5', '#4C8A4A'],
-  '주식': ['#E7E3F8', '#6B57A8'],
-}
-const BASE_TAG_COLORS: Record<string, [string, string]> = {
-  // 피그마 디자인 토큰 (해산물/육류/기능성/유산균)
-  '해산물': ['#D9E9FA', '#3D7BB5'],
-  '참치': ['#D9E9FA', '#3D7BB5'],
-  '연어': ['#D9E9FA', '#3D7BB5'],
-  '게살': ['#D9E9FA', '#3D7BB5'],
-  '새우': ['#D9E9FA', '#3D7BB5'],
-  '가리비': ['#D9E9FA', '#3D7BB5'],
-  '명태': ['#D9E9FA', '#3D7BB5'],
-  '정어리': ['#D9E9FA', '#3D7BB5'],
-  '갈치': ['#D9E9FA', '#3D7BB5'],
-  '호키': ['#D9E9FA', '#3D7BB5'],
-  '북어': ['#D9E9FA', '#3D7BB5'],
-  '닭가슴살': ['#FDE3E8', '#C06077'],
-  '소고기': ['#FDE3E8', '#C06077'],
-  '육류': ['#FDE3E8', '#C06077'],
-  '기능성': ['#EAE4FA', '#7A5089'],
-  '유산균': ['#D9F0D5', '#4C8A4A'],
-  '산양유': ['#EAE4FA', '#7A5089'],
-}
+/**
+ * 태그 컬러 — 축(axis) 단위 2색 체계.
+ * 값마다 색을 다르게 주지 않고 "종류냐 / 재료냐"만 색으로 구분합니다.
+ * 색으로 의미를 갖는 건 반응(주황)뿐이므로, 태그는 조용한 두 톤으로만 둡니다.
+ */
+const KIND_TAG = { background: '#F2E9DA', color: '#8A7350' } as const
+const BASE_TAG = { background: '#E1EBF6', color: '#547FA8' } as const
 
 export function KindTag({ v }: { v: string }) {
-  const [bg, fg] = KIND_TAG_COLORS[v] ?? ['#E4E2DE', '#4A4440']
-  return <span className="kind-tag" style={{ background: bg, color: fg }}>{v}</span>
+  return <span className="kind-tag" style={KIND_TAG}>{v}</span>
 }
 
 export function BaseTag({ v }: { v: string }) {
-  const [bg, fg] = BASE_TAG_COLORS[v] ?? ['#E4E2DE', '#4A4440']
-  return <span className="base-tag" style={{ background: bg, color: fg }}>{v}</span>
+  return <span className="base-tag" style={BASE_TAG}>{v}</span>
 }
 
 /** 반응 pill 하나 */
