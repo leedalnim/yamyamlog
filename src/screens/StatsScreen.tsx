@@ -6,6 +6,7 @@ import { listSnacks } from '../data/repo'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
+import noPhotoUrl from '../assets/no-photo.svg'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -144,14 +145,17 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               <img src={heroUrl} alt="" className="hero-img" />
             </div>
             <div className="stat-hero-panel">
-              <div className="panel-title">{cat.name}의 요즘 상태</div>
-              <div className="panel-row">
-                <ReactionIcon level="good" size={20} />
-                기호도 <b className="tabular">{counts.total ? score + '점' : '－'}</b>
+              <div className="panel-title">
+                {cat.name}의 요즘 상태
+                <span className="panel-score">기호도 {counts.total ? score + '점' : '－'}</span>
               </div>
               <div className="panel-row">
                 <ReactionIcon level="good" size={20} />
                 잘먹음 <b className="tabular">{counts.good}회</b>
+              </div>
+              <div className="panel-row">
+                <ReactionIcon level="ok" size={20} />
+                보통 <b className="tabular">{counts.ok}회</b>
               </div>
               <div className="panel-row">
                 <ReactionIcon level="bad" size={20} />
@@ -309,7 +313,7 @@ function Top3Card({ snack, rank }: { snack: Snack; rank: number }) {
     <div className="card top3-card">
       <span className={'top3-medal rank-' + rank}>{rank}</span>
       <div className="top3-thumb">
-        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <ReactionIcon level="good" size={34} />}
+        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
       </div>
       <div className="top3-name">{snack.name}</div>
       <span className="top3-love"><IconHeart size={12} /> 좋아해요</span>
@@ -322,7 +326,7 @@ function RecordRow({ snack, level }: { snack: Snack; level: ReactionLevel }) {
   return (
     <div className="record-row">
       <div className="record-thumb">
-        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <ReactionIcon level={level} size={26} />}
+        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
       </div>
       <div className="record-info">
         <div className="record-name">{snack.name}</div>

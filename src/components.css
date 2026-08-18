@@ -1069,3 +1069,25 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 }
 .stat-hero-scene { width: 205px; overflow: hidden; }
 .stat-hero-scene .hero-img { width: 252px; max-width: none; margin-left: -47px; }
+
+/* ===== 통계 히어로: 마스코트 오른쪽 끝이 패널에 닿지 않게 여유 ===== */
+.stat-hero { gap: 10px; }
+.stat-hero-scene { width: 200px; }
+.stat-hero-scene .hero-img { width: 252px; margin-left: -60px; }
+
+/* ===== 홈 반응 칩: 메인 주황 채움 ===== */
+.face-grid--chip .face-cell { background: var(--primary); border-color: var(--primary); }
+.face-grid--chip .face-name { color: #fff; }
+
+/* ===== 사진 없는 기록: 츄르 일러스트 대체 ===== */
+.top3-thumb img.no-photo, .record-thumb img.no-photo {
+  height: 62%; width: auto; max-width: none; object-fit: contain; display: block;
+  transform: rotate(-14deg);
+}
+.record-thumb img.no-photo { height: 58%; }
+.top3-thumb, .record-thumb { display: flex; align-items: center; justify-content: center; }
+.top3-thumb:has(.no-photo), .record-thumb:has(.no-photo) { background: linear-gradient(140deg, #FBB472, #FA8F45); }
+
+/* ===== 히어로 패널: 잘먹음·보통·안먹음 3행 + 기호도 ===== */
+.panel-title { display: block; margin-bottom: 0; }
+.panel-score { display: block; margin: 1px 0 3px; font-size: 11.5px; font-weight: 800; color: var(--primary); }
