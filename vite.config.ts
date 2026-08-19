@@ -19,7 +19,7 @@ export default defineConfig({
     : [
         react(),
         VitePWA({
-          registerType: 'prompt',
+          registerType: 'autoUpdate',
           includeAssets: ['apple-touch-icon.png'],
           manifest: {
             name: '얌얌로그 - 고양이 기호성 체크',
@@ -44,6 +44,13 @@ export default defineConfig({
             globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,webp,woff,woff2,webmanifest}'],
             maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
             cleanupOutdatedCaches: true,
+            // 새 서비스워커가 즉시 인계받는다.
+            // 예전에 이 설정이 화면을 깨뜨렸던 건 이미지가 프리캐시에 없어서
+            // 교체 순간 참조가 어긋났기 때문이다. 위 globPatterns로 화면을 이루는
+            // 파일을 한 세트로 묶은 지금은 교체가 통째로 일어나 어긋날 수 없고,
+            // 낡은 버전을 붙잡은 기기가 새로고침 한 번으로 스스로 복구된다.
+            skipWaiting: true,
+            clientsClaim: true,
             navigateFallback: 'index.html',
           },
         }),

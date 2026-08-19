@@ -27,16 +27,12 @@ export async function setupPwaUpdate(onNeedRefresh: (apply: () => void) => void)
     const updateSW = registerSW({
       immediate: true,
       onNeedRefresh() {
-        // 페이지를 여는 순간 이미 대기 중인 새 버전이 있었다면
-        // (= 지난 방문 이후 배포된 경우) 물어보지 않고 바로 교체한다.
-        // 아직 입력한 내용이 없는 시점이라 잃을 게 없고, 낡은 버전을
-        // 붙잡은 채 이미지가 깨진 화면을 계속 보는 일을 막는다.
-        if (Date.now() - openedAt < 10_000) {
-          void updateSW(true)
-          return
-        }
-        // 사용 중에 새 버전이 올라오면 배너로 알리고 사용자가 고르게 한다.
-        onNeedRefresh(() => void updateSW(true))
+        // 지금은 서비스워커가 스스로 인계받으므로 여기까지 오는 일이 드물지만,
+        // 혹시 대기 상태로 남으면 즉시 교체한다. 위 controllerchange 리스너가
+        // 교체 직후 한 번 새로고침해 화면과 파일 버전을 맞춘다.
+        void updateSW(true)
+        void openedAt
+        void onNeedRefresh
       },
     })
   } catch {
