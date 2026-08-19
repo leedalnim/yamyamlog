@@ -1237,3 +1237,19 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   flex: 1;
   padding-bottom: calc(var(--nav-h) + 24px);
 }
+
+/* ===== 홈 카드: 사진 없는 기록의 츄르 썸네일 ===== */
+.snack-thumb.no-photo-thumb {
+  background: linear-gradient(140deg, #fbb472, #fa8f45);
+  border-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.snack-thumb img.no-photo {
+  width: auto;
+  height: 58%;
+  max-width: none;
+  object-fit: contain;
+  transform: rotate(-14deg);
+}

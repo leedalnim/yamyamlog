@@ -318,11 +318,15 @@ function SnackCard({
       <button className="snack-btn" onClick={onOpen}>
         {/* 윗줄: 썸네일 + 이름/태그 + 화살표 */}
         <div className="snack-top">
-          {url && (
-            <div className="snack-thumb">
+          {/* 사진이 없어도 자리를 비우지 않는다 — 츄르 일러스트로 채워
+              카드마다 왼쪽 정렬이 달라지는 것도 막는다 */}
+          <div className={'snack-thumb' + (url ? '' : ' no-photo-thumb')}>
+            {url ? (
               <img src={url} alt={snack.name} loading="lazy" />
-            </div>
-          )}
+            ) : (
+              <img src={noPhotoUrl} alt="" className="no-photo" />
+            )}
+          </div>
           <div className="snack-body">
             {(snack.kind || snack.base) && (
               <div className="snack-tag-row">
