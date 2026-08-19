@@ -96,7 +96,16 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
       {tab === 'add' && <AddScreen onDone={() => { refresh(); setTab('feed') }} onCancel={() => setTab('feed')} />}
       {tab === 'stats' && <StatsScreen key={dataVersion} onAdd={() => setTab('add')} />}
       {tab === 'cats' && <CatsScreen />}
-      {tab === 'settings' && <SettingsScreen settings={settings} onChange={updateSettings} />}
+      {tab === 'settings' && (
+        <SettingsScreen
+          settings={settings}
+          onChange={updateSettings}
+          onRestored={() => {
+            refresh()
+            setTab('feed')
+          }}
+        />
+      )}
 
       <nav className="nav">
         <div className="nav-side">
