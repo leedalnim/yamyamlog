@@ -8,4 +8,6 @@ dist-ssr
 
 tsconfig.tsbuildinfo
 dist-single
-*.mjs
+# 루트에 임시로 만드는 일회용 스크립트만 무시한다.
+# (scripts/ 아래 빌드 검사 스크립트까지 삼키지 않도록 루트 한정)
+/*.mjs
