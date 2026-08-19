@@ -37,6 +37,11 @@ export default defineConfig({
             ],
           },
           workbox: {
+            // 이미지·폰트까지 전부 프리캐시한다.
+            // JS/CSS만 캐시하면, 서비스워커가 붙잡고 있는 이전 버전 JS가
+            // 참조하는 이미지 해시가 서버에서 이미 교체돼 404 → 이미지가 깨진다.
+            // 화면을 이루는 파일을 한 세트로 묶어야 버전이 절대 어긋나지 않는다.
+            globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,webp,woff,woff2,webmanifest}'],
             maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
             cleanupOutdatedCaches: true,
             navigateFallback: 'index.html',

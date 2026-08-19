@@ -22,10 +22,20 @@ export async function setupPwaUpdate(onNeedRefresh: (apply: () => void) => void)
   })
 
   try {
+    const openedAt = Date.now()
     const { registerSW } = await import('virtual:pwa-register')
     const updateSW = registerSW({
       immediate: true,
       onNeedRefresh() {
+        // 페이지를 여는 순간 이미 대기 중인 새 버전이 있었다면
+        // (= 지난 방문 이후 배포된 경우) 물어보지 않고 바로 교체한다.
+        // 아직 입력한 내용이 없는 시점이라 잃을 게 없고, 낡은 버전을
+        // 붙잡은 채 이미지가 깨진 화면을 계속 보는 일을 막는다.
+        if (Date.now() - openedAt < 10_000) {
+          void updateSW(true)
+          return
+        }
+        // 사용 중에 새 버전이 올라오면 배너로 알리고 사용자가 고르게 한다.
         onNeedRefresh(() => void updateSW(true))
       },
     })
