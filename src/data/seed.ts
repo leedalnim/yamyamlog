@@ -15,7 +15,7 @@ export const SEED_CATS: Cat[] = [
 ]
 
 /** 시드 버전 — 올리면 기존 사용자에게도 시드를 한 번 다시 적용 */
-export const SEED_VERSION = 7
+export const SEED_VERSION = 8
 
 /**
  * 예전 시드에서 쓰던 기록 id.
@@ -129,7 +129,8 @@ export const SEED_SNACKS: SeedSnack[] = [
     name: '하우스앤가토스 치킨',
     kind: '주식',
     base: '닭가슴살',
-    memo: '156g · 단종',
+    memo: '156g',
+    discontinued: true,
     reactions: { 'c-tangja': 'good' },
     agoMs: DAY * 6,
   },

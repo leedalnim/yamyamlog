@@ -79,6 +79,42 @@ export async function listCats(): Promise<Cat[]> {
   return all.filter((c) => !c.deletedAt).sort((a, b) => a.order - b.order)
 }
 
+/** 냥이 추가 — 순서는 맨 뒤로 */
+export async function addCat(input: {
+  name: string
+  weightKg?: number
+  ageYears?: number
+}): Promise<Cat> {
+  const db = await getDB()
+  const all = (await db.getAll('cats')) as Cat[]
+  const maxOrder = all.reduce((m, c) => Math.max(m, c.order ?? 0), -1)
+  const cat: Cat = {
+    id: 'c-' + uid(),
+    name: input.name.trim() || '이름 없는 냥이',
+    groupId: 'g-a',
+    color: '#E1873F',
+    order: maxOrder + 1,
+    weightKg: input.weightKg,
+    ageYears: input.ageYears,
+    updatedAt: Date.now(),
+  }
+  await db.put('cats', cat)
+  return cat
+}
+
+/**
+ * 냥이 삭제 — 지움 표시만 남긴다(툼스톤).
+ * 기존 간식 기록의 반응은 건드리지 않는다. 실수로 지웠을 때
+ * 그 냥이의 반응 기록까지 날아가면 되돌릴 수 없기 때문이다.
+ */
+export async function deleteCat(id: string): Promise<void> {
+  const db = await getDB()
+  const cat = (await db.get('cats', id)) as Cat | undefined
+  if (!cat) return
+  const now = Date.now()
+  await db.put('cats', { ...cat, deletedAt: now, updatedAt: now })
+}
+
 export async function updateCat(cat: Cat): Promise<void> {
   const db = await getDB()
   await db.put('cats', { ...cat, updatedAt: Date.now() })

@@ -49,6 +49,8 @@ export interface Snack {
   reactions: Record<string, ReactionLevel>
   /** 즐겨찾기 */
   favorite?: boolean
+  /** 단종 — 더 이상 살 수 없는 제품 */
+  discontinued?: boolean
   /**
    * 삭제 시각. 기록을 실제로 지우지 않고 표시만 남긴다.
    * 지워버리면 다른 기기와 맞출 때 "여기 없네?" → 되살아나기 때문.

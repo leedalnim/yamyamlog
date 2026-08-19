@@ -1254,3 +1254,25 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   object-fit: contain;
   transform: rotate(-14deg);
 }
+
+/* ===== 냥이 삭제 확인 ===== */
+.cat-delete-confirm {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.cat-delete-confirm p { margin: 0; font-size: 13.5px; line-height: 1.7; }
+
+/* ===== 단종 표시 ===== */
+.tag-discontinued {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #e6e2dc;
+  color: #7a736b;
+}
+/* 카드 전체를 흐리게 하지는 않는다 — 기록 자체는 여전히 유효한 정보다.
+   이름만 톤을 낮춰 '지금은 못 사는 제품'임을 알린다. */
+.snack-card.is-discontinued .snack-name { color: var(--muted); }

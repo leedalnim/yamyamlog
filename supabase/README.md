@@ -12,19 +12,20 @@ SQL Editor에 파일 내용을 붙여넣고 Run. **번호 순서대로** 실행�
 | `01-tables.sql` | 기본 테이블 (households / cats / snacks) | ✅ 실행 완료 |
 | `02-sync.sql` | 가구 코드·구성원·RLS 접근 규칙 | ✅ 실행 완료 |
 | `03-short-code.sql` | 우리집 코드 4자리 숫자 + 무차별 대입 차단 | ✅ 실행 완료 |
-| `04-favorite.sql` | **즐겨찾기 컬럼** | ⬜ **아직 안 함** |
+| `04-favorite.sql` | 즐겨찾기 컬럼 | ✅ 실행 완료 |
+| `05-discontinued.sql` | **단종 표시 컬럼** | ⬜ **아직 안 함** |
 
 ## 지금 남은 것
 
-`04-favorite.sql` 한 줄만 실행하면 된다.
+`05-discontinued.sql` 한 줄.
 
 ```sql
-alter table snacks add column if not exists favorite boolean default false;
+alter table snacks add column if not exists discontinued boolean default false;
 ```
 
-안 하면 어떻게 되나 — 즐겨찾기(별)가 **이 기기에만 남고 상대방 폰으로 넘어가지 않는다.**
-앱이 즐겨찾기를 서버에 올리려다 컬럼이 없어 실패하므로, 동기화가 통째로
-조용히 건너뛰어질 수 있다. 기록이 사라지지는 않지만 두 기기가 안 맞는다.
+안 하면 어떻게 되나 — 단종 표시가 **이 기기에만 남고 상대방 폰으로 넘어가지 않는다.**
+앱이 서버에 올리려다 컬럼이 없어 실패하므로 동기화가 통째로 건너뛰어질 수 있다.
+기록이 사라지지는 않지만 두 기기가 안 맞는다.
 
 ## 대시보드에서 한 설정 (SQL 아님)
 

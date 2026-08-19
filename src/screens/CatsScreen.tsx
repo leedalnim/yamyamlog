@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useCatsAndGroups } from '../components/common'
-import { IconCalculator, IconChevronRight, IconPencil } from '../components/icons'
+import { IconCalculator, IconChevronRight, IconPencil, IconTrash } from '../components/icons'
 import catFaceUrl from '../assets/faces/good-white.svg'
 
 /** 냥이별 아바타 원 배경 — 크림색 얼굴과 확실히 구분되는 파스텔 */
 const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC93']
-import { listCats, listSnacks, updateCat } from '../data/repo'
+import { addCat, deleteCat, listCats, listSnacks, updateCat } from '../data/repo'
 import type { Cat, Snack } from '../data/types'
 
 const CALC_URL = 'https://leedalnim.github.io/pet-food-calc/'
@@ -21,6 +21,8 @@ export function CatsScreen() {
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [calcOpen, setCalcOpen] = useState(false)
   const [editing, setEditing] = useState<Cat | null>(null)
+  // 'new' 면 추가 시트, Cat 이면 수정 시트
+  const [adding, setAdding] = useState(false)
 
   useEffect(() => {
     ;(async () => setSnacks(await listSnacks()))()
@@ -102,7 +104,7 @@ export function CatsScreen() {
 
       <button
         className="add-cat-btn"
-        onClick={() => alert('냥이 추가는 다음 업데이트에서 만들 예정이에요!')}
+        onClick={() => setAdding(true)}
       >
         + 냥이 추가하기
       </button>
@@ -114,6 +116,16 @@ export function CatsScreen() {
           onClose={() => setEditing(null)}
           onSaved={async () => {
             setEditing(null)
+            setCats(await listCats())
+          }}
+        />
+      )}
+
+      {adding && (
+        <CatEditSheet
+          onClose={() => setAdding(false)}
+          onSaved={async () => {
+            setAdding(false)
             setCats(await listCats())
           }}
         />
@@ -137,19 +149,22 @@ export function CatsScreen() {
   )
 }
 
+/** cat 이 없으면 '추가', 있으면 '수정' */
 function CatEditSheet({
   cat,
   onClose,
   onSaved,
 }: {
-  cat: Cat
+  cat?: Cat
   onClose: () => void
   onSaved: () => void
 }) {
-  const [name, setName] = useState(cat.name)
-  const [weight, setWeight] = useState(cat.weightKg != null ? String(cat.weightKg) : '')
-  const [age, setAge] = useState(cat.ageYears != null ? String(cat.ageYears) : '')
+  const isNew = !cat
+  const [name, setName] = useState(cat?.name ?? '')
+  const [weight, setWeight] = useState(cat?.weightKg != null ? String(cat.weightKg) : '')
+  const [age, setAge] = useState(cat?.ageYears != null ? String(cat.ageYears) : '')
   const [saving, setSaving] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const weightNum = Number(weight)
   const ageNum = Number(age)
@@ -159,12 +174,20 @@ function CatEditSheet({
   async function save() {
     setSaving(true)
     try {
-      await updateCat({
-        ...cat,
-        name: name.trim() || cat.name,
-        weightKg: validWeight ? weightNum : undefined,
-        ageYears: validAge ? ageNum : undefined,
-      })
+      if (cat) {
+        await updateCat({
+          ...cat,
+          name: name.trim() || cat.name,
+          weightKg: validWeight ? weightNum : undefined,
+          ageYears: validAge ? ageNum : undefined,
+        })
+      } else {
+        await addCat({
+          name: name.trim(),
+          weightKg: validWeight ? weightNum : undefined,
+          ageYears: validAge ? ageNum : undefined,
+        })
+      }
       onSaved()
     } finally {
       setSaving(false)
@@ -175,11 +198,17 @@ function CatEditSheet({
     <div className="sheet-backdrop" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="sheet-handle" />
-        <h2 className="sheet-title">{cat.name} 정보</h2>
+        <h2 className="sheet-title">{isNew ? '냥이 추가' : `${cat.name} 정보`}</h2>
 
         <div className="field">
           <label>이름</label>
-          <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+          <input
+            className="input"
+            autoFocus={isNew}
+            placeholder="예: 탱자"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </div>
 
         <div className="cat-edit-row">
@@ -219,10 +248,58 @@ function CatEditSheet({
 
         <div className="sheet-actions">
           <button className="btn" style={{ flex: 1 }} onClick={onClose}>취소</button>
-          <button className="btn btn-primary" style={{ flex: 2 }} disabled={saving} onClick={save}>
-            {saving ? '저장중…' : '저장하기'}
+          <button
+            className="btn btn-primary"
+            style={{ flex: 2 }}
+            disabled={saving || (isNew && !name.trim())}
+            onClick={save}
+          >
+            {saving ? '저장중…' : isNew ? '추가하기' : '저장하기'}
           </button>
         </div>
+
+        {/* 삭제는 수정할 때만. 간식 기록의 반응은 그대로 두고 목록에서만 뺀다. */}
+        {!isNew && (
+          confirmDelete ? (
+            <div className="cat-delete-confirm">
+              <p>
+                <b>{cat.name}</b>를 목록에서 뺄까요?
+                <br />
+                지금까지의 간식 반응 기록은 그대로 남아요.
+              </p>
+              <div className="sheet-actions" style={{ marginTop: 10 }}>
+                <button className="btn" style={{ flex: 1 }} onClick={() => setConfirmDelete(false)}>
+                  취소
+                </button>
+                <button
+                  className="btn"
+                  style={{ flex: 1, color: 'var(--danger)' }}
+                  disabled={saving}
+                  onClick={async () => {
+                    setSaving(true)
+                    try {
+                      await deleteCat(cat.id)
+                      onSaved()
+                    } finally {
+                      setSaving(false)
+                    }
+                  }}
+                >
+                  빼기
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="btn btn-icon btn-block"
+              style={{ marginTop: 10, color: 'var(--muted)' }}
+              onClick={() => setConfirmDelete(true)}
+            >
+              <IconTrash size={16} />
+              목록에서 빼기
+            </button>
+          )
+        )}
       </div>
     </div>
   )

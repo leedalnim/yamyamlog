@@ -307,7 +307,7 @@ function SnackCard({
 }) {
   const url = usePhotoURL(snack.photoId)
   return (
-    <div className="card snack-card">
+    <div className={'card snack-card' + (snack.discontinued ? ' is-discontinued' : '')}>
       <button
         className={'fav-btn' + (snack.favorite ? ' on' : '')}
         aria-label={snack.favorite ? '즐겨찾기 해제' : '즐겨찾기'}
@@ -328,8 +328,9 @@ function SnackCard({
             )}
           </div>
           <div className="snack-body">
-            {(snack.kind || snack.base) && (
+            {(snack.kind || snack.base || snack.discontinued) && (
               <div className="snack-tag-row">
+                {snack.discontinued && <span className="tag-discontinued">단종</span>}
                 {snack.kind && <KindTag v={snack.kind} />}
                 {snack.base && <BaseTag v={snack.base} />}
               </div>
@@ -367,6 +368,7 @@ function SnackDetail({
   const [base, setBase] = useState(snack.base ?? '')
   const [memo, setMemo] = useState(snack.memo ?? '')
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>(snack.reactions)
+  const [discontinued, setDiscontinued] = useState(!!snack.discontinued)
   const [saving, setSaving] = useState(false)
 
   async function save() {
@@ -378,6 +380,7 @@ function SnackDetail({
         kind: kind.trim() || undefined,
         base: base.trim() || undefined,
         memo: memo.trim() || undefined,
+        discontinued,
         reactions,
         updatedAt: Date.now(),
       }
@@ -421,6 +424,19 @@ function SnackDetail({
         <div className="field">
           <label>베이스 · 주재료</label>
           <BaseChooser value={base} onChange={setBase} />
+        </div>
+        <div className="field">
+          <label>상태</label>
+          <div className="chip-row">
+            <button
+              type="button"
+              className={'sel-chip' + (discontinued ? ' on' : '')}
+              data-accent="kind"
+              onClick={() => setDiscontinued((v) => !v)}
+            >
+              단종된 제품
+            </button>
+          </div>
         </div>
         <div className="field">
           <label>메모</label>
