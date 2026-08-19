@@ -147,9 +147,9 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         <button
           className={'chip-tab chip-fav' + (filter === 'fav' ? ' active' : '')}
           onClick={() => setFilter('fav')}
+          aria-label="즐겨찾기만 보기"
         >
-          <IconStar size={14} filled={filter === 'fav'} />
-          즐겨찾기
+          <IconStar size={17} filled={filter === 'fav'} />
         </button>
         {kinds.map((k) => (
           <button

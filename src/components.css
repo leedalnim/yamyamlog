@@ -1185,7 +1185,14 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 }
 
 /* ===== 즐겨찾기 ===== */
-.chip-fav { display: inline-flex; align-items: center; gap: 5px; }
+/* 별 하나만 있는 칩 — 아이콘이 가운데 오도록 좌우 여백을 줄인다 */
+.chip-fav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  line-height: 0;
+}
 .chip-fav.active { color: #fff; }
 
 .snack-card { position: relative; }
