@@ -95,7 +95,9 @@ export const IconCalendar = ({ size = 24, className }: P) => (
 )
 export const IconChevronRight = ({ size = 24, className }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-    <path d="M8 4L14.4 10.8L8 17.6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+    {/* 그림의 중심을 뷰박스 정중앙(12,12)에 맞춘다.
+        원래 좌표는 중심이 (11.2, 10.8)이라 동그라미 안에서 왼쪽 위로 쏠려 보였다. */}
+    <path d="M8.8 5.2L15.2 12L8.8 18.8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 export const IconDots = ({ size = 24, className }: P) => (
