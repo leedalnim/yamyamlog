@@ -48,7 +48,11 @@ export async function leaveHousehold(): Promise<void> {
 export async function createHousehold(): Promise<HouseholdInfo> {
   const sb = getSupabase()
   if (!sb) throw new Error('클라우드가 설정되지 않았어요.')
-  await ensureSignedIn()
+  try {
+    await ensureSignedIn()
+  } catch (e) {
+    throw new Error(friendly((e as Error).message))
+  }
   const { data, error } = await sb.rpc('create_household')
   if (error) throw new Error(friendly(error.message))
   const row = Array.isArray(data) ? data[0] : data
@@ -61,7 +65,11 @@ export async function createHousehold(): Promise<HouseholdInfo> {
 export async function joinHousehold(code: string): Promise<HouseholdInfo> {
   const sb = getSupabase()
   if (!sb) throw new Error('클라우드가 설정되지 않았어요.')
-  await ensureSignedIn()
+  try {
+    await ensureSignedIn()
+  } catch (e) {
+    throw new Error(friendly((e as Error).message))
+  }
   const { data, error } = await sb.rpc('join_household', { p_code: code.trim() })
   if (error) throw new Error(friendly(error.message))
   if (!data) throw new Error('그런 코드가 없어요.')
@@ -199,10 +207,16 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
   }
 }
 
+/** 서버가 돌려준 영문 메시지를 사람이 읽을 말로 바꾼다 */
 function friendly(msg: string): string {
-  if (/Anonymous sign-ins are disabled/i.test(msg)) {
-    return 'Supabase 대시보드에서 익명 로그인(Anonymous sign-ins)을 켜주세요.'
+  if (/Failed to fetch|NetworkError|Load failed|ERR_/i.test(msg)) {
+    return '지금 서버에 연결할 수 없어요. 잠시 후 다시 시도해주세요.'
   }
+  if (/Anonymous sign-ins are disabled/i.test(msg)) {
+    return 'Supabase 설정에서 익명 로그인(Anonymous sign-ins)을 켜주세요.'
+  }
+  if (/시도가 너무 많아요/.test(msg)) return '시도가 너무 많아요. 잠시 후 다시 해주세요.'
   if (/그런 코드가 없어요/.test(msg)) return '그런 코드가 없어요. 다시 확인해주세요.'
+  if (/로그인이 필요합니다/.test(msg)) return '연결 준비에 실패했어요. 새로고침 후 다시 시도해주세요.'
   return msg
 }

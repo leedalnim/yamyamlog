@@ -32,11 +32,14 @@ export function SettingsScreen({
   settings,
   onChange,
   onRestored,
+  onDataChanged,
 }: {
   settings: Settings
   onChange: (patch: Partial<Settings>) => void
-  /** 복원 후 화면들이 새 데이터를 다시 읽도록 알린다 */
+  /** 백업 복원 후 — 데이터를 다시 읽고 홈으로 보낸다 */
   onRestored?: () => void
+  /** 동기화 후 — 데이터만 다시 읽고 설정 화면에 그대로 머문다 */
+  onDataChanged?: () => void
 }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState<'export' | 'import' | null>(null)
@@ -80,7 +83,7 @@ export function SettingsScreen({
             ? '이미 최신이에요.'
             : `받은 것 ${r.pulled}건, 보낸 것 ${r.pushed}건 맞췄어요.`,
       })
-      onRestored?.()
+      onDataChanged?.()
     }
     setCloudBusy(null)
   }

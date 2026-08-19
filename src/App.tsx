@@ -121,6 +121,7 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
             refresh()
             setTab('feed')
           }}
+          onDataChanged={refresh}
         />
       )}
 
