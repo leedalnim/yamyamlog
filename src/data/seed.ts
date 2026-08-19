@@ -15,7 +15,17 @@ export const SEED_CATS: Cat[] = [
 ]
 
 /** 시드 버전 — 올리면 기존 사용자에게도 시드를 한 번 다시 적용 */
-export const SEED_VERSION = 6
+export const SEED_VERSION = 7
+
+/**
+ * 예전 시드에서 쓰던 기록 id.
+ *
+ * 노션 데이터를 넣으면서 같은 간식의 id를 바꿨는데, 시드를 다시 심을 때
+ * 새 id만 추가하고 옛 id는 남겨둬서 같은 간식이 두 벌 보였다.
+ * 시드가 갱신될 때 여기 있는 id들을 '지움 표시'로 정리한다.
+ * (실제로 지우지 않는 이유는 다른 기기와 맞출 때 되살아나지 않게 하려고)
+ */
+export const RETIRED_SEED_IDS = ['s-nc-yeongyang', 's-okiro-red']
 
 /** 사진이 있는 시드 기록의 photoId */
 export const SEED_PHOTO_ID = 'p-churu-1'

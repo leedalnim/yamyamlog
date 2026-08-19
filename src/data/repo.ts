@@ -3,7 +3,14 @@
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
 import { getDB } from './db'
-import { SEED_CATS, SEED_GROUPS, SEED_PHOTO_ID, SEED_SNACKS, SEED_VERSION } from './seed'
+import {
+  RETIRED_SEED_IDS,
+  SEED_CATS,
+  SEED_GROUPS,
+  SEED_PHOTO_ID,
+  SEED_SNACKS,
+  SEED_VERSION,
+} from './seed'
 import { CHURU_PHOTO_B64 } from './seed-photo'
 import type { Cat, Group, ReactionLevel, Snack } from './types'
 
@@ -40,6 +47,23 @@ export async function ensureSeeded(): Promise<void> {
   }
   tx.objectStore('meta').put(SEED_VERSION, 'seedVersion')
   await tx.done
+
+  // 예전 시드에서 id가 바뀐 기록 정리 — 안 하면 같은 간식이 두 벌 남는다
+  await retireOldSeedRecords()
+}
+
+/**
+ * 옛 시드 기록에 '지움 표시'를 남긴다.
+ * 사용자가 직접 만든 기록은 건드리지 않는다(정해진 id 목록만 본다).
+ */
+async function retireOldSeedRecords(): Promise<void> {
+  const db = await getDB()
+  const now = Date.now()
+  for (const id of RETIRED_SEED_IDS) {
+    const old = (await db.get('snacks', id)) as Snack | undefined
+    if (!old || old.deletedAt) continue
+    await db.put('snacks', { ...old, deletedAt: now, updatedAt: now })
+  }
 }
 
 // ---------- 그룹 / 고양이 ----------
