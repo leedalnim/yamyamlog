@@ -51,13 +51,13 @@ export async function listGroups(): Promise<Group[]> {
 
 export async function listCats(): Promise<Cat[]> {
   const db = await getDB()
-  const all = await db.getAll('cats')
-  return all.sort((a, b) => a.order - b.order)
+  const all = (await db.getAll('cats')) as Cat[]
+  return all.filter((c) => !c.deletedAt).sort((a, b) => a.order - b.order)
 }
 
 export async function updateCat(cat: Cat): Promise<void> {
   const db = await getDB()
-  await db.put('cats', cat)
+  await db.put('cats', { ...cat, updatedAt: Date.now() })
 }
 
 // ---------- 사진 ----------
@@ -109,17 +109,24 @@ export async function updateSnack(snack: Snack): Promise<void> {
   await db.put('snacks', { ...snack, updatedAt: Date.now() })
 }
 
+/**
+ * 삭제는 '지움 표시'로 남긴다(툼스톤).
+ * 실제로 지워버리면 다른 기기와 맞출 때 그쪽에 남아 있는 기록이
+ * 다시 넘어와 되살아난다. 사진은 용량이 크므로 바로 정리한다.
+ */
 export async function deleteSnack(id: string): Promise<void> {
   const db = await getDB()
-  const snack = await db.get('snacks', id)
-  await db.delete('snacks', id)
-  if (snack?.photoId) await db.delete('photos', snack.photoId)
+  const snack = (await db.get('snacks', id)) as Snack | undefined
+  if (!snack) return
+  const now = Date.now()
+  await db.put('snacks', { ...snack, photoId: undefined, deletedAt: now, updatedAt: now })
+  if (snack.photoId) await db.delete('photos', snack.photoId)
 }
 
 export async function listSnacks(): Promise<Snack[]> {
   const db = await getDB()
-  const all = await db.getAll('snacks')
-  return all.sort((a, b) => b.createdAt - a.createdAt)
+  const all = (await db.getAll('snacks')) as Snack[]
+  return all.filter((s) => !s.deletedAt).sort((a, b) => b.createdAt - a.createdAt)
 }
 
 export async function getSnack(id: string): Promise<Snack | undefined> {

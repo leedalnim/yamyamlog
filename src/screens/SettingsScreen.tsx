@@ -9,6 +9,17 @@ import {
   type BackupSummary,
 } from '../data/backup'
 import { IconTrash } from '../components/icons'
+import { isCloudConfigured } from '../lib/supabase'
+import {
+  createHousehold,
+  joinHousehold,
+  leaveHousehold,
+  readHousehold,
+  readLastSyncedAt,
+  syncNow,
+  type HouseholdInfo,
+} from '../data/sync'
+import { useEffect } from 'react'
 
 function formatWhen(ts: number): string {
   if (!ts) return '시각 미상'
@@ -31,6 +42,78 @@ export function SettingsScreen({
   const [busy, setBusy] = useState<'export' | 'import' | null>(null)
   const [note, setNote] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const [pending, setPending] = useState<{ data: BackupFile; summary: BackupSummary } | null>(null)
+
+  // ── 공유(클라우드) ──────────────────────────────────────────
+  const [house, setHouse] = useState<HouseholdInfo | null>(null)
+  const [lastSync, setLastSync] = useState<number | null>(null)
+  const [cloudBusy, setCloudBusy] = useState<'create' | 'join' | 'sync' | null>(null)
+  const [cloudNote, setCloudNote] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
+  const [joinCode, setJoinCode] = useState('')
+
+  useEffect(() => {
+    void (async () => {
+      setHouse(await readHousehold())
+      setLastSync(await readLastSyncedAt())
+    })()
+  }, [])
+
+  async function runSync() {
+    setCloudBusy('sync')
+    setCloudNote(null)
+    const r = await syncNow()
+    if (typeof r === 'string') {
+      setCloudNote({
+        kind: 'err',
+        text:
+          r === 'offline'
+            ? '지금은 연결이 안 돼요. 기록은 이 기기에 그대로 있고, 나중에 자동으로 맞춰집니다.'
+            : r === 'no-household'
+              ? '먼저 우리집을 만들거나 코드로 참여해주세요.'
+              : '클라우드가 아직 설정되지 않았어요.',
+      })
+    } else {
+      setLastSync(r.at)
+      setCloudNote({
+        kind: 'ok',
+        text:
+          r.pulled === 0 && r.pushed === 0
+            ? '이미 최신이에요.'
+            : `받은 것 ${r.pulled}건, 보낸 것 ${r.pushed}건 맞췄어요.`,
+      })
+      onRestored?.()
+    }
+    setCloudBusy(null)
+  }
+
+  async function doCreate() {
+    setCloudBusy('create')
+    setCloudNote(null)
+    try {
+      const info = await createHousehold()
+      setHouse(info)
+      setCloudNote({ kind: 'ok', text: '우리집을 만들었어요. 아래 코드를 상대에게 알려주세요.' })
+      await runSync()
+    } catch (e) {
+      setCloudNote({ kind: 'err', text: (e as Error).message })
+      setCloudBusy(null)
+    }
+  }
+
+  async function doJoin() {
+    if (!joinCode.trim()) return
+    setCloudBusy('join')
+    setCloudNote(null)
+    try {
+      const info = await joinHousehold(joinCode)
+      setHouse(info)
+      setJoinCode('')
+      setCloudNote({ kind: 'ok', text: '우리집에 참여했어요.' })
+      await runSync()
+    } catch (e) {
+      setCloudNote({ kind: 'err', text: (e as Error).message })
+      setCloudBusy(null)
+    }
+  }
 
   async function doExport() {
     setBusy('export')
@@ -176,14 +259,103 @@ export function SettingsScreen({
         </div>
       </section>
 
-      {/* 안내 */}
+      {/* 공유 */}
       <section className="stat-section">
-        <h2 className="stat-title">공유 (예정)</h2>
-        <div className="card" style={{ padding: 16, fontSize: 14.5, lineHeight: 1.7 }}>
-          <p style={{ margin: 0 }} className="muted">
-            지금은 이 기기에만 기록이 저장돼요. 다음 단계에서 무료 클라우드(Supabase)를 연결해,
-            둘만 아는 코드로 <b>같은 기록을 두 사람이 함께</b> 볼 수 있게 만들 예정이에요.
-          </p>
+        <h2 className="stat-title">함께 보기</h2>
+        <div className="card" style={{ padding: 16 }}>
+          {!isCloudConfigured ? (
+            <p className="muted" style={{ margin: 0, fontSize: 13.5, lineHeight: 1.7 }}>
+              아직 클라우드가 연결되지 않았어요. 지금은 이 기기에만 기록이 저장됩니다.
+            </p>
+          ) : house ? (
+            <>
+              <div className="muted" style={{ fontSize: 12.5, fontWeight: 700 }}>우리집 코드</div>
+              <div
+                style={{
+                  fontSize: 26,
+                  fontWeight: 800,
+                  letterSpacing: '0.06em',
+                  margin: '4px 0 10px',
+                }}
+              >
+                {house.code || '—'}
+              </div>
+              <p className="muted" style={{ margin: '0 0 14px', fontSize: 13, lineHeight: 1.7 }}>
+                상대방 폰의 <b>함께 보기</b>에서 이 코드를 넣으면 같은 기록을 보게 돼요.
+                <br />
+                마지막 동기화: {lastSync ? formatWhen(lastSync) : '아직 없음'}
+              </p>
+              <button
+                className="btn btn-primary btn-block"
+                onClick={runSync}
+                disabled={cloudBusy !== null}
+              >
+                {cloudBusy === 'sync' ? '맞추는 중…' : '지금 동기화'}
+              </button>
+              <button
+                className="btn btn-block"
+                style={{ marginTop: 10, color: 'var(--muted)' }}
+                disabled={cloudBusy !== null}
+                onClick={async () => {
+                  await leaveHousehold()
+                  setHouse(null)
+                  setLastSync(null)
+                  setCloudNote({
+                    kind: 'ok',
+                    text: '연결을 끊었어요. 기록은 이 기기에 그대로 있어요.',
+                  })
+                }}
+              >
+                연결 끊기
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="muted" style={{ margin: '0 0 14px', fontSize: 13.5, lineHeight: 1.7 }}>
+                두 사람이 <b>같은 기록</b>을 보게 만들어요. 한 사람이 우리집을 만들고,
+                나온 코드를 상대가 넣으면 됩니다.
+              </p>
+              <button
+                className="btn btn-primary btn-block"
+                onClick={doCreate}
+                disabled={cloudBusy !== null}
+              >
+                {cloudBusy === 'create' ? '만드는 중…' : '우리집 만들기'}
+              </button>
+              <div className="muted" style={{ fontSize: 12.5, margin: '14px 0 8px', fontWeight: 700 }}>
+                이미 코드가 있다면
+              </div>
+              <input
+                className="input"
+                placeholder="코드 입력 (예: ABCD-2345)"
+                value={joinCode}
+                onChange={(e) => setJoinCode(e.target.value)}
+                style={{ textTransform: 'uppercase' }}
+              />
+              <button
+                className="btn btn-block"
+                style={{ marginTop: 10 }}
+                onClick={doJoin}
+                disabled={cloudBusy !== null || !joinCode.trim()}
+              >
+                {cloudBusy === 'join' ? '참여하는 중…' : '코드로 참여하기'}
+              </button>
+            </>
+          )}
+
+          {cloudNote && (
+            <p
+              style={{
+                margin: '12px 0 0',
+                fontSize: 13,
+                lineHeight: 1.6,
+                fontWeight: 700,
+                color: cloudNote.kind === 'ok' ? 'var(--primary)' : 'var(--danger)',
+              }}
+            >
+              {cloudNote.text}
+            </p>
+          )}
         </div>
       </section>
 

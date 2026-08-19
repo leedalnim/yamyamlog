@@ -8,9 +8,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "check:precache": "node scripts/check-precache.mjs"
+    "check:precache": "node scripts/check-precache.mjs",
+    "test:merge": "esbuild src/data/merge.ts --outfile=dist-test/merge.js --format=esm && node scripts/test-merge.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
     "idb": "^8.0.0",
     "pretendard": "^1.3.9",
     "react": "^18.3.1",

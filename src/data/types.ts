@@ -25,6 +25,10 @@ export interface Cat {
   weightKg?: number
   /** 나이(년) */
   ageYears?: number
+  /** 마지막 수정 시각 (동기화 병합 기준) */
+  updatedAt?: number
+  /** 삭제 시각 (툼스톤) */
+  deletedAt?: number
 }
 
 /** 간식 기록 1건 */
@@ -43,6 +47,11 @@ export interface Snack {
   updatedAt: number
   /** 고양이별 반응 (catId -> level). 아직 체크 안한 고양이는 없음 */
   reactions: Record<string, ReactionLevel>
+  /**
+   * 삭제 시각. 기록을 실제로 지우지 않고 표시만 남긴다.
+   * 지워버리면 다른 기기와 맞출 때 "여기 없네?" → 되살아나기 때문.
+   */
+  deletedAt?: number
 }
 
 /** 사진 원본 (별도 저장소) */

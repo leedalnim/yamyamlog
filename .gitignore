@@ -16,3 +16,4 @@ dist-single
 # 예전에 '*.mjs' 규칙이 검사 스크립트를 삼켜 배포가 실패한 적이 있다.
 !scripts/
 !scripts/**
+dist-test
