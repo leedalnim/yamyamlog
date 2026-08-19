@@ -327,10 +327,11 @@ export function SettingsScreen({
               </div>
               <input
                 className="input"
-                placeholder="코드 입력 (예: ABCD-2345)"
+                placeholder="코드 4자리 입력"
                 value={joinCode}
-                onChange={(e) => setJoinCode(e.target.value)}
-                style={{ textTransform: 'uppercase' }}
+                onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                inputMode="numeric"
+                style={{ letterSpacing: '0.3em', fontSize: 20, fontWeight: 800 }}
               />
               <button
                 className="btn btn-block"
