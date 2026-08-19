@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:precache": "node scripts/check-precache.mjs"
   },
   "dependencies": {
     "idb": "^8.0.0",

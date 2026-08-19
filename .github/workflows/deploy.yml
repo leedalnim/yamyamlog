@@ -25,6 +25,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # 빌드가 참조하는 파일이 전부 프리캐시에 들어갔는지 확인한다.
+      # 하나라도 빠지면 다음 배포 때 그 파일이 404가 되어 이미지가 깨지므로,
+      # 사용자가 겪기 전에 여기서 배포를 멈춘다.
+      - run: npm run check:precache
       - uses: actions/configure-pages@v5
         with:
           enablement: true
