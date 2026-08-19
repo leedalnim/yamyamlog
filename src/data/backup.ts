@@ -138,10 +138,18 @@ export async function restoreBackup(data: BackupFile): Promise<void> {
   await db.put('meta', SEED_VERSION, 'seedVersion')
 }
 
-/** 백업 파일 이름 — 날짜가 들어가 여러 개 모아둬도 구분된다 */
-export function backupFileName(at = Date.now()): string {
-  const d = new Date(at)
-  const p = (n: number) => String(n).padStart(2, '0')
-  // 파일명은 ASCII로 — 한글 파일명이 기기·앱에 따라 깨지거나 잘리는 경우가 있다
-  return `yamyamlog-backup-${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}.json`
+/**
+ * 백업 파일 이름.
+ *
+ * 날짜를 붙이지 않고 항상 같은 이름을 쓴다. 파일 앱에서 같은 이름으로
+ * 저장하면 '대치' 여부를 물어보므로, 백업 파일이 계속 쌓이지 않고
+ * 한 개가 최신으로 유지된다.
+ *
+ * 만든 시각은 파일 안(exportedAt)에 들어 있고 되돌리기 확인 화면에서
+ * 보여주므로, 파일명에 날짜가 없어도 언제 것인지 알 수 있다.
+ *
+ * 파일명은 ASCII로 — 한글 파일명이 기기·앱에 따라 깨지거나 잘리는 경우가 있다.
+ */
+export function backupFileName(): string {
+  return 'yamyamlog-backup.json'
 }

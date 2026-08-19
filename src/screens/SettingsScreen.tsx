@@ -37,7 +37,7 @@ export function SettingsScreen({
     setNote(null)
     try {
       const backup = await createBackup()
-      const name = backupFileName(backup.exportedAt)
+      const name = backupFileName()
       const blob = new Blob([JSON.stringify(backup)], { type: 'application/json' })
       const summary = `기록 ${backup.snacks.length}건, 사진 ${backup.photos.length}장`
 
@@ -133,6 +133,8 @@ export function SettingsScreen({
           <p className="muted" style={{ margin: '0 0 14px', fontSize: 13.5, lineHeight: 1.7 }}>
             기록은 이 기기에만 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면
             사라지니, 가끔 파일로 빼두세요. <b>사진까지 함께</b> 저장됩니다.
+            <br />
+            파일 이름이 항상 같아서, 같은 자리에 저장하면 <b>덮어쓰기 한 개</b>로 유지돼요.
           </p>
 
           <button className="btn btn-primary btn-block" onClick={doExport} disabled={busy !== null}>
