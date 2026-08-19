@@ -32,7 +32,7 @@ jobs:
       # 하나라도 빠지면 다음 배포 때 그 파일이 404가 되어 이미지가 깨지므로,
       # 사용자가 겪기 전에 여기서 배포를 멈춘다.
       # 동기화 병합 규칙(지운 게 되살아나지 않는지 등) 검증
-      - run: npm run test:merge
+      - run: npm test
       - run: npm run check:precache
       - uses: actions/configure-pages@v5
         with:

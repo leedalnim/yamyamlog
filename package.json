@@ -9,7 +9,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "check:precache": "node scripts/check-precache.mjs",
-    "test:merge": "esbuild src/data/merge.ts --outfile=dist-test/merge.js --format=esm && node scripts/test-merge.mjs"
+    "test:merge": "esbuild src/data/merge.ts --outfile=dist-test/merge.js --format=esm && node scripts/test-merge.mjs",
+    "test:hangul": "esbuild src/lib/hangul.ts --outfile=dist-test/hangul.js --format=esm && node scripts/test-hangul.mjs",
+    "test": "npm run test:merge && npm run test:hangul"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

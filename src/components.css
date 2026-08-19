@@ -1208,3 +1208,15 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   color: var(--line);
 }
 .fav-btn.on { color: #f2bc57; }
+
+/* ===== 상세: 사진 없는 기록의 츄르 일러스트 ===== */
+.detail-hero-fallback { background: linear-gradient(140deg, #fbb472, #fa8f45); }
+/* .detail-hero img 의 width/height 100% 를 눌러야 하므로 선택자를 더 구체적으로 */
+.detail-hero .detail-hero-fallback img.detail-no-photo {
+  height: 38%;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  display: block;
+  transform: rotate(-14deg);
+}

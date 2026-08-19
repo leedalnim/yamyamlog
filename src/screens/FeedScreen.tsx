@@ -14,6 +14,8 @@ import { deleteSnack, listSnacks, toggleFavorite, updateSnack } from '../data/re
 import { CatDoodle, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash, ReactionIcon } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
 import logoUrl from '../assets/logo.svg'
+import noPhotoUrl from '../assets/no-photo.svg'
+import { matches } from '../lib/hangul'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -60,13 +62,14 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     else if (filter === '기타') list = list.filter((s) => !s.kind)
     else if (filter !== 'all') list = list.filter((s) => s.kind === filter)
 
-    // 이름뿐 아니라 재료·메모까지 훑는다 — '닭가슴살'로 여러 제품이 잡히게
-    const q = query.trim().toLowerCase()
+    // 이름뿐 아니라 재료·메모까지 훑는다 — '닭가슴살'로 여러 제품이 잡히게.
+    // 'ㅈㄱㅎㅋ' 처럼 초성만 치면 초성으로 비교한다.
+    const q = query.trim()
     if (q) {
       list = list.filter((s) =>
         [s.name, s.kind, s.base, s.memo]
           .filter(Boolean)
-          .some((v) => (v as string).toLowerCase().includes(q)),
+          .some((v) => matches(v as string, q)),
       )
     }
 
@@ -116,7 +119,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
             <input
               className="search-input"
               autoFocus
-              placeholder="간식 이름 · 재료 · 메모 검색"
+              placeholder="이름 · 재료 · 메모 (초성도 가능)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -362,8 +365,6 @@ function SnackDetail({
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>(snack.reactions)
   const [saving, setSaving] = useState(false)
 
-  const entries = Object.entries(snack.reactions) as [string, ReactionLevel][]
-
   async function save() {
     setSaving(true)
     try {
@@ -440,7 +441,7 @@ function SnackDetail({
           <img src={url} alt={snack.name} />
         ) : (
           <div className="detail-hero-fallback">
-            <ReactionPillFallback entries={entries} />
+            <ReactionPillFallback />
           </div>
         )}
         <button className="detail-back" onClick={onBack} aria-label="뒤로"><IconChevronLeft size={20} /></button>
@@ -471,9 +472,11 @@ function SnackDetail({
   )
 }
 
-/** 사진이 없는 기록의 히어로 대체 — 대표 반응 블롭 얼굴 */
-function ReactionPillFallback({ entries }: { entries: [string, ReactionLevel][] }) {
-  const levels = entries.map(([, lv]) => lv)
-  const level: ReactionLevel = levels.includes('good') ? 'good' : levels.includes('ok') ? 'ok' : levels.length ? 'bad' : 'ok'
-  return <ReactionIcon level={level} size={96} />
+/**
+ * 사진이 없는 기록의 히어로 대체 — 츄르 일러스트.
+ * 반응 얼굴을 크게 띄우면 아래 반응 영역과 겹쳐 보이고,
+ * '사진이 없다'는 사실도 전달되지 않는다.
+ */
+function ReactionPillFallback() {
+  return <img src={noPhotoUrl} alt="" className="detail-no-photo" />
 }
