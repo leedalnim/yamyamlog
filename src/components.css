@@ -1220,3 +1220,20 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   display: block;
   transform: rotate(-14deg);
 }
+
+/* ===== 상세: 시트가 화면 끝까지 이어지게 =====
+   시트 높이가 내용만큼이라, 기록이 짧으면 아래에 페이지 배경(아이보리)이
+   드러나 흰 시트가 중간에서 끊긴 것처럼 보였다. 남는 높이를 시트가 채운다. */
+.detail-page {
+  /* .app 이 세로 flex 컨테이너다. flex:1 로 남는 높이를 받아야
+     min-height:100% 가 auto 로 풀리는 문제를 피할 수 있다. */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+.detail-hero { flex: none; }
+.detail-sheet {
+  flex: 1;
+  padding-bottom: calc(var(--nav-h) + 24px);
+}
