@@ -23,6 +23,9 @@ jobs:
         with:
           node-version: 20
           cache: npm
+      # 빌드에 필요한 파일이 git에 실제로 올라와 있는지 먼저 확인한다.
+      # (.gitignore가 스크립트를 삼켜 배포가 실패한 적이 있다)
+      - run: git ls-files --error-unmatch scripts/check-precache.mjs
       - run: npm ci
       - run: npm run build
       # 빌드가 참조하는 파일이 전부 프리캐시에 들어갔는지 확인한다.
