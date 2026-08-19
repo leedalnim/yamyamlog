@@ -37,20 +37,39 @@ export function SettingsScreen({
     setNote(null)
     try {
       const backup = await createBackup()
+      const name = backupFileName(backup.exportedAt)
       const blob = new Blob([JSON.stringify(backup)], { type: 'application/json' })
+      const summary = `기록 ${backup.snacks.length}건, 사진 ${backup.photos.length}장`
+
+      // 아이폰 사파리는 blob 링크 다운로드를 무시하고 파일을 그냥 열어버리는
+      // 경우가 있다. 공유 시트를 쓸 수 있으면 그쪽을 먼저 쓴다 —
+      // '파일에 저장', 에어드롭, 메신저 등 원하는 곳으로 바로 내보낼 수 있다.
+      const file = new File([blob], name, { type: 'application/json' })
+      const canShare =
+        typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })
+
+      if (canShare) {
+        try {
+          await navigator.share({ files: [file], title: '얌얌로그 백업' })
+          setNote({ kind: 'ok', text: `${summary}을 내보냈어요.` })
+          return
+        } catch (err) {
+          // 사용자가 공유를 취소한 경우엔 조용히 끝낸다
+          if ((err as Error)?.name === 'AbortError') return
+          // 그 밖의 실패는 아래 다운로드 방식으로 이어서 시도
+        }
+      }
+
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = backupFileName(backup.exportedAt)
+      a.download = name
       document.body.appendChild(a)
       a.click()
       a.remove()
-      // 사파리에서 저장이 시작되기 전에 해제되지 않도록 잠시 뒤 정리
+      // 저장이 시작되기 전에 해제되지 않도록 잠시 뒤 정리
       setTimeout(() => URL.revokeObjectURL(url), 10_000)
-      setNote({
-        kind: 'ok',
-        text: `기록 ${backup.snacks.length}건, 사진 ${backup.photos.length}장을 파일로 저장했어요.`,
-      })
+      setNote({ kind: 'ok', text: `${summary}을 파일로 저장했어요.` })
     } catch (e) {
       setNote({ kind: 'err', text: '백업을 만들지 못했어요. ' + (e as Error).message })
     } finally {
