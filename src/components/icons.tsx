@@ -196,6 +196,33 @@ export const IconCalculator = (p: P) =>
     p,
   )
 
+/** 검색 */
+export const IconSearch = (p: P) =>
+  svg(
+    <>
+      <circle cx="10.5" cy="10.5" r="6.8" />
+      <path d="M15.6 15.6L20.5 20.5" />
+    </>,
+    p,
+  )
+
+/** 즐겨찾기 별 — filled면 꽉 찬 별 */
+export const IconStar = ({ size = 24, className, filled = false }: P & { filled?: boolean }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill={filled ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth={1.9}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M12 3.3l2.6 5.4 5.9.85-4.25 4.15 1 5.9L12 16.8l-5.25 2.8 1-5.9L3.5 9.55l5.9-.85L12 3.3z" />
+  </svg>
+)
+
 export const IconChevronDown = (p: P) =>
   svg(<path d="M6 9.5 12 15.5 18 9.5" />, { ...p, strokeWidth: p.strokeWidth ?? 2 })
 

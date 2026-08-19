@@ -1148,3 +1148,56 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   border-color: #e3ded5;
 }
 .face-grid--chip .face-cell[data-level='bad'] .face-name { color: var(--muted); }
+
+/* ===== 검색 ===== */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 8px 8px 14px;
+  color: var(--muted);
+}
+.search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.search-input::placeholder { color: var(--muted); font-weight: 500; }
+.search-close {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+/* ===== 즐겨찾기 ===== */
+.chip-fav { display: inline-flex; align-items: center; gap: 5px; }
+.chip-fav.active { color: #fff; }
+
+.snack-card { position: relative; }
+.fav-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  border: none;
+  background: none;
+  padding: 4px;
+  line-height: 0;
+  color: var(--line);
+}
+.fav-btn.on { color: #f2bc57; }

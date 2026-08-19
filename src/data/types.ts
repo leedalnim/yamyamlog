@@ -47,6 +47,8 @@ export interface Snack {
   updatedAt: number
   /** 고양이별 반응 (catId -> level). 아직 체크 안한 고양이는 없음 */
   reactions: Record<string, ReactionLevel>
+  /** 즐겨찾기 */
+  favorite?: boolean
   /**
    * 삭제 시각. 기록을 실제로 지우지 않고 표시만 남긴다.
    * 지워버리면 다른 기기와 맞출 때 "여기 없네?" → 되살아나기 때문.

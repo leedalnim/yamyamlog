@@ -147,6 +147,14 @@ export async function deleteSnack(id: string): Promise<void> {
   if (snack.photoId) await db.delete('photos', snack.photoId)
 }
 
+/** 즐겨찾기 켜고 끄기 */
+export async function toggleFavorite(id: string): Promise<void> {
+  const db = await getDB()
+  const s = (await db.get('snacks', id)) as Snack | undefined
+  if (!s) return
+  await db.put('snacks', { ...s, favorite: !s.favorite, updatedAt: Date.now() })
+}
+
 export async function listSnacks(): Promise<Snack[]> {
   const db = await getDB()
   const all = (await db.getAll('snacks')) as Snack[]

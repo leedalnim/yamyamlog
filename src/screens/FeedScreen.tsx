@@ -10,8 +10,8 @@ import {
   usePhotoURL,
 } from '../components/common'
 import type { Cat, ReactionLevel, Snack } from '../data/types'
-import { deleteSnack, listSnacks, updateSnack } from '../data/repo'
-import { CatDoodle, IconBell, IconChevronLeft, IconChevronRight, IconDots, IconPencil, IconSliders, IconTrash, ReactionIcon } from '../components/icons'
+import { deleteSnack, listSnacks, toggleFavorite, updateSnack } from '../data/repo'
+import { CatDoodle, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash, ReactionIcon } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
 import logoUrl from '../assets/logo.svg'
 
@@ -29,6 +29,8 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   const [catId, setCatId] = useState<string>('') // '' = 전체 냥이
   const [level, setLevel] = useState<'' | ReactionLevel>('') // '' = 반응 무관
   const [sort, setSort] = useState<'recent' | 'name'>('recent')
+  const [query, setQuery] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
 
   async function reload() {
     setSnacks(await listSnacks())
@@ -54,8 +56,19 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
 
   const filtered = useMemo(() => {
     let list = snacks
-    if (filter === '기타') list = list.filter((s) => !s.kind)
+    if (filter === 'fav') list = list.filter((s) => s.favorite)
+    else if (filter === '기타') list = list.filter((s) => !s.kind)
     else if (filter !== 'all') list = list.filter((s) => s.kind === filter)
+
+    // 이름뿐 아니라 재료·메모까지 훑는다 — '닭가슴살'로 여러 제품이 잡히게
+    const q = query.trim().toLowerCase()
+    if (q) {
+      list = list.filter((s) =>
+        [s.name, s.kind, s.base, s.memo]
+          .filter(Boolean)
+          .some((v) => (v as string).toLowerCase().includes(q)),
+      )
+    }
 
     if (catId) list = list.filter((s) => !!s.reactions[catId])
     if (level) {
@@ -70,7 +83,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     if (sort === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
     else sorted.sort((a, b) => b.createdAt - a.createdAt)
     return sorted
-  }, [snacks, filter, catId, level, sort])
+  }, [snacks, filter, catId, level, sort, query])
 
   // ---- 상세 페이지 ----
   if (viewing) {
@@ -97,13 +110,46 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   return (
     <div className="screen">
       <div className="topbar">
-        <h1 className="logo"><img src={logoUrl} alt="얌얌로그" className="logo-img" /></h1>
-        <button className="bell-btn" aria-label="알림"><IconBell size={22} /></button>
+        {searchOpen ? (
+          <div className="search-bar">
+            <IconSearch size={18} />
+            <input
+              className="search-input"
+              autoFocus
+              placeholder="간식 이름 · 재료 · 메모 검색"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button
+              className="search-close"
+              onClick={() => {
+                setQuery('')
+                setSearchOpen(false)
+              }}
+            >
+              취소
+            </button>
+          </div>
+        ) : (
+          <>
+            <h1 className="logo"><img src={logoUrl} alt="얌얌로그" className="logo-img" /></h1>
+            <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
+              <IconSearch size={22} />
+            </button>
+          </>
+        )}
       </div>
 
       <div className="tabs">
         <button className={'chip-tab' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>
           전체
+        </button>
+        <button
+          className={'chip-tab chip-fav' + (filter === 'fav' ? ' active' : '')}
+          onClick={() => setFilter('fav')}
+        >
+          <IconStar size={14} filled={filter === 'fav'} />
+          즐겨찾기
         </button>
         {kinds.map((k) => (
           <button
@@ -141,18 +187,38 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
       {filtered.length === 0 ? (
         <div className="empty">
           <div className="doodle"><CatDoodle size={116} /></div>
-          아직 기록이 없어요.
+          {query.trim() ? (
+            <>
+              <b>{query.trim()}</b> 와(과) 맞는 기록이 없어요.
+            </>
+          ) : filter === 'fav' ? (
+            <>아직 즐겨찾기한 간식이 없어요.<br />카드 오른쪽 위 별을 눌러보세요.</>
+          ) : (
+            <>아직 기록이 없어요.
+          <br />
           <br />
           아래 <b>추가</b>에서 첫 간식을 기록해보세요!
           <br />
           <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={onAdd}>
             간식 기록하기
           </button>
+            </>
+          )}
         </div>
       ) : (
         <div className="feed-list">
           {filtered.map((s) => (
-            <SnackCard key={s.id} snack={s} cats={cats} onOpen={() => setViewing(s)} />
+            <SnackCard
+            key={s.id}
+            snack={s}
+            cats={cats}
+            onOpen={() => setViewing(s)}
+            onToggleFav={async () => {
+              await toggleFavorite(s.id)
+              await reload()
+              onChanged()
+            }}
+          />
           ))}
         </div>
       )}
@@ -225,10 +291,27 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   )
 }
 
-function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen: () => void }) {
+function SnackCard({
+  snack,
+  cats,
+  onOpen,
+  onToggleFav,
+}: {
+  snack: Snack
+  cats: Cat[]
+  onOpen: () => void
+  onToggleFav: () => void
+}) {
   const url = usePhotoURL(snack.photoId)
   return (
     <div className="card snack-card">
+      <button
+        className={'fav-btn' + (snack.favorite ? ' on' : '')}
+        aria-label={snack.favorite ? '즐겨찾기 해제' : '즐겨찾기'}
+        onClick={onToggleFav}
+      >
+        <IconStar size={20} filled={!!snack.favorite} />
+      </button>
       <button className="snack-btn" onClick={onOpen}>
         {/* 윗줄: 썸네일 + 이름/태그 + 화살표 */}
         <div className="snack-top">
@@ -248,7 +331,6 @@ function SnackCard({ snack, cats, onOpen }: { snack: Snack; cats: Cat[]; onOpen:
               <span className="snack-name">{snack.name}</span>
             </div>
           </div>
-          <span className="snack-dots"><IconDots size={19} /></span>
         </div>
         {/* 아랫줄: 4마리 반응 얼굴 (카드 전체 폭) */}
         <ReactionFaces cats={cats} reactions={snack.reactions} />
