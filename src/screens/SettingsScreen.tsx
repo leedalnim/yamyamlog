@@ -376,12 +376,22 @@ export function SettingsScreen({
               <div className="muted" style={{ fontSize: 12.5, margin: '14px 0 8px', fontWeight: 700 }}>
                 이미 코드가 있다면
               </div>
+              {/*
+                코드는 숫자 4자리지만, 예전에 만든 우리집은 영문이 섞인
+                코드를 쓴다. 숫자만 받으면 그런 코드를 붙여넣을 때 영문이
+                통째로 버려지므로 영문도 함께 받는다.
+              */}
               <input
                 className="input join-input"
                 placeholder="코드 4자리 입력"
                 value={joinCode}
-                onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                inputMode="numeric"
+                onChange={(e) =>
+                  setJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4))
+                }
+                inputMode="text"
+                autoCapitalize="characters"
+                autoCorrect="off"
+                spellCheck={false}
                 style={{ letterSpacing: '0.3em', fontSize: 20, fontWeight: 800 }}
               />
               <button
