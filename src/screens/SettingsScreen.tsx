@@ -21,6 +21,16 @@ import {
 } from '../data/sync'
 import { useEffect } from 'react'
 
+/**
+ * 코드 입력을 보기 좋은 형태로 다듬는다.
+ * 영문·숫자만 남기고 대문자로 바꾼 뒤, 4자를 넘으면 하이픈을 끼운다.
+ * (TG7K-JS27 / tg7kjs27 / TG7K JS27 을 모두 같은 값으로 받는다)
+ */
+function formatCode(raw: string): string {
+  const t = raw.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8)
+  return t.length > 4 ? `${t.slice(0, 4)}-${t.slice(4)}` : t
+}
+
 function formatWhen(ts: number): string {
   if (!ts) return '시각 미상'
   const d = new Date(ts)
@@ -377,22 +387,20 @@ export function SettingsScreen({
                 이미 코드가 있다면
               </div>
               {/*
-                코드는 숫자 4자리지만, 예전에 만든 우리집은 영문이 섞인
-                코드를 쓴다. 숫자만 받으면 그런 코드를 붙여넣을 때 영문이
-                통째로 버려지므로 영문도 함께 받는다.
+                코드는 TG7K-JS27 처럼 영문·숫자 8자에 하이픈이 하나 들어간다.
+                하이픈은 눈으로 읽기 좋으라고 넣은 것이므로, 사용자가 안 쳐도
+                4자마다 알아서 넣어준다. 붙여넣기도 그대로 받는다.
               */}
               <input
                 className="input join-input"
-                placeholder="코드 4자리 입력"
+                placeholder="예: TG7K-JS27"
                 value={joinCode}
-                onChange={(e) =>
-                  setJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4))
-                }
+                onChange={(e) => setJoinCode(formatCode(e.target.value))}
                 inputMode="text"
                 autoCapitalize="characters"
                 autoCorrect="off"
                 spellCheck={false}
-                style={{ letterSpacing: '0.3em', fontSize: 20, fontWeight: 800 }}
+                style={{ letterSpacing: '0.12em', fontSize: 19, fontWeight: 800 }}
               />
               <button
                 className="btn btn-block"
