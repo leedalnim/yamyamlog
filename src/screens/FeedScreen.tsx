@@ -488,10 +488,20 @@ function SnackDetail({
           {snack.discontinued && <span className="tag-discontinued">단종</span>}
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>
-        {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
         <div style={{ marginTop: 16 }}>
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="large" />
         </div>
+
+        {/*
+          메모는 반응 아래에 둔다. 이 화면에서 제일 궁금한 건 '누가 잘 먹었나'라
+          그게 먼저 오고, 그람수 같은 부연은 그 다음이다.
+        */}
+        {snack.memo && (
+          <div className="detail-memo-box">
+            <div className="detail-memo-label muted">메모</div>
+            <p className="detail-memo">{snack.memo}</p>
+          </div>
+        )}
 
         <div className="detail-edit">
           <button className="btn btn-outline btn-block detail-edit-btn" onClick={() => setEditing(true)}>
