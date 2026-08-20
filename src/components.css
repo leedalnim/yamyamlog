@@ -622,6 +622,14 @@
   align-items: center;
   gap: 8px;
   padding: 18px 8px 14px;
+  /* 눌러서 상세로 가기 때문에 <button> 이다.
+     버튼 기본 글자색(검정)이 들어오면 다크 모드에서 제품명이 안 보인다. */
+  width: 100%;
+  border: none;
+  background: var(--surface);
+  color: inherit;
+  font-family: inherit;
+  text-align: center;
 }
 .top3-medal {
   position: absolute;
