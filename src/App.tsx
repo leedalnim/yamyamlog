@@ -140,7 +140,7 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
         <button
           className={'nav-fab' + (tab === 'add' ? ' active' : '')}
           onClick={() => setTab('add')}
-          aria-label="간식 기록 추가"
+          aria-label="기록 추가"
         >
           <IconPlus size={28} />
         </button>

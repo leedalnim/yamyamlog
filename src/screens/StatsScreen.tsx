@@ -94,7 +94,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
     return { good, ok, bad, total: good + ok + bad }
   }, [records])
 
-  // 좋아하는 간식 TOP 3 (잘먹음 우선, 최신순)
+  // 좋아하는 것 TOP 3 (잘먹음 우선, 최신순)
   const top3 = useMemo(
     () =>
       [...records]
@@ -108,7 +108,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
     [records],
   )
 
-  // 피하는 간식 (안먹음)
+  // 피하는 것 (안먹음)
   const avoid = useMemo(() => records.filter((r) => r.level === 'bad'), [records])
 
   if (snacks.length === 0) {
@@ -211,10 +211,10 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             </section>
           )}
 
-          {/* 좋아하는 간식 TOP 3 */}
+          {/* 좋아하는 것 TOP 3 */}
           {top3.length > 0 && (
             <section className="stat-section">
-              <h2 className="stat-title">좋아하는 간식 TOP {top3.length}</h2>
+              <h2 className="stat-title">좋아하는 것 TOP {top3.length}</h2>
               <div className="top3-grid">
                 {top3.map((r, i) => (
                   <Top3Card key={r.snack.id} snack={r.snack} rank={i + 1} />
@@ -242,10 +242,10 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             </section>
           )}
 
-          {/* 피하는 간식 */}
+          {/* 피하는 것 */}
           {avoid.length > 0 && (
             <section className="stat-section">
-              <h2 className="stat-title">피하는 간식</h2>
+              <h2 className="stat-title">피하는 것</h2>
               <div className="card record-list">
                 {avoid.map((r) => (
                   <div className="record-row" key={r.snack.id}>
@@ -262,11 +262,11 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 
           {/* 기록 리스트 */}
           <section className="stat-section" id="record-list-sec">
-            <h2 className="stat-title">{cat.name}의 간식 기록</h2>
+            <h2 className="stat-title">{cat.name}의 기록</h2>
             <div className="card record-list">
               {records.length === 0 && (
                 <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
-                  아직 {cat.name} 반응이 기록된 간식이 없어요.
+                  아직 {cat.name} 반응이 기록된 게 없어요.
                 </div>
               )}
               {records.map((r) => (

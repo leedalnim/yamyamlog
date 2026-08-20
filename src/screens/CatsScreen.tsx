@@ -223,7 +223,7 @@ function CatEditSheet({
           </button>
         </div>
 
-        {/* 삭제는 수정할 때만. 간식 기록의 반응은 그대로 두고 목록에서만 뺀다. */}
+        {/* 삭제는 수정할 때만. 기록의 반응은 그대로 두고 목록에서만 뺀다. */}
         {!isNew && (
           confirmDelete ? (
             // 취소는 위 시트 버튼이 이미 맡고 있으므로 여기서는 '빼기'만 둔다.
@@ -231,7 +231,7 @@ function CatEditSheet({
               <p>
                 <b>{cat.name}</b>를 목록에서 뺄까요?
                 <br />
-                지금까지의 간식 반응 기록은 그대로 남아요.
+                지금까지의 반응 기록은 그대로 남아요.
               </p>
               <button
                 className="btn cat-delete-go"

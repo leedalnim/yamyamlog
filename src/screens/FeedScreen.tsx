@@ -184,7 +184,7 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         <div className="promo-text">
           <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
           <div className="promo-sub-row">
-            <span className="promo-sub">새로운 간식을 기록해보세요</span>
+            <span className="promo-sub">새로 먹은 걸 기록해보세요</span>
             <span className="promo-arrow-dot"><IconChevronRight size={12} /></span>
           </div>
         </div>
@@ -201,15 +201,15 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
               <b>{query.trim()}</b> 와(과) 맞는 기록이 없어요.
             </>
           ) : filter === 'fav' ? (
-            <>아직 즐겨찾기한 간식이 없어요.<br />카드 오른쪽 위 별을 눌러보세요.</>
+            <>아직 즐겨찾기한 게 없어요.<br />카드 오른쪽 위 별을 눌러보세요.</>
           ) : (
             <>아직 기록이 없어요.
           <br />
           <br />
-          아래 <b>추가</b>에서 첫 간식을 기록해보세요!
+          아래 <b>추가</b>에서 첫 기록을 남겨보세요!
           <br />
           <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={onAdd}>
-            간식 기록하기
+            기록하기
           </button>
             </>
           )}
@@ -443,7 +443,7 @@ function SnackDetail({
           <label>사진</label>
           {shownPhoto ? (
             <div className="photo-box">
-              <img src={shownPhoto} alt="간식 사진" />
+              <img src={shownPhoto} alt="제품 사진" />
               <div className="photo-actions">
                 <button className="mini-btn" onClick={() => fileRef.current?.click()}>
                   <IconCamera size={16} />사진 바꾸기

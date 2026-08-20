@@ -68,7 +68,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         <button className="back-inline" onClick={onCancel} aria-label="뒤로">
           <IconChevronLeft size={22} />
         </button>
-        <h1 style={{ fontSize: 19 }}>간식 기록</h1>
+        <h1 style={{ fontSize: 19 }}>새 기록</h1>
       </div>
 
       <input
@@ -109,7 +109,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
               <label>사진</label>
               {photoPreview ? (
                 <div className="photo-box">
-                  <img src={photoPreview} alt="간식 사진" />
+                  <img src={photoPreview} alt="제품 사진" />
                   <div className="photo-actions">
                     <button className="mini-btn" onClick={() => fileRef.current?.click()}>다시 찍기</button>
                     <button className="mini-btn" onClick={runOCR} disabled={ocrState === 'running'}>
