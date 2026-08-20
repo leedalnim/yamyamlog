@@ -37,7 +37,7 @@
   --ok-bg: #f8efd2;
   --bad: #7fb3e8;
   --bad-bg: #e3edf9;
-  --danger: #f1503c;
+  --danger: #d9478a;
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 12px;
@@ -96,7 +96,7 @@ html[data-mode="dark"] {
   --ok-bg: #3a3218;
   --bad: #89a9d8;
   --bad-bg: #253243;
-  --danger: #ff7a68;
+  --danger: #f88ab8;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.3);
 }
