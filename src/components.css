@@ -104,7 +104,7 @@
   font-size: 13px;
   font-weight: 700;
 }
-.sel-chip.on[data-accent="base"] { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+.sel-chip.on[data-accent="base"] { background: var(--accent-2); border-color: var(--accent-2); color: var(--accent-2-ink); }
 .sel-chip.on[data-accent="kind"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
 .sel-custom { font-size: 14px; }
 
@@ -367,7 +367,7 @@
 .chip-tab.active { background: var(--primary); color: var(--primary-ink); }
 .sel-chip { border: none; background: var(--surface-2); }
 .sel-chip.on[data-accent="kind"] { background: var(--primary); color: var(--primary-ink); }
-.sel-chip.on[data-accent="base"] { background: var(--accent-2); color: #fff; }
+.sel-chip.on[data-accent="base"] { background: var(--accent-2); color: var(--accent-2-ink); }
 .input, .textarea { border: none; background: var(--surface); box-shadow: var(--shadow-sm); }
 .base-tag, .kind-tag { border: none; }
 .kind-tag { background: var(--kind-bg); color: var(--kind-ink); }
@@ -438,7 +438,8 @@
 /* ===================== 상세 페이지 (사진 + 시트) ===================== */
 .detail-page {
   min-height: 100%;
-  padding-bottom: calc(var(--nav-h) + 24px);
+  /* .screen 과 같은 이유 — 홈 인디케이터 높이를 함께 빼줘야 안 가린다 */
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
   background: var(--bg);
 }
 .detail-hero { position: relative; height: 300px; background: var(--surface-2); }
@@ -627,7 +628,13 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* 이름이 한 줄이든 두 줄이든 같은 높이를 차지하게 해서
+     아래 '좋아해요' 배지가 세 칸 모두 같은 선에 오도록 한다 */
+  min-height: calc(2 * 1.35em);
 }
+/* 카드 높이가 달라도 배지는 항상 맨 아래 */
+.top3-grid { align-items: stretch; }
+.top3-card > .top3-love { margin-top: auto; }
 
 /* ---------- 피하는 간식 ---------- */
 .avoid-note { font-size: 12px; font-weight: 700; color: var(--bad); white-space: nowrap; }
@@ -747,7 +754,7 @@
 .panel-btn svg { color: var(--ink); }
 .see-more { display: inline-flex; align-items: center; gap: 2px; }
 .top3-love { display: inline-flex; align-items: center; gap: 4px; }
-.top3-love svg { color: #d95c49; }
+.top3-love svg { color: var(--love-ink); }
 .avoid-note { display: inline-flex; align-items: center; gap: 4px; }
 .avoid-note svg { color: var(--bad); }
 
