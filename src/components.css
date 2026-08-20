@@ -1377,3 +1377,17 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .copy-btn.done { background: var(--good-bg); border-color: var(--good-bg); color: var(--good); }
 /* 손으로 길게 눌러 복사하는 것도 막지 않는다 */
 .house-code { user-select: all; -webkit-user-select: all; }
+
+/* ===== 수정 화면 상단 저장 버튼 ===== */
+.save-top {
+  margin-left: auto;
+  border: none;
+  background: var(--primary);
+  color: var(--primary-ink);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 800;
+  font-family: inherit;
+}
+.save-top:disabled { opacity: 0.55; }

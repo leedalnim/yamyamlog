@@ -442,6 +442,10 @@ export function SnackDetail({
             <IconChevronLeft size={22} />
           </button>
           <h1 style={{ fontSize: 19 }}>기록 수정</h1>
+          {/* 저장은 오른쪽 위에 — 아래까지 내려가지 않아도 되도록 */}
+          <button className="save-top" disabled={saving} onClick={save}>
+            {saving ? '저장중…' : '저장'}
+          </button>
         </div>
 
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickPhoto} />
@@ -510,10 +514,7 @@ export function SnackDetail({
           <textarea className="textarea" value={memo} onChange={(e) => setMemo(e.target.value)} />
         </div>
 
-        <button className="btn btn-primary btn-block" style={{ marginTop: 4 }} disabled={saving} onClick={save}>
-          {saving ? '저장중…' : '저장하기'}
-        </button>
-        <button className="btn btn-icon btn-block" onClick={remove} style={{ color: 'var(--muted)', marginTop: 10 }}>
+        <button className="btn btn-icon btn-block" onClick={remove} style={{ color: 'var(--muted)', marginTop: 4 }}>
           <IconTrash size={18} />이 기록 삭제
         </button>
       </div>
