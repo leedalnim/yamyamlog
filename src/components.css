@@ -66,8 +66,8 @@
 }
 .mini-btn.mini-danger {
   background: transparent;
-  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
-  color: var(--danger);
+  border-color: var(--line);
+  color: var(--muted);
 }
 
 /* ---------- 반응 편집기 ---------- */
@@ -402,10 +402,11 @@
 .edit-acc-body { border-top: 1.5px solid var(--line); }
 .mini-btn { border: none; background: var(--surface-2); }
 .mini-btn.mini-primary { background: var(--primary); color: var(--primary-ink); }
+/* 빼기는 보조 동작이라 회색으로 물러나 있는다 — 빨강은 너무 세게 보였다 */
 .mini-btn.mini-danger {
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
-  color: var(--danger);
+  border: 1px solid var(--line);
+  color: var(--muted);
 }
 .hero-card, .cat-bars { border-radius: var(--radius-lg); }
 
