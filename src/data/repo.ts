@@ -172,14 +172,17 @@ export async function updateSnack(snack: Snack): Promise<void> {
 /**
  * 삭제는 '지움 표시'로 남긴다(툼스톤).
  * 실제로 지워버리면 다른 기기와 맞출 때 그쪽에 남아 있는 기록이
- * 다시 넘어와 되살아난다. 사진은 용량이 크므로 바로 정리한다.
+ * 다시 넘어와 되살아난다. 사진 실물은 용량이 크므로 바로 정리한다.
+ *
+ * 사진 id 는 지움 표시에 그대로 남겨둔다 — 다음 동기화 때 이걸 보고
+ * 서버에 올라가 있던 사진까지 같이 치우기 때문이다.
  */
 export async function deleteSnack(id: string): Promise<void> {
   const db = await getDB()
   const snack = (await db.get('snacks', id)) as Snack | undefined
   if (!snack) return
   const now = Date.now()
-  await db.put('snacks', { ...snack, photoId: undefined, deletedAt: now, updatedAt: now })
+  await db.put('snacks', { ...snack, deletedAt: now, updatedAt: now })
   if (snack.photoId) await db.delete('photos', snack.photoId)
 }
 

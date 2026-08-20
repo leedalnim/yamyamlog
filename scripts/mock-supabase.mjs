@@ -8,6 +8,10 @@
  *   POST /rest/v1/rpc/join_household
  *   GET  /rest/v1/{table}?household_id=eq.X
  *   POST /rest/v1/{table}           upsert
+ *   POST /storage/v1/object/list/{bucket}     사진 목록
+ *   POST /storage/v1/object/{bucket}/{path}   사진 올리기
+ *   GET  /storage/v1/object/{bucket}/{path}   사진 받기
+ *   DELETE /storage/v1/object/{bucket}        사진 치우기
  *
  * 검증 범위: 앱 쪽 코드(클라이언트·병합·화면). 실제 서버의 RLS 정책과
  * SQL 함수는 여기서 검증되지 않는다 — 그건 실제 프로젝트에서 확인해야 한다.
@@ -21,6 +25,7 @@ const db = {
   members: [], // { household_id, user_id }
   cats: [],
   snacks: [],
+  objects: new Map(), // '<bucket>/<path>' -> Buffer
 }
 let userSeq = 0
 
@@ -39,6 +44,32 @@ function json(res, code, body) {
   res.end(JSON.stringify(body))
 }
 
+/**
+ * 브라우저의 supabase-js 는 사진을 multipart/form-data 로 감싸서 보낸다.
+ * 그 껍데기를 벗겨 파일 알맹이만 꺼낸다 — 안 벗기면 경계 문자열이 사진에
+ * 섞여 들어가 깨진 이미지가 저장된다.
+ */
+function filePart(raw, contentType = '') {
+  const m = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType)
+  if (!m) return raw
+  const boundary = Buffer.from('--' + (m[1] ?? m[2]).trim())
+  // 조각을 전부 훑어서 filename= 이 붙은 것(=진짜 파일)만 고른다.
+  // 앞쪽에는 cacheControl 같은 평범한 값들이 먼저 온다.
+  let at = raw.indexOf(boundary)
+  while (at >= 0) {
+    const headEnd = raw.indexOf('\r\n\r\n', at)
+    if (headEnd < 0) break
+    const head = raw.subarray(at, headEnd).toString('utf8')
+    const bodyStart = headEnd + 4
+    const next = raw.indexOf(boundary, bodyStart)
+    const bodyEnd = next < 0 ? raw.length : next - 2 // 경계 앞의 \r\n 제외
+    if (/filename=/i.test(head)) return raw.subarray(bodyStart, bodyEnd)
+    if (next < 0) break
+    at = next
+  }
+  return raw
+}
+
 function userOf(req) {
   const auth = req.headers['authorization'] ?? ''
   const token = auth.replace(/^Bearer\s+/i, '')
@@ -49,13 +80,64 @@ const server = createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return json(res, 200, {})
 
   const url = new URL(req.url, `http://localhost:${PORT}`)
-  const body = await new Promise((resolve) => {
-    let b = ''
-    req.on('data', (c) => (b += c))
-    req.on('end', () => {
-      try { resolve(b ? JSON.parse(b) : {}) } catch { resolve({}) }
-    })
+  // 사진은 바이너리라 원본 그대로 받아두고, JSON 은 그 위에서 해석한다
+  const raw = await new Promise((resolve) => {
+    const chunks = []
+    req.on('data', (c) => chunks.push(c))
+    req.on('end', () => resolve(Buffer.concat(chunks)))
   })
+  let body = {}
+  try { body = raw.length ? JSON.parse(raw.toString('utf8')) : {} } catch { body = {} }
+
+  // 테스트에서 서버 상태를 들여다보기 위한 창구 (실제 Supabase 에는 없음)
+  if (url.pathname === '/debug/objects') return json(res, 200, [...db.objects.keys()])
+
+  // ── 사진 보관함 ───────────────────────────────────────────
+  if (url.pathname.startsWith('/storage/v1/object')) {
+    const uid = userOf(req)
+    if (!uid) return json(res, 401, { message: 'no auth' })
+
+    // 목록:  POST /storage/v1/object/list/<bucket>   { prefix, limit, offset }
+    const list = url.pathname.match(/^\/storage\/v1\/object\/list\/([^/]+)$/)
+    if (list) {
+      const prefix = (body.prefix ?? '').replace(/\/$/, '')
+      const head = `${list[1]}/${prefix}/`
+      const names = [...db.objects.keys()]
+        .filter((k) => k.startsWith(head))
+        .map((k) => k.slice(head.length))
+      const offset = body.offset ?? 0
+      const limit = body.limit ?? 100
+      return json(res, 200, names.slice(offset, offset + limit).map((name) => ({ name })))
+    }
+
+    // 치우기:  DELETE /storage/v1/object/<bucket>   { prefixes: [...] }
+    const del = url.pathname.match(/^\/storage\/v1\/object\/([^/]+)$/)
+    if (del && req.method === 'DELETE') {
+      for (const p of body.prefixes ?? []) db.objects.delete(`${del[1]}/${p}`)
+      return json(res, 200, [])
+    }
+
+    // 올리기 / 받기:  /storage/v1/object[/authenticated]/<bucket>/<path>
+    const one = url.pathname.match(/^\/storage\/v1\/object(?:\/authenticated)?\/([^/]+)\/(.+)$/)
+    if (one) {
+      const key = `${one[1]}/${decodeURIComponent(one[2])}`
+      if (req.method === 'POST' || req.method === 'PUT') {
+        if (db.objects.has(key) && req.headers['x-upsert'] !== 'true') {
+          return json(res, 409, { message: 'The resource already exists' })
+        }
+        db.objects.set(key, filePart(raw, req.headers['content-type']))
+        return json(res, 200, { Key: key })
+      }
+      if (req.method === 'GET') {
+        const buf = db.objects.get(key)
+        if (!buf) return json(res, 404, { message: 'not found' })
+        cors(res)
+        res.writeHead(200, { 'Content-Type': 'image/jpeg' })
+        return res.end(buf)
+      }
+    }
+    return json(res, 404, { message: 'storage: ' + url.pathname })
+  }
 
   // ── 익명 로그인 ────────────────────────────────────────────
   if (url.pathname === '/auth/v1/signup' || url.pathname === '/auth/v1/token') {

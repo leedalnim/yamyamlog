@@ -7,6 +7,7 @@
  */
 import { getDB } from './db'
 import { mergeLists } from './merge'
+import { photoIdFromPath, photoPath, syncPhotos } from './photos'
 import type { Cat, Snack } from './types'
 import { ensureSignedIn, getSupabase, isCloudConfigured } from '../lib/supabase'
 
@@ -90,6 +91,8 @@ function snackToRow(s: Snack, householdId: string) {
     reactions: s.reactions ?? {},
     favorite: s.favorite ?? false,
     discontinued: s.discontinued ?? false,
+    // 사진 파일 자체는 Storage 에 있고, 여기에는 그 위치만 적는다
+    photo_path: s.photoId ? photoPath(householdId, s.photoId) : null,
     created_at: new Date(s.createdAt).toISOString(),
     updated_at: new Date(s.updatedAt).toISOString(),
     deleted_at: s.deletedAt ? new Date(s.deletedAt).toISOString() : null,
@@ -106,6 +109,7 @@ function rowToSnack(r: Record<string, any>): Snack {
     reactions: r.reactions ?? {},
     favorite: r.favorite ?? false,
     discontinued: r.discontinued ?? false,
+    photoId: photoIdFromPath(r.photo_path),
     createdAt: Date.parse(r.created_at),
     updatedAt: Date.parse(r.updated_at),
     deletedAt: r.deleted_at ? Date.parse(r.deleted_at) : undefined,
@@ -144,6 +148,9 @@ function rowToCat(r: Record<string, any>): Cat {
 export interface SyncResult {
   pulled: number
   pushed: number
+  /** 주고받은 사진 장수 */
+  photosUp: number
+  photosDown: number
   at: number
 }
 
@@ -197,11 +204,24 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
       if (error) throw error
     }
 
+    // 사진은 기록보다 무겁고 실패해도 덜 치명적이라 따로 감싼다.
+    // 여기서 넘어져도 기록 동기화는 이미 끝난 상태로 남는다.
+    let photos = { uploaded: 0, downloaded: 0, removed: 0 }
+    try {
+      const merged = new Map(localSnacks.map((s) => [s.id, s]))
+      for (const s of snackPlan.toLocal) merged.set(s.id, s)
+      photos = await syncPhotos(sb, db, household.id, [...merged.values()])
+    } catch (err) {
+      console.warn('[얌얌로그] 사진 동기화를 건너뜁니다.', err)
+    }
+
     const at = Date.now()
     await db.put('meta', at, LAST_SYNC_KEY)
     return {
       pulled: snackPlan.toLocal.length + catPlan.toLocal.length,
       pushed: snackPlan.toRemote.length + catPlan.toRemote.length,
+      photosUp: photos.uploaded,
+      photosDown: photos.downloaded,
       at,
     }
   } catch (err) {

@@ -465,6 +465,17 @@ function SnackDetail({
           </div>
         )}
         <button className="detail-back" onClick={onBack} aria-label="뒤로"><IconChevronLeft size={20} /></button>
+        <button
+          className={'detail-fav' + (snack.favorite ? ' on' : '')}
+          aria-label={snack.favorite ? '즐겨찾기 해제' : '즐겨찾기'}
+          aria-pressed={!!snack.favorite}
+          onClick={async () => {
+            await toggleFavorite(snack.id)
+            onSaved({ ...snack, favorite: !snack.favorite })
+          }}
+        >
+          <IconStar size={20} filled={!!snack.favorite} />
+        </button>
       </div>
 
       {/* ---- 아래에서 올라오는 흰 시트 ---- */}

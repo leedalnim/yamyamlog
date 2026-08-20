@@ -76,12 +76,14 @@ export function SettingsScreen({
       })
     } else {
       setLastSync(r.at)
+      const photos = r.photosUp + r.photosDown
+      const photoNote = photos > 0 ? ` 사진 ${photos}장도 맞췄어요.` : ''
       setCloudNote({
         kind: 'ok',
         text:
-          r.pulled === 0 && r.pushed === 0
+          r.pulled === 0 && r.pushed === 0 && photos === 0
             ? '이미 최신이에요.'
-            : `받은 것 ${r.pulled}건, 보낸 것 ${r.pushed}건 맞췄어요.`,
+            : `받은 것 ${r.pulled}건, 보낸 것 ${r.pushed}건 맞췄어요.${photoNote}`,
       })
       onDataChanged?.()
     }
@@ -248,6 +250,7 @@ export function SettingsScreen({
 
           {note && (
             <p
+              className="backup-note"
               style={{
                 margin: '12px 0 0',
                 fontSize: 13,
@@ -274,6 +277,7 @@ export function SettingsScreen({
             <>
               <div className="muted" style={{ fontSize: 12.5, fontWeight: 700 }}>우리집 코드</div>
               <div
+                className="house-code"
                 style={{
                   fontSize: 26,
                   fontWeight: 800,
@@ -329,7 +333,7 @@ export function SettingsScreen({
                 이미 코드가 있다면
               </div>
               <input
-                className="input"
+                className="input join-input"
                 placeholder="코드 4자리 입력"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
@@ -349,6 +353,7 @@ export function SettingsScreen({
 
           {cloudNote && (
             <p
+              className="cloud-note"
               style={{
                 margin: '12px 0 0',
                 fontSize: 13,
