@@ -61,8 +61,10 @@
    '바꾸기'는 채워서 주된 동작으로, '빼기'는 지우는 쪽임이 보이게 */
 /* 사진 바꾸기는 이 화면의 주된 동작이 아니다(저장이 그렇다).
    꽉 채우면 위 '저장' 버튼과 시선을 다투므로 은은한 주황 톤으로만 둔다. */
+/* 바탕은 무채색 회색으로 두고, 구분은 글자색으로 한다.
+   (누런 크림 바탕이 사진 밑에서 떠 보였다) */
 .mini-btn.mini-primary {
-  background: var(--kind-bg);
+  background: var(--photo-btn-bg);
   border-color: transparent;
   color: var(--kind-ink);
 }
@@ -402,8 +404,8 @@
 .nav-fab { border: none; box-shadow: 0 8px 20px color-mix(in srgb, var(--primary) 40%, transparent); }
 .photo-drop { border: 2px dashed var(--line); }
 .edit-acc-body { border-top: 1.5px solid var(--line); }
-.mini-btn { border: none; background: var(--surface-2); }
-.mini-btn.mini-primary { background: var(--kind-bg); color: var(--kind-ink); }
+.mini-btn { border: none; background: var(--photo-btn-bg); }
+.mini-btn.mini-primary { background: var(--photo-btn-bg); color: var(--kind-ink); }
 /* 빼기는 보조 동작이라 회색으로 물러나 있는다 — 빨강은 너무 세게 보였다 */
 .mini-btn.mini-danger {
   background: transparent;
