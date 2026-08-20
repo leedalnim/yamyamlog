@@ -25,7 +25,17 @@ order by tablename;
 -- 4) 만들어진 우리집과 코드
 select id, code as 코드, created_at as 만든시각 from households;
 
--- 5) 즐겨찾기 컬럼이 있는지 (04-favorite.sql 실행 여부)
-select count(*) as 즐겨찾기_컬럼_있음
+-- 5) 앱이 쓰는 컬럼이 다 있는지 (04·05 실행 여부) — 둘 다 1 이어야 한다
+select
+  count(*) filter (where column_name = 'favorite') as 즐겨찾기,
+  count(*) filter (where column_name = 'discontinued') as 단종,
+  count(*) filter (where column_name = 'photo_path') as 사진경로
 from information_schema.columns
-where table_schema = 'public' and table_name = 'snacks' and column_name = 'favorite';
+where table_schema = 'public' and table_name = 'snacks';
+
+-- 6) 사진 보관함 (06-photos.sql 실행 여부) — 버킷 1, 접근규칙 4 여야 한다
+select
+  (select count(*) from storage.buckets where id = 'photos') as 버킷,
+  (select count(*) from pg_policies
+    where schemaname = 'storage' and tablename = 'objects'
+      and policyname like 'photos %') as 접근규칙;
