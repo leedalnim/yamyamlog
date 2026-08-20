@@ -62,7 +62,10 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
   useEffect(() => {
     const run = () => {
       void syncNow().then((r) => {
-        if (typeof r !== 'string' && r.pulled > 0) refresh()
+        if (typeof r === 'string') return
+        // 사진만 받아온 경우(pulled === 0)에도 다시 그려야 한다.
+        // 안 그러면 이미 있던 기록의 사진이 다음에 들어올 때까지 츄르 그림으로 남는다.
+        if (r.pulled > 0 || r.photosDown > 0) refresh()
       })
     }
     run()
