@@ -211,7 +211,7 @@
 .snack-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .snack-body { flex: 1; min-width: 0; }
 .snack-name-row { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
-.snack-name { font-size: 19px; font-weight: 700; letter-spacing: 0; font-family: var(--font-hand); }
+.snack-name { font-size: 17px; font-weight: 700; letter-spacing: 0; font-family: var(--font-hand); }
 .base-tag, .kind-tag {
   font-size: 11px;
   font-weight: 800;
@@ -271,7 +271,7 @@
 
 /* ---------- 통계 ---------- */
 .stat-section { margin-top: 24px; }
-.stat-title { font-size: 18px; font-weight: 700; margin: 0 0 11px; font-family: var(--font-hand); }
+.stat-title { font-size: 16px; font-weight: 700; margin: 0 0 11px; font-family: var(--font-hand); }
 
 /* 히어로 지표 */
 .hero-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; margin-top: 8px; }
