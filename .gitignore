@@ -17,3 +17,6 @@ dist-single
 !scripts/
 !scripts/**
 dist-test
+
+# 작업 중 찍은 확인용 스크린샷 (저장소에 남기지 않는다)
+/*.png
