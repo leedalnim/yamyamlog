@@ -3,6 +3,7 @@ import { useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
+import { SnackDetail } from './FeedScreen'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
@@ -22,6 +23,12 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   const { cats } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [catId, setCatId] = useState<string>('')
+  // 통계에서 바로 기록을 열어볼 수 있게 — 홈으로 돌아갈 필요가 없다
+  const [viewing, setViewing] = useState<Snack | null>(null)
+
+  async function reload() {
+    setSnacks(await listSnacks())
+  }
 
   useEffect(() => {
     ;(async () => setSnacks(await listSnacks()))()
@@ -110,6 +117,25 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 
   // 피하는 것 (안먹음)
   const avoid = useMemo(() => records.filter((r) => r.level === 'bad'), [records])
+
+  // 기록을 열어보는 중이면 상세 화면을 그대로 보여준다 (홈과 같은 화면)
+  if (viewing) {
+    return (
+      <SnackDetail
+        snack={viewing}
+        cats={cats}
+        onBack={() => setViewing(null)}
+        onSaved={async (updated) => {
+          setViewing(updated)
+          await reload()
+        }}
+        onDeleted={async () => {
+          setViewing(null)
+          await reload()
+        }}
+      />
+    )
+  }
 
   if (snacks.length === 0) {
     return (
@@ -217,7 +243,12 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               <h2 className="stat-title">좋아하는 것 TOP {top3.length}</h2>
               <div className="top3-grid">
                 {top3.map((r, i) => (
-                  <Top3Card key={r.snack.id} snack={r.snack} rank={i + 1} />
+                  <Top3Card
+                    key={r.snack.id}
+                    snack={r.snack}
+                    rank={i + 1}
+                    onOpen={() => setViewing(r.snack)}
+                  />
                 ))}
               </div>
             </section>
@@ -312,17 +343,25 @@ function Donut({ data }: { data: { base: string; share: number }[] }) {
   )
 }
 
-function Top3Card({ snack, rank }: { snack: Snack; rank: number }) {
+function Top3Card({
+  snack,
+  rank,
+  onOpen,
+}: {
+  snack: Snack
+  rank: number
+  onOpen: () => void
+}) {
   const url = usePhotoURL(snack.photoId)
   return (
-    <div className="card top3-card">
+    <button className="card top3-card" onClick={onOpen}>
       <img src={RANK_BADGES[rank - 1] ?? rank3Url} alt={rank + "위"} className="top3-medal" />
       <div className="top3-thumb">
         {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
       </div>
       <div className="top3-name">{snack.name}</div>
       <span className="top3-love"><IconHeart size={12} /> 좋아해요</span>
-    </div>
+    </button>
   )
 }
 

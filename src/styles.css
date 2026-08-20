@@ -22,7 +22,7 @@
   /* 통계 패널·말풍선·기타 */
   --panel: #fffdf8;
   --blank-bub: #f6f4ef;
-  --love-bg: #fbdfd6; --love-ink: #d95c49;
+  --love-bg: #fde0ec; --love-ink: #d9478a;
   --promo-pill-bg: #ffffff; --promo-pill-ink: #6b6259;
   --accent-2-ink: #ffffff;
   --promo-grad-a: #fbe9d2; --promo-grad-b: #f8ddba;
@@ -84,7 +84,7 @@ html[data-mode="dark"] {
   /* 통계 패널·말풍선·기타 */
   --panel: #332e25;
   --blank-bub: #2f2b23;
-  --love-bg: #4d2b26; --love-ink: #f5907c;
+  --love-bg: #4a2135; --love-ink: #f88ab8;
   --promo-pill-bg: #3d372c; --promo-pill-ink: #ddd2c1;
   /* 밝은 파랑 위에 흰 글씨는 다크에서 눈부시다. 짙은 남색으로 앉힌다 */
   --accent-2-ink: #10243a;

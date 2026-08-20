@@ -354,7 +354,7 @@ function SnackCard({
 }
 
 /** 상세 페이지 — 카드를 누르면 이동. 정보는 보기 전용, 수정 폼은 아코디언으로 접힘 */
-function SnackDetail({
+export function SnackDetail({
   snack,
   cats,
   onBack,
@@ -445,11 +445,11 @@ function SnackDetail({
             <div className="photo-box">
               <img src={shownPhoto} alt="제품 사진" />
               <div className="photo-actions">
-                <button className="mini-btn" onClick={() => fileRef.current?.click()}>
+                <button className="mini-btn mini-primary" onClick={() => fileRef.current?.click()}>
                   <IconCamera size={16} />사진 바꾸기
                 </button>
                 <button
-                  className="mini-btn"
+                  className="mini-btn mini-danger"
                   onClick={() => {
                     setRemovePhoto(true)
                     setNewPhoto(null)

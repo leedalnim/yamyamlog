@@ -57,6 +57,18 @@
   font-weight: 700;
 }
 .mini-btn:disabled { opacity: 0.6; }
+/* 두 버튼이 똑같이 생겨서 무엇이 무엇인지 구분이 안 됐다.
+   '바꾸기'는 채워서 주된 동작으로, '빼기'는 지우는 쪽임이 보이게 */
+.mini-btn.mini-primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-ink);
+}
+.mini-btn.mini-danger {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  color: var(--danger);
+}
 
 /* ---------- 반응 편집기 ---------- */
 .react-editor { display: flex; flex-direction: column; gap: 12px; }
