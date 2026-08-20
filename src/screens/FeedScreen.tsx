@@ -20,6 +20,7 @@ import bannerCatUrl from '../assets/cat-bowl.png'
 import logoRaw from '../assets/logo.svg?raw'
 import noPhotoUrl from '../assets/no-photo.svg'
 import { matches } from '../lib/hangul'
+import { useBackGuard } from '../lib/useBackGuard'
 
 function formatDate(ts: number): string {
   const d = new Date(ts)
@@ -37,6 +38,11 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
   const [sort, setSort] = useState<'recent' | 'name'>('recent')
   const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
+
+  // 뒤로 제스처로 한 단계씩 닫히게 한다
+  useBackGuard(!!viewing, () => setViewing(null))
+  useBackGuard(filterOpen, () => setFilterOpen(false))
+  useBackGuard(searchOpen, () => { setQuery(''); setSearchOpen(false) })
 
   async function reload() {
     setSnacks(await listSnacks())
@@ -376,6 +382,7 @@ export function SnackDetail({
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>(snack.reactions)
   const [discontinued, setDiscontinued] = useState(!!snack.discontinued)
   const [saving, setSaving] = useState(false)
+  useBackGuard(editing, () => setEditing(false))
   // 사진 교체 — 저장을 눌러야 실제로 반영된다
   const fileRef = useRef<HTMLInputElement>(null)
   const [newPhoto, setNewPhoto] = useState<Blob | null>(null)

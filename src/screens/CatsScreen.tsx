@@ -8,6 +8,7 @@ const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC
 import { dailyKcal } from '../lib/kcal'
 import { addCat, deleteCat, listCats, updateCat } from '../data/repo'
 import type { Cat } from '../data/types'
+import { useBackGuard } from '../lib/useBackGuard'
 
 const CALC_URL = 'https://leedalnim.github.io/pet-food-calc/'
 
@@ -21,6 +22,9 @@ export function CatsScreen() {
   useEffect(() => {
     setCats(initialCats)
   }, [initialCats])
+
+  useBackGuard(!!editing, () => setEditing(null))
+  useBackGuard(adding, () => setAdding(false))
 
   return (
     <div className="screen">

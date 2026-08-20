@@ -4,6 +4,7 @@ import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { SnackDetail } from './FeedScreen'
+import { useBackGuard } from '../lib/useBackGuard'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
@@ -29,6 +30,8 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   async function reload() {
     setSnacks(await listSnacks())
   }
+
+  useBackGuard(!!viewing, () => setViewing(null))
 
   useEffect(() => {
     ;(async () => setSnacks(await listSnacks()))()

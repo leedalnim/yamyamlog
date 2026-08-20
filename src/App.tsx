@@ -9,6 +9,7 @@ import { StatsScreen } from './screens/StatsScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { CatsScreen } from './screens/CatsScreen'
 import { IconHome, IconPlus, IconChart, IconSettings, IconPaw, IconCatFace } from './components/icons'
+import { useBackGuard } from './lib/useBackGuard'
 
 type Tab = 'feed' | 'add' | 'stats' | 'cats' | 'settings'
 
@@ -31,6 +32,9 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
   const [dataVersion, setDataVersion] = useState(0)
 
   const refresh = useCallback(() => setDataVersion((v) => v + 1), [])
+
+  // 기록 추가 화면도 뒤로 제스처로 닫히게
+  useBackGuard(tab === 'add', useCallback(() => setTab('feed'), []))
 
   // 초기 로드
   useEffect(() => {
