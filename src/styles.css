@@ -11,6 +11,22 @@
   /* 메모 상자 — 크림 바탕에서 '적어둔 칸'으로 구분되게 살짝 회색 쪽으로 */
   --memo-bg: #f4f3f1;
   --memo-line: #eae7e2;
+  /* 태그 — 축(종류/재료) 2색 */
+  --kind-bg: #fdeedd;  --kind-ink: #d9782e;
+  --base-bg: #e1ebf6;  --base-ink: #547fa8;
+  --retire-bg: #e6e2dc; --retire-ink: #7a736b;
+  /* 반응 pill */
+  --pill-good-bg: #fbe9c6; --pill-good-ink: #c4842a;
+  --pill-ok-bg: #f8f2e2;   --pill-ok-ink: #9a8f7b;
+  --pill-bad-bg: #efece7;  --pill-bad-ink: #7a756d;
+  /* 통계 패널·말풍선·기타 */
+  --panel: #fffdf8;
+  --blank-bub: #f6f4ef;
+  --love-bg: #fbdfd6; --love-ink: #d95c49;
+  --promo-pill-bg: #ffffff; --promo-pill-ink: #6b6259;
+  --promo-grad-a: #fbe9d2; --promo-grad-b: #f8ddba;
+  --hero-grad-a: #fdeed6; --hero-grad-b: #f9ddb0;
+  --hero-ink: #4a4440;
   --primary: #fa7f38;
   --primary-ink: #ffffff;
   --accent-2: #7fb3e8;
@@ -51,10 +67,27 @@ html[data-mode="dark"] {
   --line: #403a2e;
   --memo-bg: #322e26;
   --memo-line: #423c30;
-  --primary: #e6934f;
-  --primary-ink: #2a1c0e;
-  --accent-2: #89a9d8;
-  --good: #e6934f;
+  /* 브랜드 주황 — 어두운 바탕에서는 채도가 살아 있어야 탁해 보이지 않는다 */
+  --primary: #ff8b42;
+  --primary-ink: #2a1806;
+  --accent-2: #9cc4f2;
+  --good: #ff8b42;
+  /* 태그 — 각 축의 색을 머금은 어두운 바탕 */
+  --kind-bg: #4a3018;  --kind-ink: #f8ab6b;
+  --base-bg: #25374b;  --base-ink: #a2c8f2;
+  --retire-bg: #3b372f; --retire-ink: #a79e90;
+  /* 반응 pill */
+  --pill-good-bg: #4a3418; --pill-good-ink: #f3ad5d;
+  --pill-ok-bg: #3b3529;   --pill-ok-ink: #cbbb9c;
+  --pill-bad-bg: #34302a;  --pill-bad-ink: #a09789;
+  /* 통계 패널·말풍선·기타 */
+  --panel: #332e25;
+  --blank-bub: #2f2b23;
+  --love-bg: #4d2b26; --love-ink: #f5907c;
+  --promo-pill-bg: #3d372c; --promo-pill-ink: #ddd2c1;
+  --promo-grad-a: #4a3520; --promo-grad-b: #3e2d1b;
+  --hero-grad-a: #4a3520; --hero-grad-b: #3e2d1b;
+  --hero-ink: #f2ead9;
   --good-bg: #3d2d1c;
   --ok: #dcb45e;
   --ok-bg: #3a3218;
@@ -100,7 +133,9 @@ button { font-family: inherit; cursor: pointer; }
 
 .screen {
   flex: 1;
-  padding: 0 16px calc(var(--nav-h) + 24px);
+  /* 하단 탭바는 홈 인디케이터(safe-area) 만큼 더 높다.
+     그걸 빼먹으면 아이폰에서 맨 아래 버튼이 탭바에 가린다. */
+  padding: 0 16px calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
   padding-top: calc(env(safe-area-inset-top) + 8px);
 }
 
@@ -156,7 +191,7 @@ button { font-family: inherit; cursor: pointer; }
   width: 58px;
   height: 58px;
   border-radius: 50%;
-  border: 4px solid var(--bg);
+  border: 3px solid var(--bg);
   background: var(--primary);
   color: var(--primary-ink);
   display: flex;

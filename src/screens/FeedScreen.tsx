@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   BaseChooser,
   BaseTag,
@@ -10,10 +10,14 @@ import {
   usePhotoURL,
 } from '../components/common'
 import type { Cat, ReactionLevel, Snack } from '../data/types'
-import { deleteSnack, listSnacks, toggleFavorite, updateSnack } from '../data/repo'
-import { CatDoodle, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash, ReactionIcon } from '../components/icons'
+import { deleteSnack, listSnacks, savePhoto, toggleFavorite, updateSnack } from '../data/repo'
+import { compressImage } from '../lib/image'
+import { CatDoodle, IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash, ReactionIcon } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
-import logoUrl from '../assets/logo.svg'
+// 로고 안의 '흰색' 부분은 사실 배경이 비쳐 보이는 구멍이라, 다크 모드에서
+// 흰 덩어리로 남지 않으려면 페이지 배경색을 따라가야 한다. 그러려면
+// <img> 가 아니라 문서 안에 직접 그려야 CSS 변수가 닿는다.
+import logoRaw from '../assets/logo.svg?raw'
 import noPhotoUrl from '../assets/no-photo.svg'
 import { matches } from '../lib/hangul'
 
@@ -135,7 +139,9 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
           </div>
         ) : (
           <>
-            <h1 className="logo"><img src={logoUrl} alt="얌얌로그" className="logo-img" /></h1>
+            <h1 className="logo" aria-label="얌얌로그">
+              <span className="logo-img" role="img" dangerouslySetInnerHTML={{ __html: logoRaw }} />
+            </h1>
             <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
               <IconSearch size={22} />
             </button>
@@ -370,12 +376,34 @@ function SnackDetail({
   const [reactions, setReactions] = useState<Record<string, ReactionLevel>>(snack.reactions)
   const [discontinued, setDiscontinued] = useState(!!snack.discontinued)
   const [saving, setSaving] = useState(false)
+  // 사진 교체 — 저장을 눌러야 실제로 반영된다
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [newPhoto, setNewPhoto] = useState<Blob | null>(null)
+  const [newPreview, setNewPreview] = useState<string>()
+  const [removePhoto, setRemovePhoto] = useState(false)
+  const shownPhoto = removePhoto ? undefined : (newPreview ?? url)
+
+  async function pickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // 같은 파일 다시 고를 수 있게
+    if (!file) return
+    const blob = await compressImage(file)
+    if (newPreview) URL.revokeObjectURL(newPreview)
+    setNewPhoto(blob)
+    setNewPreview(URL.createObjectURL(blob))
+    setRemovePhoto(false)
+  }
 
   async function save() {
     setSaving(true)
     try {
+      let photoId = snack.photoId
+      if (removePhoto) photoId = undefined
+      else if (newPhoto) photoId = await savePhoto(newPhoto)
+
       const updated: Snack = {
         ...snack,
+        photoId,
         name: name.trim() || snack.name,
         kind: kind.trim() || undefined,
         base: base.trim() || undefined,
@@ -407,6 +435,38 @@ function SnackDetail({
             <IconChevronLeft size={22} />
           </button>
           <h1 style={{ fontSize: 19 }}>기록 수정</h1>
+        </div>
+
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickPhoto} />
+
+        <div className="field">
+          <label>사진</label>
+          {shownPhoto ? (
+            <div className="photo-box">
+              <img src={shownPhoto} alt="간식 사진" />
+              <div className="photo-actions">
+                <button className="mini-btn" onClick={() => fileRef.current?.click()}>
+                  <IconCamera size={16} />사진 바꾸기
+                </button>
+                <button
+                  className="mini-btn"
+                  onClick={() => {
+                    setRemovePhoto(true)
+                    setNewPhoto(null)
+                    if (newPreview) URL.revokeObjectURL(newPreview)
+                    setNewPreview(undefined)
+                  }}
+                >
+                  <IconTrash size={16} />사진 빼기
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button className="photo-drop slim" onClick={() => fileRef.current?.click()}>
+              <IconCamera size={20} />
+              사진 추가하기
+            </button>
+          )}
         </div>
 
         <div className="field">

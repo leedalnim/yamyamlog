@@ -83,16 +83,17 @@ export function ReactionFaces({
  * 태그 컬러 — 축(axis) 단위 2색 체계.
  * 값마다 색을 다르게 주지 않고 "종류냐 / 재료냐"만 색으로 구분합니다.
  * 색으로 의미를 갖는 건 반응(주황)뿐이므로, 태그는 조용한 두 톤으로만 둡니다.
+ *
+ * 색은 CSS 토큰(--kind-bg 등)으로 둔다. 예전에는 여기서 style 로 직접
+ * 박았는데, 인라인 스타일은 CSS 로 못 덮어서 다크 모드에서 밝은 알약이
+ * 그대로 남아 있었다.
  */
-const KIND_TAG = { background: '#FDEEDD', color: '#D9782E' } as const
-const BASE_TAG = { background: '#E1EBF6', color: '#547FA8' } as const
-
 export function KindTag({ v }: { v: string }) {
-  return <span className="kind-tag" style={KIND_TAG}>{v}</span>
+  return <span className="kind-tag">{v}</span>
 }
 
 export function BaseTag({ v }: { v: string }) {
-  return <span className="base-tag" style={BASE_TAG}>{v}</span>
+  return <span className="base-tag">{v}</span>
 }
 
 /** 반응 pill 하나 */
