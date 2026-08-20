@@ -279,13 +279,17 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               <h2 className="stat-title">피하는 것</h2>
               <div className="card record-list">
                 {avoid.map((r) => (
-                  <div className="record-row" key={r.snack.id}>
+                  <button
+                    className="record-row"
+                    key={r.snack.id}
+                    onClick={() => setViewing(r.snack)}
+                  >
                     <ReactionIcon level="bad" size={26} />
                     <div className="record-info">
                       <div className="record-name">{r.snack.name}</div>
                     </div>
                     <span className="avoid-note"><IconHeart size={13} /> {cat.name}가 안 먹어요</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </section>
@@ -301,7 +305,12 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                 </div>
               )}
               {records.map((r) => (
-                <RecordRow key={r.snack.id} snack={r.snack} level={r.level} />
+                <RecordRow
+                  key={r.snack.id}
+                  snack={r.snack}
+                  level={r.level}
+                  onOpen={() => setViewing(r.snack)}
+                />
               ))}
             </div>
           </section>
@@ -365,10 +374,18 @@ function Top3Card({
   )
 }
 
-function RecordRow({ snack, level }: { snack: Snack; level: ReactionLevel }) {
+function RecordRow({
+  snack,
+  level,
+  onOpen,
+}: {
+  snack: Snack
+  level: ReactionLevel
+  onOpen: () => void
+}) {
   const url = usePhotoURL(snack.photoId)
   return (
-    <div className="record-row">
+    <button className="record-row" onClick={onOpen}>
       <div className="record-thumb">
         {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
       </div>
@@ -380,6 +397,6 @@ function RecordRow({ snack, level }: { snack: Snack; level: ReactionLevel }) {
         </div>
       </div>
       <ReactionIcon level={level} size={30} />
-    </div>
+    </button>
   )
 }

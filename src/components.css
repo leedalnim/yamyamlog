@@ -433,7 +433,16 @@
 
 /* 기록 리스트 (레퍼런스의 거래내역 스타일) */
 .record-list { display: flex; flex-direction: column; padding: 6px 0; }
-.record-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; }
+/* 통계에서 눌러 상세로 가기 때문에 <button> 이다. 버튼 기본 모양을 지운다 */
+.record-row {
+  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+  width: 100%;
+  border: none;
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+}
 .record-row + .record-row { border-top: 1px solid var(--line); }
 .record-thumb {
   flex: none;
