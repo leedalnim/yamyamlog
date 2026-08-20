@@ -488,7 +488,8 @@ function SnackDetail({
           {snack.discontinued && <span className="tag-discontinued">단종</span>}
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>
-        <div style={{ marginTop: 16 }}>
+        {/* 점선으로 위쪽 제품 정보와 갈라 놓는다 — 여기부터가 '누가 잘 먹었나' */}
+        <div className="detail-reactions">
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="large" />
         </div>
 

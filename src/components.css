@@ -142,6 +142,12 @@
 .detail-name { font-size: 24px; font-weight: 700; margin: 0 0 8px; font-family: var(--font-hand); }
 .detail-tags { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .detail-tags .snack-date { margin-left: auto; }
+/* 기호성 — 위쪽 제품 정보와 점선으로 나눈다 (수정 화면 점선과 같은 굵기·색) */
+.detail-reactions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1.5px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+}
 /* 메모 — 반응 아래, 수정하기 위. 상자로 감싸 '적어둔 것'처럼 보이게 한다 */
 .detail-memo-box {
   margin-top: 18px;
