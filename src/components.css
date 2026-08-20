@@ -59,10 +59,12 @@
 .mini-btn:disabled { opacity: 0.6; }
 /* 두 버튼이 똑같이 생겨서 무엇이 무엇인지 구분이 안 됐다.
    '바꾸기'는 채워서 주된 동작으로, '빼기'는 지우는 쪽임이 보이게 */
+/* 사진 바꾸기는 이 화면의 주된 동작이 아니다(저장이 그렇다).
+   꽉 채우면 위 '저장' 버튼과 시선을 다투므로 은은한 주황 톤으로만 둔다. */
 .mini-btn.mini-primary {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--primary-ink);
+  background: var(--kind-bg);
+  border-color: transparent;
+  color: var(--kind-ink);
 }
 .mini-btn.mini-danger {
   background: transparent;
@@ -401,7 +403,7 @@
 .photo-drop { border: 2px dashed var(--line); }
 .edit-acc-body { border-top: 1.5px solid var(--line); }
 .mini-btn { border: none; background: var(--surface-2); }
-.mini-btn.mini-primary { background: var(--primary); color: var(--primary-ink); }
+.mini-btn.mini-primary { background: var(--kind-bg); color: var(--kind-ink); }
 /* 빼기는 보조 동작이라 회색으로 물러나 있는다 — 빨강은 너무 세게 보였다 */
 .mini-btn.mini-danger {
   background: transparent;
