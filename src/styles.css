@@ -8,6 +8,9 @@
   --ink: #33292a;
   --muted: #8e8781;
   --line: #f1ece5;
+  /* 메모 상자 — 크림 바탕에서 '적어둔 칸'으로 구분되게 살짝 회색 쪽으로 */
+  --memo-bg: #f4f3f1;
+  --memo-line: #eae7e2;
   --primary: #fa7f38;
   --primary-ink: #ffffff;
   --accent-2: #7fb3e8;
@@ -46,6 +49,8 @@ html[data-mode="dark"] {
   --ink: #f2ead9;
   --muted: #ab9d8a;
   --line: #403a2e;
+  --memo-bg: #322e26;
+  --memo-line: #423c30;
   --primary: #e6934f;
   --primary-ink: #2a1c0e;
   --accent-2: #89a9d8;

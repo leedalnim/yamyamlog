@@ -145,8 +145,8 @@
 /* 메모 — 반응 아래, 수정하기 위. 상자로 감싸 '적어둔 것'처럼 보이게 한다 */
 .detail-memo-box {
   margin-top: 18px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
+  background: var(--memo-bg);
+  border: 1px solid var(--memo-line);
   border-radius: var(--radius-md);
   padding: 12px 14px;
 }
