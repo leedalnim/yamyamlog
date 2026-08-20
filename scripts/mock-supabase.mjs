@@ -156,9 +156,20 @@ const server = createServer(async (req, res) => {
   if (url.pathname === '/rest/v1/rpc/create_household') {
     const uid = userOf(req)
     if (!uid) return json(res, 401, { message: '로그인이 필요합니다' })
+    // 실제 서버와 같은 형식으로 만든다 — TG7K-JS27 (영문·숫자 8자 + 하이픈)
+    // 예전에는 숫자 4자리로 만들었는데, 그 바람에 영문이 섞인 진짜 코드에서만
+    // 터지는 문제를 여기서 못 잡았다.
+    const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+    const gen = () => {
+      let o = ''
+      for (let i = 0; i < 8; i++) {
+        o += CHARS[Math.floor(Math.random() * CHARS.length)]
+        if (i === 3) o += '-'
+      }
+      return o
+    }
     let code
-    do { code = String(Math.floor(Math.random() * 10000)).padStart(4, '0') }
-    while (db.households.some((h) => h.code === code))
+    do { code = gen() } while (db.households.some((h) => h.code === code))
     const id = 'h-' + code
     db.households.push({ id, code })
     db.members.push({ household_id: id, user_id: uid })
@@ -168,8 +179,11 @@ const server = createServer(async (req, res) => {
   if (url.pathname === '/rest/v1/rpc/join_household') {
     const uid = userOf(req)
     if (!uid) return json(res, 401, { message: '로그인이 필요합니다' })
-    const wanted = String(body.p_code ?? '').replace(/\D/g, '')
-    const h = db.households.find((x) => x.code === wanted)
+    // 지금 배포된 03-short-code.sql 과 똑같이 '숫자만 남겨' 비교한다.
+    // (07-code-match.sql 을 돌리면 글자 전체로 비교하게 된다)
+    const digits = (v) => String(v ?? '').replace(/\D/g, '')
+    const wanted = digits(body.p_code)
+    const h = db.households.find((x) => digits(x.code) === wanted && wanted !== '')
     if (!h) return json(res, 400, { message: '그런 코드가 없어요' })
     if (!db.members.some((m) => m.household_id === h.id && m.user_id === uid)) {
       db.members.push({ household_id: h.id, user_id: uid })
