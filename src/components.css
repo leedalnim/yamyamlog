@@ -118,7 +118,7 @@
   font-size: 13px;
   font-weight: 700;
 }
-.sel-chip.on[data-accent="base"] { background: var(--accent-2); border-color: var(--accent-2); color: var(--accent-2-ink); }
+.sel-chip.on[data-accent="base"] { background: var(--accent-2-fill); border-color: var(--accent-2-fill); color: var(--accent-2-ink); }
 .sel-chip.on[data-accent="kind"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
 .sel-custom { font-size: 14px; }
 
@@ -381,7 +381,7 @@
 .chip-tab.active { background: var(--primary); color: var(--primary-ink); }
 .sel-chip { border: none; background: var(--surface-2); }
 .sel-chip.on[data-accent="kind"] { background: var(--primary); color: var(--primary-ink); }
-.sel-chip.on[data-accent="base"] { background: var(--accent-2); color: var(--accent-2-ink); }
+.sel-chip.on[data-accent="base"] { background: var(--accent-2-fill); color: var(--accent-2-ink); }
 .input, .textarea { border: none; background: var(--surface); box-shadow: var(--shadow-sm); }
 .base-tag, .kind-tag { border: none; }
 .kind-tag { background: var(--kind-bg); color: var(--kind-ink); }
@@ -677,7 +677,7 @@
 .top3-card > .top3-love { margin-top: auto; }
 
 /* ---------- 피하는 간식 ---------- */
-.avoid-note { font-size: 12px; font-weight: 700; color: var(--bad); white-space: nowrap; }
+.avoid-note { font-size: 12px; font-weight: 700; color: var(--bad-ink); white-space: nowrap; }
 
 /* 로고 (목업: 오렌지 + 발바닥) */
 .topbar h1.logo { color: var(--primary); display: inline-flex; align-items: center; gap: 4px; }
@@ -796,7 +796,7 @@
 .top3-love { display: inline-flex; align-items: center; gap: 4px; }
 .top3-love svg { color: var(--love-ink); }
 .avoid-note { display: inline-flex; align-items: center; gap: 4px; }
-.avoid-note svg { color: var(--bad); }
+.avoid-note svg { color: var(--bad-ink); }
 
 /* ===== 가이드 원본 에셋 ===== */
 .promo-img-wrap { padding: 0; background: none; overflow: hidden; }

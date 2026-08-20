@@ -25,6 +25,10 @@
   --love-bg: #f7e3ea; --love-ink: #bc5c81;
   --promo-pill-bg: #ffffff; --promo-pill-ink: #6b6259;
   --accent-2-ink: #ffffff;
+  /* 칩을 채울 때 쓰는 진한 파랑 — 흰 글자가 읽히려면 이만큼 어두워야 한다 */
+  --accent-2-fill: #4681c7;
+  /* 파란 글자(안먹음 안내 등) — --bad 는 면을 칠하는 용도라 글자로는 너무 밝다 */
+  --bad-ink: #4a80b5;
   --promo-grad-a: #fbe9d2; --promo-grad-b: #f8ddba;
   --hero-grad-a: #fdeed6; --hero-grad-b: #f9ddb0;
   --hero-ink: #4a4440;
@@ -88,6 +92,8 @@ html[data-mode="dark"] {
   --promo-pill-bg: #3d372c; --promo-pill-ink: #ddd2c1;
   /* 밝은 파랑 위에 흰 글씨는 다크에서 눈부시다. 짙은 남색으로 앉힌다 */
   --accent-2-ink: #10243a;
+  --accent-2-fill: #9cc4f2;
+  --bad-ink: #a2c8f2;
   --promo-grad-a: #4a3520; --promo-grad-b: #3e2d1b;
   --hero-grad-a: #4a3520; --hero-grad-b: #3e2d1b;
   --hero-ink: #f2ead9;
