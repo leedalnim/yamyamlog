@@ -485,6 +485,7 @@ function SnackDetail({
         <div className="detail-tags">
           {snack.kind && <KindTag v={snack.kind} />}
           {snack.base && <BaseTag v={snack.base} />}
+          {snack.discontinued && <span className="tag-discontinued">단종</span>}
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>
         {snack.memo && <p className="detail-memo muted">{snack.memo}</p>}
