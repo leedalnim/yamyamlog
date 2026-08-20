@@ -5,15 +5,11 @@ import catFaceUrl from '../assets/faces/good-white.svg'
 
 /** 냥이별 아바타 원 배경 — 크림색 얼굴과 확실히 구분되는 파스텔 */
 const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC93']
+import { dailyKcal } from '../lib/kcal'
 import { addCat, deleteCat, listCats, updateCat } from '../data/repo'
 import type { Cat } from '../data/types'
 
 const CALC_URL = 'https://leedalnim.github.io/pet-food-calc/'
-
-/** 몸무게 기반 하루 권장 칼로리 (RER = 70 × kg^0.75) */
-function dailyKcal(weightKg: number): number {
-  return Math.round(70 * Math.pow(weightKg, 0.75))
-}
 
 export function CatsScreen() {
   const { cats: initialCats } = useCatsAndGroups()
