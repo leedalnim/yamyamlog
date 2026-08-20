@@ -1293,3 +1293,6 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 /* 카드 전체를 흐리게 하지는 않는다 — 기록 자체는 여전히 유효한 정보다.
    이름만 톤을 낮춰 '지금은 못 사는 제품'임을 알린다. */
 .snack-card.is-discontinued .snack-name { color: var(--muted); }
+
+/* 단종: 상세 페이지의 큰 사진도 회색 */
+.detail-hero.is-discontinued img { filter: grayscale(1); opacity: 0.8; }

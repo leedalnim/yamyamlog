@@ -456,7 +456,7 @@ function SnackDetail({
   return (
     <div className="detail-page">
       {/* ---- 사진 풀블리드 히어로 ---- */}
-      <div className="detail-hero">
+      <div className={'detail-hero' + (snack.discontinued ? ' is-discontinued' : '')}>
         {url ? (
           <img src={url} alt={snack.name} />
         ) : (

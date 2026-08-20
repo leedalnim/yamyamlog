@@ -72,6 +72,13 @@ export function CatsScreen() {
         </div>
       </section>
 
+      <button
+        className="add-cat-btn"
+        onClick={() => setAdding(true)}
+      >
+        + 냥이 추가하기
+      </button>
+
       {/* 한눈에 보기 */}
       <section className="stat-section">
         <h2 className="stat-title">한눈에 보기</h2>
@@ -102,12 +109,7 @@ export function CatsScreen() {
         </div>
       </section>
 
-      <button
-        className="add-cat-btn"
-        onClick={() => setAdding(true)}
-      >
-        + 냥이 추가하기
-      </button>
+
 
       {/* 냥이 정보 수정 */}
       {editing && (
