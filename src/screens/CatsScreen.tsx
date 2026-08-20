@@ -14,7 +14,6 @@ const CALC_URL = 'https://leedalnim.github.io/pet-food-calc/'
 export function CatsScreen() {
   const { cats: initialCats } = useCatsAndGroups()
   const [cats, setCats] = useState<Cat[]>([])
-  const [calcOpen, setCalcOpen] = useState(false)
   const [editing, setEditing] = useState<Cat | null>(null)
   // 'new' 면 추가 시트, Cat 이면 수정 시트
   const [adding, setAdding] = useState(false)
@@ -67,14 +66,23 @@ export function CatsScreen() {
       <section className="stat-section">
         <h2 className="stat-title">도구</h2>
         <div className="card record-list">
-          <button className="record-row tool-row" onClick={() => setCalcOpen(true)}>
+          {/*
+            예전에는 앱 안에 iframe 으로 띄웠는데, 사파리에서 빈 화면이 되는
+            일이 잦았고 모래·건식 얘기라 이 앱과는 다른 일이다. 새 창으로 연다.
+          */}
+          <a
+            className="record-row tool-row"
+            href={CALC_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span className="tool-ico"><IconCalculator size={22} /></span>
             <div className="record-info">
               <div className="record-name">용품 최저가 · 몸무게 계산기</div>
-              <div className="record-sub muted">직접 만든 계산기를 앱에서 바로</div>
+              <div className="record-sub muted">새 창에서 열려요</div>
             </div>
             <IconChevronRight size={16} />
-          </button>
+          </a>
         </div>
       </section>
 
@@ -102,20 +110,6 @@ export function CatsScreen() {
         />
       )}
 
-      {/* 계산기 레이어 팝업 */}
-      {calcOpen && (
-        <div className="sheet-backdrop" onClick={() => setCalcOpen(false)}>
-          <div className="sheet calc-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="sheet-handle" />
-            <div className="calc-sheet-head">
-              계산기
-              <button className="link-btn" onClick={() => setCalcOpen(false)}>닫기</button>
-            </div>
-            <p className="calc-note">화면이 비어 보이면 네트워크 문제예요. 잠시 후 다시 열어주세요.</p>
-            <iframe src={CALC_URL} className="calc-frame" title="용품 최저가 · 몸무게 계산기" />
-          </div>
-        </div>
-      )}
     </div>
   )
 }
