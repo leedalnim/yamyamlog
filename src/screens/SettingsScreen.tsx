@@ -8,7 +8,7 @@ import {
   type BackupFile,
   type BackupSummary,
 } from '../data/backup'
-import { IconTrash } from '../components/icons'
+import { IconCheck, IconCopy, IconTrash } from '../components/icons'
 import { isCloudConfigured } from '../lib/supabase'
 import {
   createHousehold,
@@ -52,6 +52,40 @@ export function SettingsScreen({
   const [cloudBusy, setCloudBusy] = useState<'create' | 'join' | 'sync' | null>(null)
   const [cloudNote, setCloudNote] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
   const [joinCode, setJoinCode] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  /**
+   * 코드 복사.
+   * 사파리는 https 가 아니거나 사용자 동작에서 너무 멀면 clipboard 를 막는다.
+   * 그럴 때를 대비해 옛 방식(execCommand)으로 한 번 더 시도한다.
+   */
+  async function copyCode(code: string) {
+    let done = false
+    try {
+      await navigator.clipboard.writeText(code)
+      done = true
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = code
+      ta.setAttribute('readonly', '')
+      ta.style.position = 'fixed'
+      ta.style.opacity = '0'
+      document.body.appendChild(ta)
+      ta.select()
+      try {
+        done = document.execCommand('copy')
+      } catch {
+        done = false
+      }
+      ta.remove()
+    }
+    if (done) {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    } else {
+      setCloudNote({ kind: 'err', text: '복사하지 못했어요. 코드를 길게 눌러 복사해주세요.' })
+    }
+  }
 
   useEffect(() => {
     void (async () => {
@@ -276,16 +310,26 @@ export function SettingsScreen({
           ) : house ? (
             <>
               <div className="muted" style={{ fontSize: 12.5, fontWeight: 700 }}>우리집 코드</div>
-              <div
-                className="house-code"
-                style={{
-                  fontSize: 26,
-                  fontWeight: 800,
-                  letterSpacing: '0.06em',
-                  margin: '4px 0 10px',
-                }}
-              >
-                {house.code || '—'}
+              <div className="code-row">
+                <div
+                  className="house-code"
+                  style={{
+                    fontSize: 26,
+                    fontWeight: 800,
+                    letterSpacing: '0.06em',
+                  }}
+                >
+                  {house.code || '—'}
+                </div>
+                {house.code && (
+                  <button
+                    className={'copy-btn' + (copied ? ' done' : '')}
+                    onClick={() => copyCode(house.code)}
+                  >
+                    {copied ? <IconCheck size={15} /> : <IconCopy size={15} />}
+                    {copied ? '복사됨' : '복사'}
+                  </button>
+                )}
               </div>
               <p className="muted" style={{ margin: '0 0 14px', fontSize: 13, lineHeight: 1.7 }}>
                 상대방 폰의 <b>함께 보기</b>에서 이 코드를 넣으면 같은 기록을 보게 돼요.

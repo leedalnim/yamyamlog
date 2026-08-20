@@ -171,6 +171,16 @@ export const IconTrash = (p: P) =>
     p,
   )
 
+/** 복사 — 겹친 두 장의 종이 */
+export const IconCopy = (p: P) =>
+  svg(
+    <>
+      <rect x="9" y="9" width="11" height="11" rx="2.5" />
+      <path d="M15 5.5A2.5 2.5 0 0 0 12.5 3H6.5A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14" />
+    </>,
+    p,
+  )
+
 export const IconCheck = (p: P) =>
   svg(<path d="M5 12.5 10 17 19 7" />, { ...p, strokeWidth: p.strokeWidth ?? 2.2 })
 
