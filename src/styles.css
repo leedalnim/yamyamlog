@@ -22,7 +22,7 @@
   /* 통계 패널·말풍선·기타 */
   --panel: #fffdf8;
   --blank-bub: #f6f4ef;
-  --love-bg: #fde0ec; --love-ink: #d9478a;
+  --love-bg: #f7e3ea; --love-ink: #bc5c81;
   --promo-pill-bg: #ffffff; --promo-pill-ink: #6b6259;
   --accent-2-ink: #ffffff;
   --promo-grad-a: #fbe9d2; --promo-grad-b: #f8ddba;
@@ -37,7 +37,7 @@
   --ok-bg: #f8efd2;
   --bad: #7fb3e8;
   --bad-bg: #e3edf9;
-  --danger: #d9478a;
+  --danger: #bc5c81;
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 12px;
@@ -84,7 +84,7 @@ html[data-mode="dark"] {
   /* 통계 패널·말풍선·기타 */
   --panel: #332e25;
   --blank-bub: #2f2b23;
-  --love-bg: #4a2135; --love-ink: #f88ab8;
+  --love-bg: #432934; --love-ink: #e0a0b8;
   --promo-pill-bg: #3d372c; --promo-pill-ink: #ddd2c1;
   /* 밝은 파랑 위에 흰 글씨는 다크에서 눈부시다. 짙은 남색으로 앉힌다 */
   --accent-2-ink: #10243a;
@@ -96,7 +96,7 @@ html[data-mode="dark"] {
   --ok-bg: #3a3218;
   --bad: #89a9d8;
   --bad-bg: #253243;
-  --danger: #f88ab8;
+  --danger: #e0a0b8;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   --shadow-sm: 0 3px 12px rgba(0, 0, 0, 0.3);
 }
