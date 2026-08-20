@@ -39,7 +39,7 @@
   gap: 8px;
 }
 .photo-drop .big { line-height: 0; color: var(--muted); }
-.photo-box { border-radius: var(--radius-md); overflow: hidden; background: var(--surface-2); }
+.photo-box { border-radius: var(--radius-md); overflow: hidden; background: var(--photo-bg); }
 .photo-box img { width: 100%; display: block; max-height: 320px; object-fit: cover; }
 .photo-actions { display: flex; gap: 8px; padding: 10px; }
 .mini-btn {
