@@ -261,33 +261,28 @@ function CatEditSheet({
         {/* 삭제는 수정할 때만. 간식 기록의 반응은 그대로 두고 목록에서만 뺀다. */}
         {!isNew && (
           confirmDelete ? (
+            // 취소는 위 시트 버튼이 이미 맡고 있으므로 여기서는 '빼기'만 둔다.
             <div className="cat-delete-confirm">
               <p>
                 <b>{cat.name}</b>를 목록에서 뺄까요?
                 <br />
                 지금까지의 간식 반응 기록은 그대로 남아요.
               </p>
-              <div className="sheet-actions" style={{ marginTop: 10 }}>
-                <button className="btn" style={{ flex: 1 }} onClick={() => setConfirmDelete(false)}>
-                  취소
-                </button>
-                <button
-                  className="btn"
-                  style={{ flex: 1, color: 'var(--danger)' }}
-                  disabled={saving}
-                  onClick={async () => {
-                    setSaving(true)
-                    try {
-                      await deleteCat(cat.id)
-                      onSaved()
-                    } finally {
-                      setSaving(false)
-                    }
-                  }}
-                >
-                  빼기
-                </button>
-              </div>
+              <button
+                className="btn cat-delete-go"
+                disabled={saving}
+                onClick={async () => {
+                  setSaving(true)
+                  try {
+                    await deleteCat(cat.id)
+                    onSaved()
+                  } finally {
+                    setSaving(false)
+                  }
+                }}
+              >
+                빼기
+              </button>
             </div>
           ) : (
             <button
