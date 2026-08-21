@@ -158,26 +158,33 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         )}
       </div>
 
-      <div className="tabs">
-        <button className={'chip-tab' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>
-          전체
-        </button>
-        <button
-          className={'chip-tab chip-fav' + (filter === 'fav' ? ' active' : '')}
-          onClick={() => setFilter('fav')}
-          aria-label="즐겨찾기만 보기"
-        >
-          <IconStar size={17} filled={filter === 'fav'} />
-        </button>
-        {kinds.map((k) => (
-          <button
-            key={k}
-            className={'chip-tab' + (filter === k ? ' active' : '')}
-            onClick={() => setFilter(k)}
-          >
-            {k}
+      {/*
+        종류 칩은 개수가 늘어나므로 옆으로 넘겨 보고, 필터는 늘 같은 자리에
+        고정해 둔다. 예전에는 필터도 넘김 줄 안에 있어서 끝에서 잘려 보이고
+        누르려면 옆으로 밀어야 했다.
+      */}
+      <div className="tabs-bar">
+        <div className="tabs">
+          <button className={'chip-tab' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>
+            전체
           </button>
-        ))}
+          <button
+            className={'chip-tab chip-fav' + (filter === 'fav' ? ' active' : '')}
+            onClick={() => setFilter('fav')}
+            aria-label="즐겨찾기만 보기"
+          >
+            <IconStar size={17} filled={filter === 'fav'} />
+          </button>
+          {kinds.map((k) => (
+            <button
+              key={k}
+              className={'chip-tab' + (filter === k ? ' active' : '')}
+              onClick={() => setFilter(k)}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
         <button
           className={'chip-tab filter-chip' + (activeCount > 0 ? ' on' : '')}
           onClick={() => setFilterOpen(true)}
