@@ -32,13 +32,19 @@ function svg(children: ReactNode, { size = 24, className, strokeWidth = 1.8 }: P
 }
 
 /* ===== 피그마에서 내보낸 아이콘 ===== */
+/*
+ * 아래 아이콘들은 그림이 상자 한가운데(12,12)가 아니라 (11,11) 근처를
+ * 중심으로 그려져 있다. 그래서 오른쪽·아래에만 여백이 남아 하단 탭에서
+ * 아이콘이 왼쪽으로 밀리고, 큰 아이콘(설정)은 오른쪽이 잘린 것처럼 보였다.
+ * 그림을 다시 그리는 대신 viewBox 를 그만큼 옮겨 가운데로 맞춘다.
+ */
 export const IconHome = ({ size = 24, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+  <svg width={size} height={size} viewBox="-0.95 -0.85 24 24" fill="none" className={className}>
     <path d="M2.45001 9.24998L11.05 2.34998L19.65 9.24998V18.35C19.65 19.25 18.95 19.95 18.05 19.95H4.05001C3.15001 19.95 2.45001 19.25 2.45001 18.35V9.24998Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 export const IconChart = ({ size = 24, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+  <svg width={size} height={size} viewBox="-1.3 -0.7 24 24" fill="none" className={className}>
     <path d="M4.90002 6.59998V7.19998" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M4.90002 11.3V18.3" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M10.7 4.30005V18.3" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -46,7 +52,7 @@ export const IconChart = ({ size = 24, className }: P) => (
   </svg>
 )
 export const IconCatFace = ({ size = 24, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+  <svg width={size} height={size} viewBox="-0.95 -0.45 24 24" fill="none" className={className}>
     <path d="M3.75 7.75V2.75L8.15 5.55C9.05 5.25 10.05 5.15 11.05 5.15C12.05 5.15 13.05 5.25 13.95 5.55L18.35 2.75V7.75C19.65 9.25 20.35 10.95 20.35 12.85C20.35 17.05 16.25 20.35 11.05 20.35C5.85 20.35 1.75 17.05 1.75 12.85C1.75 10.95 2.45 9.25 3.75 7.75Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
     <circle cx="7.50002" cy="10.5" r="1.1" fill="currentColor"/>
     <circle cx="14.5" cy="10.5" r="1.1" fill="currentColor"/>
@@ -54,7 +60,7 @@ export const IconCatFace = ({ size = 24, className }: P) => (
   </svg>
 )
 export const IconSettings = ({ size = 24, className }: P) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+  <svg width={size} height={size} viewBox="-0.95 -0.95 24 24" fill="none" className={className}>
     <path d="M9.35 3.95006L9.55 1.06006H12.55L12.75 3.95006L14.86 4.83006L17.05 2.93006L19.17 5.05006L17.27 7.24006L18.15 9.35006L21.04 9.55006V12.5501L18.15 12.7501L17.27 14.8601L19.17 17.0501L17.05 19.1701L14.86 17.2701L12.75 18.1501L12.55 21.0401H9.55L9.35 18.1501L7.24 17.2701L5.05 19.1701L2.93 17.0501L4.83 14.8601L3.95 12.7501L1.06 12.5501V9.55006L3.95 9.35006L4.83 7.24006L2.93 5.05006L5.05 2.93006L7.24 4.83006L9.35 3.95006Z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
     <circle cx="11" cy="11" r="2.35" stroke="currentColor" strokeWidth="1.9"/>
   </svg>

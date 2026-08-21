@@ -1403,3 +1403,13 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-family: inherit;
 }
 .save-top:disabled { opacity: 0.55; }
+
+/* ===== 아무것도 없을 때의 고양이 ===== */
+.empty-cat {
+  width: 170px;
+  max-width: 60%;
+  height: auto;
+  display: block;
+  margin: 0 auto 14px;
+  opacity: 0.92;
+}
