@@ -151,50 +151,45 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
             <h1 className="logo" aria-label="얌얌로그">
               <span className="logo-img" role="img" dangerouslySetInnerHTML={{ __html: logoRaw }} />
             </h1>
-            <div className="top-actions">
-              <button
-                className={'bell-btn' + (activeCount > 0 ? ' on' : '')}
-                aria-label="필터"
-                onClick={() => setFilterOpen(true)}
-              >
-                <IconSliders size={21} />
-                {activeCount > 0 && <span className="filter-dot">{activeCount}</span>}
-              </button>
-              <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
-                <IconSearch size={22} />
-              </button>
-            </div>
+            <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
+              <IconSearch size={22} />
+            </button>
           </>
         )}
       </div>
 
       {/*
-        종류 칩만 옆으로 넘겨 본다. 줄을 화면 양끝까지 늘려서, 칩이 잘리는
-        지점이 화면 끝과 맞아떨어지게 했다. 필터는 넘김 줄에 두면 잘리거나
-        밀어야 닿으므로 위 상단바로 옮겼다.
+        줄을 화면 양끝까지 늘린다. 화면 여백(16px) 앞에서 잘리면 배너 폭에
+        맞춰 잘린 것처럼 어색한데, 화면 끝에서 잘리면 '옆에 더 있다'로 읽힌다.
       */}
-      <div className="tabs-bar">
-        <div className="tabs">
-          <button className={'chip-tab' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>
-            전체
-          </button>
+      <div className="tabs">
+        <button className={'chip-tab' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>
+          전체
+        </button>
+        <button
+          className={'chip-tab chip-fav' + (filter === 'fav' ? ' active' : '')}
+          onClick={() => setFilter('fav')}
+          aria-label="즐겨찾기만 보기"
+        >
+          <IconStar size={17} filled={filter === 'fav'} />
+        </button>
+        {kinds.map((k) => (
           <button
-            className={'chip-tab chip-fav' + (filter === 'fav' ? ' active' : '')}
-            onClick={() => setFilter('fav')}
-            aria-label="즐겨찾기만 보기"
+            key={k}
+            className={'chip-tab' + (filter === k ? ' active' : '')}
+            onClick={() => setFilter(k)}
           >
-            <IconStar size={17} filled={filter === 'fav'} />
+            {k}
           </button>
-          {kinds.map((k) => (
-            <button
-              key={k}
-              className={'chip-tab' + (filter === k ? ' active' : '')}
-              onClick={() => setFilter(k)}
-            >
-              {k}
-            </button>
-          ))}
-        </div>
+        ))}
+        <button
+          className={'chip-tab filter-chip' + (activeCount > 0 ? ' on' : '')}
+          onClick={() => setFilterOpen(true)}
+          aria-label="필터"
+        >
+          <IconSliders size={16} />
+          {activeCount > 0 && <span className="filter-dot">{activeCount}</span>}
+        </button>
       </div>
 
       {/* 오늘의 기록 유도 배너 — 일러스트 + 실제 텍스트 */}
