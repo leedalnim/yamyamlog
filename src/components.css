@@ -1405,6 +1405,8 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .save-top:disabled { opacity: 0.55; }
 
 /* ===== 아무것도 없을 때의 고양이 ===== */
+/* 검색 결과 없음 그림은 말풍선이 옆에 붙어 있어 가로로 길다 — 조금 더 넓게 */
+.empty-cat.wide { width: 230px; }
 .empty-cat {
   width: 170px;
   max-width: 60%;

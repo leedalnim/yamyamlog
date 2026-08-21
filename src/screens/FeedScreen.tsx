@@ -15,8 +15,10 @@ import { compressImage } from '../lib/image'
 import { IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash, ReactionIcon } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
 // 손그림 고양이(CatDoodle)는 앱의 다른 일러스트와 결이 안 맞아 어설퍼 보였다.
-// 통계 화면에서 쓰는 것과 같은 그림으로 맞춘다.
+// '아직 없음'은 자는 고양이, '검색해도 안 나옴'은 찾다 갸웃하는 고양이로
+// 상황에 맞춰 나눠 쓴다.
 import emptyCatUrl from '../assets/cat-cushion.png'
+import noResultCatUrl from '../assets/no-result.png'
 // 로고 안의 '흰색' 부분은 사실 배경이 비쳐 보이는 구멍이라, 다크 모드에서
 // 흰 덩어리로 남지 않으려면 페이지 배경색을 따라가야 한다. 그러려면
 // <img> 가 아니라 문서 안에 직접 그려야 CSS 변수가 닿는다.
@@ -208,7 +210,11 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
 
       {filtered.length === 0 ? (
         <div className="empty">
-          <img src={emptyCatUrl} alt="" className="empty-cat" />
+          <img
+            src={query.trim() ? noResultCatUrl : emptyCatUrl}
+            alt=""
+            className={'empty-cat' + (query.trim() ? ' wide' : '')}
+          />
           {query.trim() ? (
             <>
               <b>{query.trim()}</b> 와(과) 맞는 기록이 없어요.
