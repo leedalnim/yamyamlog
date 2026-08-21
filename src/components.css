@@ -1486,7 +1486,8 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .face-grid--stack .face-cell.blank img { opacity: 0.4; }
 
 /* ===== B안: 이름 밑 가로 알약 + 오른쪽 옅은 글자 ===== */
-.snack-card .snack-name-row { flex-wrap: nowrap; align-items: baseline; gap: 8px; }
+/* baseline 으로 두면 글자 크기가 달라 중심이 어긋난다 — 가운데로 */
+.snack-card .snack-name-row { flex-wrap: nowrap; align-items: center; gap: 8px; }
 .snack-card .snack-meta {
   margin-left: auto;
   flex: none;
@@ -1514,3 +1515,19 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .face-grid--pill .face-cell[data-level='good'] { background: var(--chip-good); }
 .face-grid--pill .face-cell[data-level='ok'] { background: var(--chip-ok); }
 .face-grid--pill .face-cell[data-level='bad'] { background: var(--chip-bad); }
+
+/* ===== C1: 이름 줄에 카테고리와 별을 나란히 =====
+   별은 카드 안에서 절대 위치라, 이름 줄과 같은 높이·같은 세로 중심을
+   갖도록 값을 맞춰 둔다. 눈대중으로 top 을 주면 글자와 중심이 어긋난다. */
+.snack-card .snack-name-row { min-height: 24px; }
+.snack-card .snack-btn { padding-right: 14px; }
+.snack-card .snack-meta { padding-right: 28px; }
+.snack-card .fav-btn {
+  top: 12px;              /* .snack-btn 의 padding-top 과 같은 값 */
+  height: 24px;           /* .snack-name-row 의 min-height 와 같은 값 */
+  right: 10px;
+  transform: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
