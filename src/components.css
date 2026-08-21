@@ -1418,12 +1418,12 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
    종류 칩은 옆으로 넘겨 보고, 필터 버튼은 오른쪽에 고정한다.
    넘김 줄은 화면 끝까지 늘려서, 잘린 칩이 '더 있다'는 신호로 읽히게 한다.
    (예전에는 화면 끝보다 16px 앞에서 잘려 그냥 망가져 보였다) */
-.tabs-bar { display: flex; align-items: center; gap: 8px; }
-.tabs-bar .tabs {
-  flex: 1;
-  min-width: 0;
-  margin-left: -16px;
-  padding-left: 16px;
-  padding-right: 4px;
-}
-.tabs-bar .filter-chip { flex: none; }
+/* 칩 줄을 화면 양끝까지 늘린다 — 화면 여백(16px) 앞에서 잘리면
+   그냥 망가져 보이지만, 화면 끝에서 잘리면 '옆에 더 있다'로 읽힌다. */
+.tabs-bar { margin: 0 -16px; }
+.tabs-bar .tabs { padding-left: 16px; padding-right: 16px; }
+
+/* 상단바 오른쪽 동작 묶음 (필터 · 검색) */
+.top-actions { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.top-actions .bell-btn { position: relative; }
+.top-actions .bell-btn.on { color: var(--primary); }

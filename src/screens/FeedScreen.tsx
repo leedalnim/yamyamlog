@@ -151,17 +151,27 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
             <h1 className="logo" aria-label="얌얌로그">
               <span className="logo-img" role="img" dangerouslySetInnerHTML={{ __html: logoRaw }} />
             </h1>
-            <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
-              <IconSearch size={22} />
-            </button>
+            <div className="top-actions">
+              <button
+                className={'bell-btn' + (activeCount > 0 ? ' on' : '')}
+                aria-label="필터"
+                onClick={() => setFilterOpen(true)}
+              >
+                <IconSliders size={21} />
+                {activeCount > 0 && <span className="filter-dot">{activeCount}</span>}
+              </button>
+              <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
+                <IconSearch size={22} />
+              </button>
+            </div>
           </>
         )}
       </div>
 
       {/*
-        종류 칩은 개수가 늘어나므로 옆으로 넘겨 보고, 필터는 늘 같은 자리에
-        고정해 둔다. 예전에는 필터도 넘김 줄 안에 있어서 끝에서 잘려 보이고
-        누르려면 옆으로 밀어야 했다.
+        종류 칩만 옆으로 넘겨 본다. 줄을 화면 양끝까지 늘려서, 칩이 잘리는
+        지점이 화면 끝과 맞아떨어지게 했다. 필터는 넘김 줄에 두면 잘리거나
+        밀어야 닿으므로 위 상단바로 옮겼다.
       */}
       <div className="tabs-bar">
         <div className="tabs">
@@ -185,14 +195,6 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
             </button>
           ))}
         </div>
-        <button
-          className={'chip-tab filter-chip' + (activeCount > 0 ? ' on' : '')}
-          onClick={() => setFilterOpen(true)}
-          aria-label="필터"
-        >
-          <IconSliders size={16} />
-          {activeCount > 0 && <span className="filter-dot">{activeCount}</span>}
-        </button>
       </div>
 
       {/* 오늘의 기록 유도 배너 — 일러스트 + 실제 텍스트 */}
