@@ -21,6 +21,11 @@
   --retire-bg: #e6e2dc; --retire-ink: #7a736b;
   /* 반응 pill */
   --pill-good-bg: #fbe9c6; --pill-good-ink: #c4842a;
+  /* 이름 칩 — 흰 글자를 얹으므로 면이 진해야 한다 (대비 3.4~4.2) */
+  --chip-good: #e06818;
+  --chip-ok: #8e857b;
+  --chip-bad: #4681c7;
+  --chip-none: #d9d3cb;
   --pill-ok-bg: #f8f2e2;   --pill-ok-ink: #9a8f7b;
   --pill-bad-bg: #efece7;  --pill-bad-ink: #7a756d;
   /* 통계 패널·말풍선·기타 */
@@ -89,6 +94,10 @@ html[data-mode="dark"] {
   --retire-bg: #3b372f; --retire-ink: #a79e90;
   /* 반응 pill */
   --pill-good-bg: #4a3418; --pill-good-ink: #f3ad5d;
+  --chip-good: #e06818;
+  --chip-ok: #8e857b;
+  --chip-bad: #4681c7;
+  --chip-none: #4a453b;
   --pill-ok-bg: #3b3529;   --pill-ok-ink: #cbbb9c;
   --pill-bad-bg: #34302a;  --pill-bad-ink: #a09789;
   /* 통계 패널·말풍선·기타 */

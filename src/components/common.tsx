@@ -57,19 +57,28 @@ export function ReactionFaces({
 }: {
   cats: Cat[]
   reactions: Record<string, ReactionLevel>
-  /** chip: 피드 카드용 작은 칩 · large: 상세용 큰 얼굴 */
-  variant?: 'chip' | 'large'
+  /**
+   * chip: 피드 카드용 작은 칩 · large: 상세용 큰 얼굴
+   * stack: 목록 줄 오른쪽에 세로로 — 얼굴 밑에 이름 칩
+   * pill: 이름 밑에 가로로 — 얼굴과 이름이 한 알약 안에
+   */
+  variant?: 'chip' | 'large' | 'stack' | 'pill'
 }) {
+  // 알약 형태는 자리가 좁으니 반응이 있는 냥이만 보여준다
+  const shown = variant === 'pill' ? cats.filter((c) => reactions[c.id]) : cats
+  const faceSize = variant === 'large' ? 46 : variant === 'stack' ? 28 : variant === 'pill' ? 18 : 40
+
   return (
     <div className={'face-grid face-grid--' + variant}>
-      {cats.map((cat) => {
+      {shown.map((cat) => {
         const lv = reactions[cat.id]
         return (
           <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')} data-level={lv}>
             {lv ? (
-              <ReactionIcon level={lv} size={variant === 'large' ? 46 : 40} />
+              /* 색으로 채운 알약 위에서는 크림색 얼굴이 묻힌다 — 흰 얼굴로 */
+              <ReactionIcon level={lv} size={faceSize} white={variant === 'pill'} />
             ) : (
-              <FaceNeutral size={variant === 'large' ? 46 : 40} dim />
+              <FaceNeutral size={faceSize} dim />
             )}
             <span className="face-name">{cat.name}</span>
           </div>

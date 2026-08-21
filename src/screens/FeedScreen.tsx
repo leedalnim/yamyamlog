@@ -340,33 +340,32 @@ function SnackCard({
       >
         <IconStar size={20} filled={!!snack.favorite} />
       </button>
+      {/*
+        한 줄짜리 목록 형태. 예전에는 썸네일/태그/이름 윗줄 + 얼굴 아랫줄로
+        카드가 두 단이라 한 화면에 서너 개밖에 안 들어왔다. 통계의 기록
+        목록처럼 한 줄로 눕히고, 반응은 오른쪽에 얼굴 + 이름 칩으로 세운다.
+      */}
       <button className="snack-btn" onClick={onOpen}>
-        {/* 윗줄: 썸네일 + 이름/태그 + 화살표 */}
-        <div className="snack-top">
-          {/* 사진이 없어도 자리를 비우지 않는다 — 츄르 일러스트로 채워
-              카드마다 왼쪽 정렬이 달라지는 것도 막는다 */}
-          <div className={'snack-thumb' + (url ? '' : ' no-photo-thumb')}>
-            {url ? (
-              <img src={url} alt={snack.name} loading="lazy" />
-            ) : (
-              <img src={noPhotoUrl} alt="" className="no-photo" />
-            )}
-          </div>
-          <div className="snack-body">
-            {(snack.kind || snack.base || snack.discontinued) && (
-              <div className="snack-tag-row">
-                {snack.discontinued && <span className="tag-discontinued">단종</span>}
-                {snack.kind && <KindTag v={snack.kind} />}
-                {snack.base && <BaseTag v={snack.base} />}
-              </div>
-            )}
-            <div className="snack-name-row">
-              <span className="snack-name">{snack.name}</span>
-            </div>
-          </div>
+        {/* 사진이 없어도 자리를 비우지 않는다 — 츄르 일러스트로 채워
+            카드마다 왼쪽 정렬이 달라지는 것도 막는다 */}
+        <div className={'snack-thumb' + (url ? '' : ' no-photo-thumb')}>
+          {url ? (
+            <img src={url} alt={snack.name} loading="lazy" />
+          ) : (
+            <img src={noPhotoUrl} alt="" className="no-photo" />
+          )}
         </div>
-        {/* 아랫줄: 4마리 반응 얼굴 (카드 전체 폭) */}
-        <ReactionFaces cats={cats} reactions={snack.reactions} />
+        <div className="snack-body">
+          <div className="snack-name-row">
+            <span className="snack-name">{snack.name}</span>
+            {/* 종류·재료는 칩 대신 옅은 글자로 — 알약이 두 줄로 겹치면 시끄럽다 */}
+            <span className="snack-meta">
+              {snack.discontinued && <b className="meta-retired">단종</b>}
+              {[snack.kind, snack.base].filter(Boolean).join(' · ')}
+            </span>
+          </div>
+          <ReactionFaces cats={cats} reactions={snack.reactions} variant="pill" />
+        </div>
       </button>
     </div>
   )
