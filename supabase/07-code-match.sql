@@ -29,7 +29,14 @@ begin
   end if;
 
   -- 하이픈·공백만 걷어내고 대문자로 (TG7K-JS27 = tg7kjs27 = TG7K JS27)
-  v_key := upper(regexp_replace(p_code, '[^A-Za-z0-9]', '', 'g'));
+  v_key := upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g'));
+
+  -- 빈 값이 통과하면 안 된다. 예전 방식에서는 숫자 없는 코드가 빈 값이 돼
+  -- 아무거나 넣어도 그 집에 들어가지는 구멍이 있었다.
+  if length(v_key) < 4 then
+    insert into join_attempts (user_id, ok) values (auth.uid(), false);
+    raise exception '그런 코드가 없어요';
+  end if;
 
   select h.id into v_id from households h
   where upper(regexp_replace(h.code, '[^A-Za-z0-9]', '', 'g')) = v_key;
@@ -46,3 +53,12 @@ begin
   return v_id;
 end;
 $$;
+
+-- 확인 — 아래를 함께 돌리면 새 방식이 들어갔는지 보인다.
+-- '글자 전체' 가 나오면 성공.
+select case
+         when prosrc like '%[^A-Za-z0-9]%' then '글자 전체 ✅'
+         else '숫자만 ❌ (아직 예전 방식)'
+       end as 코드_비교_방식
+from pg_proc
+where proname = 'join_household';
