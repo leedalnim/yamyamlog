@@ -1136,7 +1136,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 /* ===== 홈 카드: 반응 칩 위 구분선 제거 ===== */
 /* 여백은 여기서만 정한다. 아래 .face-grid--pill 은 클래스 하나뿐이라
    두 클래스인 이 선택자를 못 이긴다 — 저쪽에 적으면 조용히 무시된다. */
-.snack-card .face-grid { border-top: none; padding-top: 0; margin-top: 2px; }
+.snack-card .face-grid { border-top: none; padding-top: 0; margin-top: 5px; }
 
 /* ===== 통계 히어로: 실내 배경 + 마스코트 확대(왼쪽 살짝 크롭) ===== */
 .stat-hero {
