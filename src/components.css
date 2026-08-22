@@ -1512,13 +1512,13 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   align-items: center;
   gap: 4px;
   width: auto;
-  padding: 4px 11px 4px 5px;
+  padding: 3px 10px 3px 5px;
   border: none;
   border-radius: 999px;
   background: var(--chip-none);
 }
-.face-grid--pill .face-cell img { width: 22px !important; }
-.face-grid--pill .face-name { font-size: 12.5px; font-weight: 800; color: #fff; white-space: nowrap; }
+.face-grid--pill .face-cell img { width: 20px !important; }
+.face-grid--pill .face-name { font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; }
 .face-grid--pill .face-cell[data-level='good'] { background: var(--chip-good); }
 .face-grid--pill .face-cell[data-level='ok'] { background: var(--chip-ok); }
 .face-grid--pill .face-cell[data-level='bad'] { background: var(--chip-bad); }
