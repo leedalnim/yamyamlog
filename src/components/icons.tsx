@@ -9,6 +9,9 @@ import faceBadUrl from '../assets/faces/bad.svg'
 import faceGoodWhiteUrl from '../assets/faces/good-white.svg'
 import faceOkWhiteUrl from '../assets/faces/ok-white.svg'
 import faceBadWhiteUrl from '../assets/faces/bad-white.svg'
+import faceGoodChipUrl from '../assets/faces/good-chip.svg'
+import faceOkChipUrl from '../assets/faces/ok-chip.svg'
+import faceBadChipUrl from '../assets/faces/bad-chip.svg'
 
 type P = { size?: number; className?: string; strokeWidth?: number }
 
@@ -465,20 +468,30 @@ const FACE_URLS_WHITE: Record<ReactionLevel, string> = {
   bad: faceBadWhiteUrl,
 }
 
+/** 20px 칩 안에서도 표정이 읽히도록 얼굴을 줄이고 이목구비를 키운 변형 */
+const FACE_URLS_CHIP: Record<ReactionLevel, string> = {
+  good: faceGoodChipUrl,
+  ok: faceOkChipUrl,
+  bad: faceBadChipUrl,
+}
+
 /** 반응 아이콘 — 디자인 가이드에서 추출한 실제 표정 에셋 */
 export const ReactionIcon = ({
   level,
   size = 24,
   white = false,
+  chip = false,
 }: {
   level: ReactionLevel
   size?: number
   color?: string
   /** 컬러 칩 배경 위에서 얼굴이 묻히지 않도록 흰 바탕 변형 사용 */
   white?: boolean
+  /** 홈 카드의 작은 알약 — 표정을 키운 변형 (white 를 포함한다) */
+  chip?: boolean
 }) => (
   <img
-    src={(white ? FACE_URLS_WHITE : FACE_URLS)[level]}
+    src={(chip ? FACE_URLS_CHIP : white ? FACE_URLS_WHITE : FACE_URLS)[level]}
     alt=""
     width={size}
     style={{ height: 'auto', display: 'block' }}

@@ -76,8 +76,14 @@ export function ReactionFaces({
         return (
           <div key={cat.id} className={'face-cell' + (lv ? '' : ' blank')} data-level={lv}>
             {lv ? (
-              /* 색으로 채운 알약 위에서는 크림색 얼굴이 묻힌다 — 흰 얼굴로 */
-              <ReactionIcon level={lv} size={faceSize} white={variant === 'pill'} />
+              /* 색으로 채운 알약 위에서는 크림색 얼굴이 묻힌다 — 흰 얼굴로.
+                 알약은 20px 이라 그대로 넣으면 표정이 안 보인다 (chip 변형) */
+              <ReactionIcon
+                level={lv}
+                size={faceSize}
+                white={variant === 'pill'}
+                chip={variant === 'pill'}
+              />
             ) : (
               <FaceNeutral size={faceSize} dim />
             )}
