@@ -1525,13 +1525,15 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== C1: 이름 줄에 카테고리와 별을 나란히 =====
    별은 카드 안에서 절대 위치라, 이름 줄과 같은 높이·같은 세로 중심을
-   갖도록 값을 맞춰 둔다. 눈대중으로 top 을 주면 글자와 중심이 어긋난다. */
-.snack-card .snack-name-row { min-height: 24px; }
+   갖도록 값을 맞춰 둔다. 눈대중으로 top 을 주면 글자와 중심이 어긋난다.
+   24px 은 이름 글자(19px)보다 커서 위아래로 빈 공간이 남았다 — 그만큼
+   아래 알약과 떠 보인다. 20px 로 줄이고 별 높이도 같이 맞춘다. */
+.snack-card .snack-name-row { min-height: 20px; }
 .snack-card .snack-btn { padding-right: 14px; }
 .snack-card .snack-meta { padding-right: 28px; }
 .snack-card .fav-btn {
   top: 12px;              /* .snack-btn 의 padding-top 과 같은 값 */
-  height: 24px;           /* .snack-name-row 의 min-height 와 같은 값 */
+  height: 20px;           /* .snack-name-row 의 min-height 와 같은 값 */
   right: 10px;
   transform: none;
   padding: 0;
