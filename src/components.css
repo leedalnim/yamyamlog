@@ -1510,7 +1510,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 0;                       /* 얼굴 에셋 둘레에 이미 여백이 있다 */
+  gap: 2px;
   width: auto;
   padding: 3px 10px 3px 5px;
   border: none;
