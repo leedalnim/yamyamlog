@@ -17,7 +17,9 @@
   --memo-line: #eae7e2;
   /* 태그 — 축(종류/재료) 2색 */
   --kind-bg: #fdeedd;  --kind-ink: #d9782e;
-  --base-bg: #e1ebf6;  --base-ink: #547fa8;
+  /* 원료 태그 — 종류는 브랜드 주황, 원료는 조용한 회색.
+     파랑은 '안먹음'에만 쓴다 (반응 색과 섞이면 뜻이 흐려진다) */
+  --base-bg: #efece7;  --base-ink: #7a756d;
   --retire-bg: #e6e2dc; --retire-ink: #7a736b;
   /* 반응 pill */
   --pill-good-bg: #fbe9c6; --pill-good-ink: #c4842a;
@@ -91,7 +93,7 @@ html[data-mode="dark"] {
   --good: #ff8b42;
   /* 태그 — 각 축의 색을 머금은 어두운 바탕 */
   --kind-bg: #4a3018;  --kind-ink: #f8ab6b;
-  --base-bg: #25374b;  --base-ink: #a2c8f2;
+  --base-bg: #3a352e;  --base-ink: #c2b7a6;
   --retire-bg: #3b372f; --retire-ink: #a79e90;
   /* 반응 pill */
   --pill-good-bg: #4a3418; --pill-good-ink: #f3ad5d;
