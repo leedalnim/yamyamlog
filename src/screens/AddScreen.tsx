@@ -71,14 +71,9 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         <h1 style={{ fontSize: 19 }}>새 기록</h1>
       </div>
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        hidden
-        onChange={onPickPhoto}
-      />
+      {/* capture 를 붙이면 카메라만 열린다. 빼 두면 아이폰이
+          '사진 보관함 / 사진 찍기'를 함께 물어본다. */}
+      <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPickPhoto} />
 
       {/* 제목 — 가장 중요 */}
       <div className="field">
