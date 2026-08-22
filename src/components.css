@@ -120,7 +120,9 @@
   font-size: 13px;
   font-weight: 700;
 }
-.sel-chip.on[data-accent="base"] { background: var(--accent-2-fill); border-color: var(--accent-2-fill); color: var(--accent-2-ink); }
+/* 고른 칩은 종류·원료 모두 브랜드 주황. 파랑은 앱의 다른 어디에도 안 쓰여
+   혼자 튀었다. (같은 선언이 아래쪽에 또 있다 — 둘 다 맞춰야 한다) */
+.sel-chip.on[data-accent="base"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
 .sel-chip.on[data-accent="kind"] { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
 .sel-custom { font-size: 14px; }
 
@@ -383,7 +385,7 @@
 .chip-tab.active { background: var(--primary); color: var(--primary-ink); }
 .sel-chip { border: none; background: var(--surface-2); }
 .sel-chip.on[data-accent="kind"] { background: var(--primary); color: var(--primary-ink); }
-.sel-chip.on[data-accent="base"] { background: var(--accent-2-fill); color: var(--accent-2-ink); }
+.sel-chip.on[data-accent="base"] { background: var(--primary); color: var(--primary-ink); }
 .input, .textarea { border: none; background: var(--surface); box-shadow: var(--shadow-sm); }
 .base-tag, .kind-tag { border: none; }
 .kind-tag { background: var(--kind-bg); color: var(--kind-ink); }
@@ -1493,7 +1495,8 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   flex: none;
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--kind-ink);
+  /* 주황이면 이름과 시선을 다툰다 — 곁들이는 정보이므로 회색으로 물러난다 */
+  color: var(--muted);
   white-space: nowrap;
 }
 .snack-card .snack-meta .meta-retired { color: var(--retire-ink); margin-right: 5px; }

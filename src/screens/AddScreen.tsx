@@ -95,7 +95,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
       {/* 선택 정보 — 접어서 짧게 */}
       <div className="card edit-acc add-screen-acc" style={{ marginTop: 4 }}>
         <button className="edit-acc-head" onClick={() => setMoreOpen((v) => !v)} aria-expanded={moreOpen}>
-          {'자세히 입력하기 (사진 · 종류 · 베이스 · 메모)'}
+          {'자세히 입력하기 (사진 · 종류 · 원료 · 메모)'}
           <span className={'snack-chev' + (moreOpen ? ' open' : '')}><IconChevronDown size={18} /></span>
         </button>
         {moreOpen && (
@@ -128,7 +128,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
               <KindChooser value={kind} onChange={setKind} />
             </div>
             <div className="field">
-              <label>베이스 · 주재료</label>
+              <label>원료</label>
               <BaseChooser value={base} onChange={setBase} />
             </div>
             <div className="field">

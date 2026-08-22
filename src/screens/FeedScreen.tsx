@@ -25,6 +25,7 @@ import noResultCatUrl from '../assets/no-result.png'
 import logoRaw from '../assets/logo.svg?raw'
 import noPhotoUrl from '../assets/no-photo.svg'
 import { matches } from '../lib/hangul'
+import { splitBase } from '../lib/base'
 import { useBackGuard } from '../lib/useBackGuard'
 
 function formatDate(ts: number): string {
@@ -361,7 +362,7 @@ function SnackCard({
             {/* 종류·재료는 칩 대신 옅은 글자로 — 알약이 두 줄로 겹치면 시끄럽다 */}
             <span className="snack-meta">
               {snack.discontinued && <b className="meta-retired">단종</b>}
-              {[snack.kind, snack.base].filter(Boolean).join(' · ')}
+              {[snack.kind, ...splitBase(snack.base)].filter(Boolean).join(' · ')}
             </span>
           </div>
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="pill" />
@@ -505,7 +506,7 @@ export function SnackDetail({
           <KindChooser value={kind} onChange={setKind} />
         </div>
         <div className="field">
-          <label>베이스 · 주재료</label>
+          <label>원료</label>
           <BaseChooser value={base} onChange={setBase} />
         </div>
         <div className="field">
@@ -564,7 +565,10 @@ export function SnackDetail({
         <h2 className="detail-name">{snack.name}</h2>
         <div className="detail-tags">
           {snack.kind && <KindTag v={snack.kind} />}
-          {snack.base && <BaseTag v={snack.base} />}
+          {/* 원료는 여러 개일 수 있다 — 하나씩 따로 붙인다 */}
+          {splitBase(snack.base).map((b) => (
+            <BaseTag key={b} v={b} />
+          ))}
           {snack.discontinued && <span className="tag-discontinued">단종</span>}
           <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
         </div>

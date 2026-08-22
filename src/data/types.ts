@@ -87,6 +87,7 @@ export const KIND_PRESETS = ['츄르', '캔', '파우치(습식)', '건식', '�
 export const BASE_PRESETS = [
   '참치',
   '닭가슴살',
+  '칠면조',
   '연어',
   '게살',
   '새우',

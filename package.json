@@ -11,9 +11,10 @@
     "check:precache": "node scripts/check-precache.mjs",
     "test:merge": "esbuild src/data/merge.ts --outfile=dist-test/merge.js --format=esm && node scripts/test-merge.mjs",
     "test:hangul": "esbuild src/lib/hangul.ts --outfile=dist-test/hangul.js --format=esm && node scripts/test-hangul.mjs",
-    "test": "npm run test:merge && npm run test:hangul && npm run test:photos && npm run test:kcal",
+    "test": "npm run test:merge && npm run test:hangul && npm run test:photos && npm run test:kcal && npm run test:base",
     "test:photos": "esbuild src/data/photos.ts --outfile=dist-test/photos.js --format=esm && node scripts/test-photos.mjs",
     "test:kcal": "esbuild src/lib/kcal.ts --outfile=dist-test/kcal.js --format=esm && node scripts/test-kcal.mjs",
+    "test:base": "esbuild src/lib/base.ts --outfile=dist-test/base.js --format=esm && node scripts/test-base.mjs",
     "check:contrast": "SINGLE=1 vite build && node scripts/check-contrast.mjs"
   },
   "dependencies": {

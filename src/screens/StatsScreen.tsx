@@ -5,6 +5,7 @@ import { REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
+import { splitBase } from '../lib/base'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
@@ -73,12 +74,13 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
     if (!cat) return []
     const map = new Map<string, { sum: number; n: number }>()
     for (const r of records) {
-      const base = r.snack.base
-      if (!base) continue
-      const cur = map.get(base) ?? { sum: 0, n: 0 }
-      cur.sum += REACTION_SCORE[r.level]
-      cur.n += 1
-      map.set(base, cur)
+      // 원료가 여럿이면 각각에 한 번씩 센다 (칠면조+연어 → 둘 다)
+      for (const base of splitBase(r.snack.base)) {
+        const cur = map.get(base) ?? { sum: 0, n: 0 }
+        cur.sum += REACTION_SCORE[r.level]
+        cur.n += 1
+        map.set(base, cur)
+      }
     }
     const total = [...map.values()].reduce((a, v) => a + v.n, 0)
     return [...map.entries()]
@@ -260,7 +262,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
           {/* 좋아하는 베이스 — 도넛 차트 */}
           {perBase.length > 0 && (
             <section className="stat-section">
-              <h2 className="stat-title">{cat.name}가 좋아하는 베이스</h2>
+              <h2 className="stat-title">{cat.name}가 좋아하는 원료</h2>
               <div className="card donut-card">
                 <Donut data={perBase} />
                 <div className="donut-legend">
@@ -396,7 +398,7 @@ function RecordRow({
         <div className="record-name">{snack.name}</div>
         <div className="record-sub muted">
           {formatDate(snack.createdAt)}
-          {snack.base ? ` · ${snack.base}` : ''}
+          {splitBase(snack.base).map((b) => ` · ${b}`).join('')}
         </div>
       </div>
       <ReactionIcon level={level} size={30} />

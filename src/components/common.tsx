@@ -3,6 +3,7 @@ import { listCats, listGroups, getPhotoURL } from '../data/repo'
 import type { Cat, Group, ReactionLevel } from '../data/types'
 import { BASE_PRESETS, KIND_PRESETS, REACTION_META } from '../data/types'
 import { FaceNeutral, ReactionIcon } from './icons'
+import { joinBase, splitBase, toggleBase } from '../lib/base'
 
 /** 고양이 얼굴 아이콘 (가이드 에셋) */
 export function CatPaw({ size = 18 }: { cat?: Cat; size?: number }) {
@@ -116,22 +117,54 @@ export function ReactionPill({ cat, level }: { cat: Cat; level: ReactionLevel })
   )
 }
 
-/** 프리셋 칩 + 직접입력 선택기 (베이스/종류 공용) */
+/**
+ * 프리셋 칩 + 직접입력 선택기 (베이스/종류 공용)
+ *
+ * multi 를 켜면 여러 개를 고를 수 있다. 값은 여전히 문자열 하나이고
+ * 쉼표로 이어 붙는다 (src/lib/base.ts). 직접 입력한 값은 목록의 마지막
+ * 칸으로 두어, 칩을 눌러도 지워지지 않게 한다.
+ */
 export function ChipSelect({
   value,
   onChange,
   presets,
   placeholder,
   accent,
+  multi = false,
 }: {
   value: string
   onChange: (v: string) => void
   presets: readonly string[]
   placeholder: string
   accent: 'base' | 'kind'
+  multi?: boolean
 }) {
-  const isPreset = presets.includes(value)
-  const [custom, setCustom] = useState(value && !isPreset ? value : '')
+  const picked = multi ? splitBase(value) : value ? [value] : []
+  const customPicked = picked.filter((p) => !presets.includes(p))
+  const [custom, setCustom] = useState(customPicked.join(', '))
+
+  const isOn = (b: string) => picked.includes(b)
+
+  function toggle(b: string) {
+    if (!multi) {
+      onChange(value === b ? '' : b)
+      setCustom('')
+      return
+    }
+    onChange(toggleBase(value, b))
+  }
+
+  function editCustom(text: string) {
+    setCustom(text)
+    if (!multi) {
+      onChange(text)
+      return
+    }
+    // 칩으로 고른 것은 두고, 직접 적은 부분만 갈아 끼운다
+    const kept = splitBase(value).filter((p) => presets.includes(p))
+    onChange(joinBase([...kept, ...splitBase(text)]))
+  }
+
   return (
     <div className="chip-select">
       <div className="chip-row">
@@ -140,11 +173,9 @@ export function ChipSelect({
             key={b}
             type="button"
             data-accent={accent}
-            className={'sel-chip' + (value === b ? ' on' : '')}
-            onClick={() => {
-              onChange(value === b ? '' : b)
-              setCustom('')
-            }}
+            aria-pressed={isOn(b)}
+            className={'sel-chip' + (isOn(b) ? ' on' : '')}
+            onClick={() => toggle(b)}
           >
             {b}
           </button>
@@ -154,10 +185,7 @@ export function ChipSelect({
         className="input sel-custom"
         placeholder={placeholder}
         value={custom}
-        onChange={(e) => {
-          setCustom(e.target.value)
-          onChange(e.target.value)
-        }}
+        onChange={(e) => editCustom(e.target.value)}
       />
     </div>
   )
@@ -168,9 +196,17 @@ export function KindChooser(p: { value: string; onChange: (v: string) => void })
   return <ChipSelect {...p} presets={KIND_PRESETS} placeholder="직접 입력 (예: 수프, 스틱)" accent="kind" />
 }
 
-/** 베이스(주재료) 선택 */
+/** 원료(주재료) 선택 — 여러 개 고를 수 있다 */
 export function BaseChooser(p: { value: string; onChange: (v: string) => void }) {
-  return <ChipSelect {...p} presets={BASE_PRESETS} placeholder="직접 입력 (예: 오리, 참치+게살)" accent="base" />
+  return (
+    <ChipSelect
+      {...p}
+      presets={BASE_PRESETS}
+      placeholder="직접 입력 (여러 개는 쉼표로: 오리, 참치)"
+      accent="base"
+      multi
+    />
+  )
 }
 
 /** 그룹별로 고양이를 나눠서 반응을 선택하는 편집기 */
