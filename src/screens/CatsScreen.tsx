@@ -6,6 +6,7 @@ import catFaceUrl from '../assets/faces/good-white.svg'
 /** 냥이별 아바타 원 배경 — 크림색 얼굴과 확실히 구분되는 파스텔 */
 const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC93']
 import { dailyKcal } from '../lib/kcal'
+import { ageFrom, displayAge, guessBirthday } from '../lib/age'
 import { addCat, deleteCat, listCats, updateCat } from '../data/repo'
 import type { Cat } from '../data/types'
 import { useBackGuard } from '../lib/useBackGuard'
@@ -39,12 +40,9 @@ export function CatsScreen() {
               </div>
               <div className="record-info">
                 <div className="record-name">{cat.name}</div>
-                {(cat.ageYears != null || cat.weightKg != null) && (
+                {(displayAge(cat) || cat.weightKg != null) && (
                   <div className="record-sub muted">
-                    {[
-                      cat.ageYears != null ? `${cat.ageYears}살` : null,
-                      cat.weightKg != null ? `${cat.weightKg}kg` : null,
-                    ]
+                    {[displayAge(cat), cat.weightKg != null ? `${cat.weightKg}kg` : null]
                       .filter(Boolean)
                       .join(' · ')}
                   </div>
@@ -131,30 +129,39 @@ function CatEditSheet({
   const isNew = !cat
   const [name, setName] = useState(cat?.name ?? '')
   const [weight, setWeight] = useState(cat?.weightKg != null ? String(cat.weightKg) : '')
-  const [age, setAge] = useState(cat?.ageYears != null ? String(cat.ageYears) : '')
+  // 생년월일이 없고 예전에 적어 둔 나이만 있으면, 그 나이로 어림한 날짜를
+  // 미리 채워 준다. 그대로 저장해도 예전과 같은 나이가 나오고, 아는 사람은
+  // 실제 날짜로 고치면 된다.
+  const [birthday, setBirthday] = useState(
+    cat?.birthday ?? (cat?.ageYears != null ? guessBirthday(cat.ageYears) : ''),
+  )
   const [saving, setSaving] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const weightNum = Number(weight)
-  const ageNum = Number(age)
   const validWeight = weight.trim() !== '' && !Number.isNaN(weightNum) && weightNum > 0
-  const validAge = age.trim() !== '' && !Number.isNaN(ageNum) && ageNum >= 0
+  const computed = ageFrom(birthday)
+  const badBirthday = birthday.trim() !== '' && !computed
 
   async function save() {
     setSaving(true)
     try {
+      // 생년월일이 있으면 나이는 거기서 계산하므로 적어 둔 나이는 지운다.
+      // 둘 다 남으면 어느 쪽이 맞는지 알 수 없게 된다.
+      const bd = computed ? birthday.trim() : undefined
       if (cat) {
         await updateCat({
           ...cat,
           name: name.trim() || cat.name,
           weightKg: validWeight ? weightNum : undefined,
-          ageYears: validAge ? ageNum : undefined,
+          birthday: bd,
+          ageYears: bd ? undefined : cat.ageYears,
         })
       } else {
         await addCat({
           name: name.trim(),
           weightKg: validWeight ? weightNum : undefined,
-          ageYears: validAge ? ageNum : undefined,
+          birthday: bd,
         })
       }
       onSaved()
@@ -182,16 +189,13 @@ function CatEditSheet({
 
         <div className="cat-edit-row">
           <div className="field">
-            <label>나이 (살)</label>
+            <label>생년월일</label>
             <input
               className="input"
-              type="number"
-              inputMode="decimal"
-              step="0.5"
-              min="0"
-              placeholder="예: 5"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
+              type="date"
+              max={new Date().toISOString().slice(0, 10)}
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
             />
           </div>
           <div className="field">
@@ -208,6 +212,19 @@ function CatEditSheet({
             />
           </div>
         </div>
+
+        {/* 정확한 날을 모르는 아이가 많다 — 대충 적어도 된다고 먼저 말해 준다 */}
+        <p className="cat-edit-hint muted">
+          {computed ? (
+            <>
+              지금 <b>{computed.long}</b>이에요. 나이는 생년월일에서 계산해요.
+            </>
+          ) : badBirthday ? (
+            '날짜를 다시 확인해주세요.'
+          ) : (
+            '정확한 날짜를 몰라도 괜찮아요. 대략 이맘때로 적어두면 나이가 알아서 올라가요.'
+          )}
+        </p>
 
         {validWeight && (
           <p className="cat-edit-hint muted">

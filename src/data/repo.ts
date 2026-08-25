@@ -84,6 +84,7 @@ export async function addCat(input: {
   name: string
   weightKg?: number
   ageYears?: number
+  birthday?: string
 }): Promise<Cat> {
   const db = await getDB()
   const all = (await db.getAll('cats')) as Cat[]
@@ -96,6 +97,7 @@ export async function addCat(input: {
     order: maxOrder + 1,
     weightKg: input.weightKg,
     ageYears: input.ageYears,
+    birthday: input.birthday,
     updatedAt: Date.now(),
   }
   await db.put('cats', cat)

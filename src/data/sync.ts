@@ -125,6 +125,7 @@ function catToRow(c: Cat, householdId: string) {
     color: c.color ?? null,
     weight_kg: c.weightKg ?? null,
     age_years: c.ageYears ?? null,
+    birthday: c.birthday ?? null,
     updated_at: new Date(c.updatedAt ?? 0).toISOString(),
     deleted_at: c.deletedAt ? new Date(c.deletedAt).toISOString() : null,
   }
@@ -139,6 +140,7 @@ function rowToCat(r: Record<string, any>): Cat {
     order: r.order ?? 0,
     weightKg: r.weight_kg ?? undefined,
     ageYears: r.age_years ?? undefined,
+    birthday: r.birthday ?? undefined,
     updatedAt: r.updated_at ? Date.parse(r.updated_at) : 0,
     deletedAt: r.deleted_at ? Date.parse(r.deleted_at) : undefined,
   }
@@ -198,10 +200,18 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
       if (error) throw error
     }
     if (catPlan.toRemote.length > 0) {
-      const { error } = await sb
-        .from('cats')
-        .upsert(catPlan.toRemote.map((c) => catToRow(c, household.id)))
-      if (error) throw error
+      const rows = catPlan.toRemote.map((c) => catToRow(c, household.id))
+      const { error } = await sb.from('cats').upsert(rows)
+      // 생년월일 칸(09-birthday.sql)을 아직 서버에 안 만들었을 수 있다.
+      // 그것 때문에 동기화 전체가 멈추면 안 되니, 그 칸만 빼고 다시 보낸다.
+      if (error && /birthday/i.test(error.message ?? '')) {
+        console.warn('[얌얌로그] 서버에 생년월일 칸이 없어 그 값만 빼고 보냅니다. 09-birthday.sql 을 실행하세요.')
+        const slim = rows.map(({ birthday, ...rest }) => (void birthday, rest))
+        const retry = await sb.from('cats').upsert(slim)
+        if (retry.error) throw retry.error
+      } else if (error) {
+        throw error
+      }
     }
 
     // 사진은 기록보다 무겁고 실패해도 덜 치명적이라 따로 감싼다.

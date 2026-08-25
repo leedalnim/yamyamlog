@@ -23,7 +23,9 @@ export interface Cat {
   order: number
   /** 몸무게(kg) */
   weightKg?: number
-  /** 나이(년) */
+  /** 생년월일 'YYYY-MM-DD' — 나이는 여기서 계산한다 */
+  birthday?: string
+  /** 나이(년) — 생년월일을 넣기 전에 적어 둔 값 (예비) */
   ageYears?: number
   /** 마지막 수정 시각 (동기화 병합 기준) */
   updatedAt?: number
