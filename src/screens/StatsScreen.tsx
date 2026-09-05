@@ -6,6 +6,7 @@ import { listSnacks } from '../data/repo'
 import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
 import { splitBase } from '../lib/base'
+import { shortDate } from '../lib/date'
 import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
@@ -16,10 +17,7 @@ import rank3Url from '../assets/badges/rank3.png'
 
 const RANK_BADGES = [rank1Url, rank2Url, rank3Url]
 
-function formatDate(ts: number): string {
-  const d = new Date(ts)
-  return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`
-}
+
 
 export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   const { cats } = useCatsAndGroups()
@@ -29,6 +27,8 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   const [viewing, setViewing] = useState<Snack | null>(null)
   // 기록 목록의 기호성 필터 ('' = 전체)
   const [levelFilter, setLevelFilter] = useState<'' | ReactionLevel>('')
+  // 원료가 여럿이 되면서 범례가 길어졌다 — 기본은 상위 몇 개만
+  const [allBases, setAllBases] = useState(false)
 
   async function reload() {
     setSnacks(await listSnacks())
@@ -130,6 +130,28 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 
   // 피하는 것 (안먹음)
   const avoid = useMemo(() => records.filter((r) => r.level === 'bad'), [records])
+
+  // 도넛은 조각이 많아질수록 읽기 어려워진다. 상위 5개만 두고 나머지는
+  // '기타' 한 조각으로 묶는다. 차트와 범례가 같은 데이터를 봐야 하므로
+  // 여기서 한 번에 만든다.
+  const TOP_BASES = 5
+  const donutData = useMemo<Slice[]>(() => {
+    if (allBases || perBase.length <= TOP_BASES + 1) return perBase
+    const head = perBase.slice(0, TOP_BASES)
+    const rest = perBase.slice(TOP_BASES)
+    return [
+      ...head,
+      {
+        base: `기타 ${rest.length}가지`,
+        score: 0,
+        n: rest.reduce((a, r) => a + r.n, 0),
+        share: rest.reduce((a, r) => a + r.share, 0),
+        rest: true,
+      },
+    ]
+  }, [perBase, allBases])
+
+  const foldedCount = perBase.length - TOP_BASES
 
   const shownRecords = useMemo(
     () => (levelFilter ? records.filter((r) => r.level === levelFilter) : records),
@@ -277,15 +299,20 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             <section className="stat-section">
               <h2 className="stat-title">{cat.name}가 좋아하는 원료</h2>
               <div className="card donut-card">
-                <Donut data={perBase} />
+                <Donut data={donutData} />
                 <div className="donut-legend">
-                  {perBase.map((r, i) => (
+                  {donutData.map((r, i) => (
                     <div key={r.base} className="donut-leg-row">
-                      <i style={{ background: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                      <i style={{ background: sliceColor(r, i) }} />
                       <span className="donut-leg-name">{r.base}</span>
                       <span className="donut-leg-pct tabular">{Math.round(r.share * 100)}%</span>
                     </div>
                   ))}
+                  {foldedCount > 1 && (
+                    <button className="donut-more" onClick={() => setAllBases((v) => !v)}>
+                      {allBases ? '접기' : `${foldedCount}가지 더 보기`}
+                    </button>
+                  )}
                 </div>
               </div>
             </section>
@@ -367,9 +394,17 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 }
 
 const DONUT_COLORS = ['#7FB3E8', '#FBC15E', '#F9A8C4', '#DCD8D3', '#FA7F38', '#F2BC57']
+/** 묶어 놓은 '기타' 는 재료 하나가 아니므로 색을 주지 않는다 (무채색) */
+const REST_COLOR = '#c9c3bb'
+
+/** 도넛 한 조각 = 원료 하나, 또는 나머지를 묶은 '기타' */
+type Slice = { base: string; score: number; n: number; share: number; rest?: boolean }
+
+const sliceColor = (d: Slice, i: number) =>
+  d.rest ? REST_COLOR : DONUT_COLORS[i % DONUT_COLORS.length]
 
 /** 도넛 차트 — 베이스 분포 */
-function Donut({ data }: { data: { base: string; share: number }[] }) {
+function Donut({ data }: { data: Slice[] }) {
   const R = 34
   const C = 2 * Math.PI * R
   let acc = 0
@@ -384,7 +419,7 @@ function Donut({ data }: { data: { base: string; share: number }[] }) {
             cy="50"
             r={R}
             fill="none"
-            stroke={DONUT_COLORS[i % DONUT_COLORS.length]}
+            stroke={sliceColor(d, i)}
             strokeWidth="16"
             strokeDasharray={`${dash} ${C - dash}`}
             strokeDashoffset={-acc}
@@ -438,7 +473,7 @@ function RecordRow({
       <div className="record-info">
         <div className="record-name">{snack.name}</div>
         <div className="record-sub muted">
-          {formatDate(snack.createdAt)}
+          {shortDate(snack.createdAt)}
           {splitBase(snack.base).map((b) => ` · ${b}`).join('')}
         </div>
       </div>

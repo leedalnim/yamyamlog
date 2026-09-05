@@ -27,12 +27,10 @@ import logoRaw from '../assets/logo.svg?raw'
 import noPhotoUrl from '../assets/no-photo.svg'
 import { matches } from '../lib/hangul'
 import { splitBase } from '../lib/base'
+import { longDate } from '../lib/date'
 import { useBackGuard } from '../lib/useBackGuard'
 
-function formatDate(ts: number): string {
-  const d = new Date(ts)
-  return `${d.getMonth() + 1}월 ${d.getDate()}일`
-}
+
 
 export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged: () => void }) {
   const { cats } = useCatsAndGroups()
@@ -601,7 +599,7 @@ export function SnackDetail({
             <BaseTag key={b} v={b} />
           ))}
           {snack.discontinued && <span className="tag-discontinued">단종</span>}
-          <span className="snack-date">{formatDate(snack.createdAt)} 기록</span>
+          <span className="snack-date">{longDate(snack.createdAt)} 기록</span>
         </div>
         {/* 점선으로 위쪽 제품 정보와 갈라 놓는다 — 여기부터가 '누가 잘 먹었나' */}
         <div className="detail-reactions">

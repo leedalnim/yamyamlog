@@ -1631,3 +1631,17 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-weight: 800;
   font-family: inherit;
 }
+
+/* 도넛 범례 접기/펼치기 */
+.donut-more {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 0 0;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
