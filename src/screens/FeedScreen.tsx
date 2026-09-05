@@ -450,7 +450,7 @@ export function SnackDetail({
   if (editing) {
     return (
       <div className="screen">
-        <div className="topbar page-top">
+        <div className="topbar page-top sticky-top">
           <button className="back-inline" onClick={() => setEditing(false)} aria-label="뒤로">
             <IconChevronLeft size={22} />
           </button>
