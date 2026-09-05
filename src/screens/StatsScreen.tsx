@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
-import { REACTION_SCORE } from '../data/types'
+import { REACTION_META, REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
@@ -27,6 +27,8 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   const [catId, setCatId] = useState<string>('')
   // 통계에서 바로 기록을 열어볼 수 있게 — 홈으로 돌아갈 필요가 없다
   const [viewing, setViewing] = useState<Snack | null>(null)
+  // 기록 목록의 기호성 필터 ('' = 전체)
+  const [levelFilter, setLevelFilter] = useState<'' | ReactionLevel>('')
 
   async function reload() {
     setSnacks(await listSnacks())
@@ -42,6 +44,12 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   useEffect(() => {
     if (!catId && cats.length) setCatId(cats[0].id)
   }, [cats, catId])
+
+  // 냥이를 바꾸면 필터를 푼다 — 그 아이에겐 그 반응이 하나도 없어서
+  // 빈 목록만 보이면 고장난 것처럼 느껴진다
+  useEffect(() => {
+    setLevelFilter('')
+  }, [catId])
 
   const cat = cats.find((c) => c.id === catId)
 
@@ -122,6 +130,11 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 
   // 피하는 것 (안먹음)
   const avoid = useMemo(() => records.filter((r) => r.level === 'bad'), [records])
+
+  const shownRecords = useMemo(
+    () => (levelFilter ? records.filter((r) => r.level === levelFilter) : records),
+    [records, levelFilter],
+  )
 
   // 기록을 열어보는 중이면 상세 화면을 그대로 보여준다 (홈과 같은 화면)
   if (viewing) {
@@ -303,13 +316,39 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
           {/* 기록 리스트 */}
           <section className="stat-section" id="record-list-sec">
             <h2 className="stat-title">{cat.name}의 기록</h2>
+
+            {/* 기호성으로 골라 보기 — 개수를 같이 보여줘야 고르기 전에 감이 온다 */}
+            {records.length > 0 && (
+              <div className="lv-filter">
+                {([
+                  ['', '전체', counts.total],
+                  ['good', REACTION_META.good.label, counts.good],
+                  ['ok', REACTION_META.ok.label, counts.ok],
+                  ['bad', REACTION_META.bad.label, counts.bad],
+                ] as const).map(([lv, text, n]) => (
+                  <button
+                    key={lv || 'all'}
+                    className={'lv-chip' + (levelFilter === lv ? ' on' : '')}
+                    data-level={lv || undefined}
+                    onClick={() => setLevelFilter(lv as '' | ReactionLevel)}
+                  >
+                    {text} <i>{n}</i>
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="card record-list">
-              {records.length === 0 && (
+              {records.length === 0 ? (
                 <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
                   아직 {cat.name} 반응이 기록된 게 없어요.
                 </div>
-              )}
-              {records.map((r) => (
+              ) : shownRecords.length === 0 ? (
+                <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
+                  {levelFilter ? REACTION_META[levelFilter].label : ''}으로 기록된 게 없어요.
+                </div>
+              ) : null}
+              {shownRecords.map((r) => (
                 <RecordRow
                   key={r.snack.id}
                   snack={r.snack}
@@ -401,6 +440,8 @@ function RecordRow({
           {splitBase(snack.base).map((b) => ` · ${b}`).join('')}
         </div>
       </div>
+      {/* 얼굴만으로는 표정을 구별하기 어렵다 — 글자를 같이 둔다 */}
+      <span className="lv-tag" data-level={level}>{REACTION_META[level].label}</span>
       <ReactionIcon level={level} size={30} />
     </button>
   )

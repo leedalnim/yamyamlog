@@ -1540,3 +1540,36 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   display: flex;
   align-items: center;
 }
+
+/* ===== 통계 기록 목록: 기호성 필터 + 반응 글자 =====
+   얼굴 아이콘만으로는 표정 구별이 어려워 글자를 같이 둔다.
+   색은 홈 알약과 같은 반응 색 계열(연한 바탕 + 진한 글자)로 맞춘다. */
+.lv-filter { display: flex; gap: 6px; margin: 0 0 10px; flex-wrap: wrap; }
+.lv-chip {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 11px;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.lv-chip i { font-style: normal; font-size: 11.5px; opacity: 0.6; }
+.lv-chip.on { background: var(--primary); color: var(--primary-ink); }
+.lv-chip.on i { opacity: 0.8; }
+.lv-chip.on[data-level='good'] { background: var(--chip-good); color: #fff; }
+.lv-chip.on[data-level='ok'] { background: var(--chip-ok); color: #fff; }
+.lv-chip.on[data-level='bad'] { background: var(--chip-bad); color: #fff; }
+
+.lv-tag {
+  flex: none;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.lv-tag[data-level='good'] { background: var(--lv-good-bg); color: var(--lv-good-ink); }
+.lv-tag[data-level='ok'] { background: var(--lv-ok-bg); color: var(--lv-ok-ink); }
+.lv-tag[data-level='bad'] { background: var(--lv-bad-bg); color: var(--lv-bad-ink); }
