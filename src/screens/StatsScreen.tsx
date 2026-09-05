@@ -315,10 +315,11 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 
           {/* 기록 리스트 */}
           <section className="stat-section" id="record-list-sec">
-            <h2 className="stat-title">{cat.name}의 기록</h2>
-
-            {/* 기호성으로 골라 보기 — 개수를 같이 보여줘야 고르기 전에 감이 온다 */}
-            {records.length > 0 && (
+            {/* 제목과 필터를 한 줄에 — 목록 위 공간을 줄이 두 개나 먹지 않게 */}
+            <div className="stat-title-row">
+              <h2 className="stat-title">{cat.name}의 기록</h2>
+              {/* 개수를 같이 보여줘야 누르기 전에 몇 개인지 감이 온다 */}
+              {records.length > 0 && (
               <div className="lv-filter">
                 {([
                   ['', '전체', counts.total],
@@ -336,7 +337,8 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   </button>
                 ))}
               </div>
-            )}
+              )}
+            </div>
 
             <div className="card record-list">
               {records.length === 0 ? (

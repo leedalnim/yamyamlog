@@ -1573,3 +1573,26 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .lv-tag[data-level='good'] { background: var(--lv-good-bg); color: var(--lv-good-ink); }
 .lv-tag[data-level='ok'] { background: var(--lv-ok-bg); color: var(--lv-ok-ink); }
 .lv-tag[data-level='bad'] { background: var(--lv-bad-bg); color: var(--lv-bad-ink); }
+
+/* 제목 + 필터 한 줄. 칩이 넘치면 줄을 화면 끝까지 늘려 옆으로 밀어 본다 —
+   가운데서 잘리면 망가져 보이고, 화면 끝에서 잘려야 '더 있다'로 읽힌다. */
+.stat-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.stat-title-row .stat-title { margin: 0; flex: none; }
+.stat-title-row .lv-filter {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-right: -16px;
+  padding-right: 16px;
+}
+.stat-title-row .lv-filter::-webkit-scrollbar { display: none; }
+.stat-title-row .lv-chip { flex: none; font-size: 12px; padding: 5px 9px; }
