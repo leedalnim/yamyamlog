@@ -10,9 +10,10 @@ import {
   usePhotoURL,
 } from '../components/common'
 import type { Cat, ReactionLevel, Snack } from '../data/types'
+import { REACTION_META } from '../data/types'
 import { deleteSnack, listSnacks, savePhoto, toggleFavorite, updateSnack } from '../data/repo'
 import { compressImage } from '../lib/image'
-import { IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash, ReactionIcon } from '../components/icons'
+import { IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
 // 손그림 고양이(CatDoodle)는 앱의 다른 일러스트와 결이 안 맞아 어설퍼 보였다.
 // '아직 없음'은 자는 고양이, '검색해도 안 나옴'은 찾다 갸웃하는 고양이로
@@ -70,7 +71,32 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
     return list
   }, [snacks])
 
-  const activeCount = (catId ? 1 : 0) + (level ? 1 : 0) + (sort !== 'recent' ? 1 : 0)
+  // 반응은 화면에 칩으로 보이므로 시트 배지에서는 빼고 센다
+  const activeCount = (catId ? 1 : 0) + (sort !== 'recent' ? 1 : 0)
+
+  // 반응 칩에 붙일 개수. 반응 말고 다른 조건(종류·검색·냥이)은 이미 적용한
+  // 상태에서 세야 '지금 화면에서 몇 개'가 맞는다.
+  const levelCounts = useMemo(() => {
+    const hit = (s: Snack, lv: ReactionLevel) =>
+      catId ? s.reactions[catId] === lv : Object.values(s.reactions).some((v) => v === lv)
+    let list = snacks
+    if (filter === 'fav') list = list.filter((s) => s.favorite)
+    else if (filter === '기타') list = list.filter((s) => !s.kind)
+    else if (filter !== 'all') list = list.filter((s) => s.kind === filter)
+    const q = query.trim()
+    if (q) {
+      list = list.filter((s) =>
+        [s.name, s.kind, s.base, s.memo].filter(Boolean).some((v) => matches(v as string, q)),
+      )
+    }
+    if (catId) list = list.filter((s) => !!s.reactions[catId])
+    return {
+      total: list.length,
+      good: list.filter((s) => hit(s, 'good')).length,
+      ok: list.filter((s) => hit(s, 'ok')).length,
+      bad: list.filter((s) => hit(s, 'bad')).length,
+    }
+  }, [snacks, filter, catId, query])
 
   const filtered = useMemo(() => {
     let list = snacks
@@ -207,7 +233,30 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
         <img src={bannerCatUrl} alt="" className="promo-cat" />
       </button>
 
-      <h2 className="stat-title" style={{ marginTop: 4 }}>최근 기록</h2>
+      {/* 통계의 기록 목록과 같은 자리·같은 모양 — 두 화면에서 다르게 생기면
+          같은 기능인 줄 모른다 */}
+      <div className="stat-title-row" style={{ marginTop: 4 }}>
+        <h2 className="stat-title">최근 기록</h2>
+        {levelCounts.total > 0 && (
+          <div className="rx-filter">
+            {([
+              ['', '전체', levelCounts.total],
+              ['good', REACTION_META.good.label, levelCounts.good],
+              ['ok', REACTION_META.ok.label, levelCounts.ok],
+              ['bad', REACTION_META.bad.label, levelCounts.bad],
+            ] as const).map(([lv, text, n]) => (
+              <button
+                key={lv || 'all'}
+                className={'rx-chip' + (level === lv ? ' on' : '')}
+                data-level={lv || undefined}
+                onClick={() => setLevel(lv as '' | ReactionLevel)}
+              >
+                {text} <i>{n}</i>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {filtered.length === 0 ? (
         <div className="empty">
@@ -270,24 +319,6 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
                     onClick={() => setCatId(c.id)}
                   >
                     {c.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="filter-sec">
-              <div className="filter-label">반응</div>
-              <div className="chip-row">
-                <button className={'sel-chip' + (level === '' ? ' on' : '')} data-accent="kind" onClick={() => setLevel('')}>전체</button>
-                {(['good', 'ok', 'bad'] as ReactionLevel[]).map((lv) => (
-                  <button
-                    key={lv}
-                    className={'sel-chip lv-chip' + (level === lv ? ' on' : '')}
-                    data-accent="kind"
-                    onClick={() => setLevel(lv)}
-                  >
-                    <ReactionIcon level={lv} size={18} />
-                    {lv === 'good' ? '잘먹음' : lv === 'ok' ? '보통' : '안먹음'}
                   </button>
                 ))}
               </div>

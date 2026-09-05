@@ -320,7 +320,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               <h2 className="stat-title">{cat.name}의 기록</h2>
               {/* 개수를 같이 보여줘야 누르기 전에 몇 개인지 감이 온다 */}
               {records.length > 0 && (
-              <div className="lv-filter">
+              <div className="rx-filter">
                 {([
                   ['', '전체', counts.total],
                   ['good', REACTION_META.good.label, counts.good],
@@ -329,7 +329,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                 ] as const).map(([lv, text, n]) => (
                   <button
                     key={lv || 'all'}
-                    className={'lv-chip' + (levelFilter === lv ? ' on' : '')}
+                    className={'rx-chip' + (levelFilter === lv ? ' on' : '')}
                     data-level={lv || undefined}
                     onClick={() => setLevelFilter(lv as '' | ReactionLevel)}
                   >
@@ -443,7 +443,7 @@ function RecordRow({
         </div>
       </div>
       {/* 얼굴만으로는 표정을 구별하기 어렵다 — 글자를 같이 둔다 */}
-      <span className="lv-tag" data-level={level}>{REACTION_META[level].label}</span>
+      <span className="rx-tag" data-level={level}>{REACTION_META[level].label}</span>
       <ReactionIcon level={level} size={30} />
     </button>
   )
