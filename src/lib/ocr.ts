@@ -4,29 +4,61 @@
 
 import type { Worker } from 'tesseract.js'
 
+/** 진행 상황 — 화면에 뭘 보여줄지 정하는 데 쓴다 */
+export type OcrPhase =
+  | { phase: 'preparing' } // 글자 인식 파일 내려받는 중 (처음 한 번, 몇 MB)
+  | { phase: 'reading'; progress: number }
+
+/** 인식에 필요한 파일을 아직 못 받은 상태 — 인터넷이 필요하다는 뜻 */
+export class OcrOfflineError extends Error {
+  constructor() {
+    super('ocr-offline')
+    this.name = 'OcrOfflineError'
+  }
+}
+
 let workerPromise: Promise<Worker> | null = null
 
-async function getWorker(onProgress?: (p: number) => void): Promise<Worker> {
+async function getWorker(onPhase?: (p: OcrPhase) => void): Promise<Worker> {
   if (!workerPromise) {
     workerPromise = (async () => {
       const { createWorker } = await import('tesseract.js')
-      const worker = await createWorker(['kor', 'eng'], 1, {
+      return createWorker(['kor', 'eng'], 1, {
         logger: (m) => {
-          if (m.status === 'recognizing text' && onProgress) onProgress(m.progress)
+          if (!onPhase) return
+          // 'recognizing text' 전까지는 전부 준비 단계(내려받기·초기화)다.
+          // 예전에는 이 구간에 아무 신호가 없어서, 몇 MB 를 받는 동안
+          // 버튼이 '읽는 중 0%' 로 멈춰 있는 것처럼 보였다.
+          if (m.status === 'recognizing text') onPhase({ phase: 'reading', progress: m.progress })
+          else onPhase({ phase: 'preparing' })
         },
       })
-      return worker
-    })()
+    })().catch((err) => {
+      // 실패한 약속을 남겨두면 다음에 눌러도 같은 실패가 되돌아온다
+      workerPromise = null
+      throw err
+    })
   }
   return workerPromise
 }
 
-/** 이미지에서 제품명 후보 텍스트를 뽑아냅니다. */
+/**
+ * 이미지에서 제품명 후보 텍스트를 뽑아냅니다.
+ * 글자를 못 찾으면 빈 문자열을 돌려줍니다 (실패가 아니다).
+ */
 export async function readText(
   image: Blob | File,
-  onProgress?: (p: number) => void,
+  onPhase?: (p: OcrPhase) => void,
 ): Promise<string> {
-  const worker = await getWorker(onProgress)
+  let worker: Worker
+  try {
+    worker = await getWorker(onPhase)
+  } catch (err) {
+    // 인식 파일은 처음 쓸 때 인터넷으로 받아온다. 못 받으면 여기서 걸린다.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) throw new OcrOfflineError()
+    if (/network|fetch|importScripts|Failed to load/i.test(String(err))) throw new OcrOfflineError()
+    throw err
+  }
   const { data } = await worker.recognize(image)
   return cleanup(data.text)
 }

@@ -3,7 +3,7 @@ import { BaseChooser, KindChooser, ReactionEditor, useCatsAndGroups } from '../c
 import type { ReactionLevel } from '../data/types'
 import { addSnack, savePhoto } from '../data/repo'
 import { compressImage } from '../lib/image'
-import { readText } from '../lib/ocr'
+import { OcrOfflineError, readText } from '../lib/ocr'
 import { IconCamera, IconChevronDown, IconChevronLeft, IconScan } from '../components/icons'
 
 export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
@@ -20,8 +20,12 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
   const [saving, setSaving] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
 
-  const [ocrState, setOcrState] = useState<'idle' | 'running'>('idle')
+  const [ocrState, setOcrState] = useState<'idle' | 'preparing' | 'reading'>('idle')
   const [ocrProgress, setOcrProgress] = useState(0)
+  // 읽은 결과를 화면에 남긴다. 예전에는 제목 칸이 비어 있을 때만 조용히
+  // 채우고 끝나서, 이미 적어 둔 게 있거나 글자를 못 찾으면 아무 일도
+  // 일어나지 않은 것처럼 보였다.
+  const [ocrMsg, setOcrMsg] = useState<{ kind: 'found' | 'none' | 'error'; text: string } | null>(null)
 
   async function onPickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -35,14 +39,36 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
 
   async function runOCR() {
     if (!photoBlob) return
-    setOcrState('running')
+    setOcrState('preparing')
     setOcrProgress(0)
+    setOcrMsg(null)
     try {
-      const text = await readText(photoBlob, (p) => setOcrProgress(p))
-      if (text) setName((prev) => prev || text)
+      const text = await readText(photoBlob, (p) => {
+        if (p.phase === 'reading') {
+          setOcrState('reading')
+          setOcrProgress(p.progress)
+        } else {
+          setOcrState('preparing')
+        }
+      })
+      if (!text) {
+        setOcrMsg({ kind: 'none', text: '' })
+      } else if (!name.trim()) {
+        setName(text)
+        setOcrMsg({ kind: 'found', text })
+      } else {
+        // 적어 둔 제목을 말없이 덮지 않는다 — 눌러서 바꾸게 둔다
+        setOcrMsg({ kind: 'found', text })
+      }
     } catch (err) {
       console.error('OCR 실패', err)
-      alert('글자를 읽지 못했어요. 직접 입력해 주세요.')
+      setOcrMsg({
+        kind: 'error',
+        text:
+          err instanceof OcrOfflineError
+            ? '글자 인식 파일을 못 받았어요. 인터넷에 연결하고 다시 눌러주세요.'
+            : '글자를 읽지 못했어요. 제목은 직접 적어주세요.',
+      })
     } finally {
       setOcrState('idle')
     }
@@ -107,14 +133,45 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
                   <img src={photoPreview} alt="제품 사진" />
                   <div className="photo-actions">
                     <button className="mini-btn" onClick={() => fileRef.current?.click()}>다시 찍기</button>
-                    <button className="mini-btn" onClick={runOCR} disabled={ocrState === 'running'}>
-                      {ocrState === 'running' ? (
+                    <button className="mini-btn" onClick={runOCR} disabled={ocrState !== 'idle'}>
+                      {ocrState === 'preparing' ? (
+                        '준비 중…'
+                      ) : ocrState === 'reading' ? (
                         `읽는 중 ${Math.round(ocrProgress * 100)}%`
                       ) : (
                         <><IconScan size={16} />사진에서 제목 읽기</>
                       )}
                     </button>
                   </div>
+                  {ocrState === 'preparing' && (
+                    <p className="ocr-msg muted">
+                      글자 인식 파일을 준비하는 중이에요. 처음 한 번만 받아오고,
+                      인터넷이 필요해요.
+                    </p>
+                  )}
+                  {ocrMsg?.kind === 'found' && (
+                    <p className="ocr-msg">
+                      읽은 글자: <b>{ocrMsg.text}</b>
+                      {name.trim() !== ocrMsg.text && (
+                        <button
+                          className="ocr-apply"
+                          onClick={() => {
+                            setName(ocrMsg.text)
+                            setOcrMsg(null)
+                          }}
+                        >
+                          제목에 넣기
+                        </button>
+                      )}
+                    </p>
+                  )}
+                  {ocrMsg?.kind === 'none' && (
+                    <p className="ocr-msg muted">
+                      사진에서 글자를 찾지 못했어요. 글씨가 크고 반듯하게 나온 사진이면
+                      잘 읽혀요.
+                    </p>
+                  )}
+                  {ocrMsg?.kind === 'error' && <p className="ocr-msg muted">{ocrMsg.text}</p>}
                 </div>
               ) : (
                 <button className="photo-drop slim" onClick={() => fileRef.current?.click()}>
