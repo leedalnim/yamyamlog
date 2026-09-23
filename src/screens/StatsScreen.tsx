@@ -78,11 +78,28 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
     return { good, ok, bad, total: records.length }
   }, [records])
 
-  const score = counts.total
-    ? Math.round(
-        (records.reduce((a, r) => a + REACTION_SCORE[r.level], 0) / counts.total) * 100,
-      )
-    : 0
+  // 가장 좋아하는 원료 = '잘 먹음'이 가장 많은 원료.
+  // 도넛처럼 기록 개수로만 세면 안 먹은 원료도 올라올 수 있어서 반응을 가려 센다.
+  // 같으면 그 원료가 들어간 기록 중 잘 먹은 비율이 높은 쪽.
+  const favBase = useMemo(() => {
+    const m = new Map<string, { good: number; all: number }>()
+    for (const r of records) {
+      for (const b of splitBase(r.snack.base)) {
+        const cur = m.get(b) ?? { good: 0, all: 0 }
+        cur.all += 1
+        if (r.level === 'good') cur.good += 1
+        m.set(b, cur)
+      }
+    }
+    let best: string | null = null
+    let bg = 0, br = 0
+    for (const [b, v] of m) {
+      if (v.good === 0) continue
+      const rate = v.good / v.all
+      if (v.good > bg || (v.good === bg && rate > br)) { best = b; bg = v.good; br = rate }
+    }
+    return best
+  }, [records])
 
   // 선택한 냥이의 베이스 분포 (잘먹음·보통 위주 = 좋아하는 베이스)
   const perBase = useMemo(() => {
@@ -210,9 +227,15 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               <img src={heroUrl} alt="" className="hero-img" />
             </div>
             <div className="stat-hero-panel">
-              <div className="panel-title">
-                {cat.name}의 요즘 상태
-                <span className="panel-score">기호도 {counts.total ? score + '점' : '－'}</span>
+              {/* 제목('탱자의 요즘 상태')은 뺐다 — 위 탭이 이미 누구인지 말해 주고,
+                  기록이 기간 단위로 쌓이는 게 아니라 '요즘'이라 부를 근거도 없다 */}
+              <div className="panel-fav">
+                <span className="panel-fav-k">가장 좋아하는 원료</span>
+                {favBase ? (
+                  <span className="panel-fav-v">{favBase}</span>
+                ) : (
+                  <span className="panel-fav-v empty">아직 없어요</span>
+                )}
               </div>
               <div className="panel-row">
                 <ReactionIcon level="good" size={20} />

@@ -1169,13 +1169,9 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 히어로 패널: 잘먹음·보통·안먹음 3행 + 기호도 ===== */
 .panel-title { display: block; margin-bottom: 0; }
-.panel-score { display: block; margin: 1px 0 3px; font-size: 11.5px; font-weight: 800; color: var(--primary); }
 
 /* ===== 도구 아이콘: 라인 아이콘 정렬 ===== */
 .tool-ico { display: inline-flex; align-items: center; justify-content: center; color: var(--ink); line-height: 0; }
-
-/* ===== 히어로 기호도 점수 강조 ===== */
-.panel-score { font-size: 15px; margin: 2px 0 4px; letter-spacing: -0.01em; }
 
 /* ===== 냥이 아바타: 흰 얼굴 SVG ===== */
 .cat-avatar-face { width: 30px; height: auto; display: block; }
@@ -1644,3 +1640,20 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-weight: 800;
   color: var(--primary);
 }
+
+/* ===== 히어로 패널: 가장 좋아하는 원료 =====
+   기호도 점수(77점)는 뭘 사 주면 되는지 알려주지 못했다. 원료 이름을 둔다. */
+.panel-fav { display: flex; flex-direction: column; margin-bottom: 4px; }
+.panel-fav-k { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+.panel-fav-v {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1.25;
+  margin-top: 1px;
+  /* 원료 이름이 길어도 패널을 밀어내지 않게 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.panel-fav-v.empty { font-size: 14px; color: var(--muted); }
