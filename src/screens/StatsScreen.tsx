@@ -101,11 +101,14 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
     return best
   }, [records])
 
-  // 선택한 냥이의 베이스 분포 (잘먹음·보통 위주 = 좋아하는 베이스)
+  // 좋아하는 원료 — '잘 먹음' 기록만 센다.
+  // 예전에는 반응을 가리지 않고 기록 개수를 세서, 안 먹은 원료(호키)와
+  // 보통인 원료(갈치)도 '좋아하는 원료' 조각에 똑같이 들어갔다.
   const perBase = useMemo(() => {
     if (!cat) return []
     const map = new Map<string, { sum: number; n: number }>()
     for (const r of records) {
+      if (r.level !== 'good') continue
       // 원료가 여럿이면 각각에 한 번씩 센다 (칠면조+연어 → 둘 다)
       for (const base of splitBase(r.snack.base)) {
         const cur = map.get(base) ?? { sum: 0, n: 0 }
