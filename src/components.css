@@ -1657,3 +1657,76 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   white-space: nowrap;
 }
 .panel-fav-v.empty { font-size: 14px; color: var(--muted); }
+
+/* ===== 새 기록: 같은 제품이 이미 있을 때 ===== */
+.dup-hint {
+  margin-top: 8px;
+  background: var(--kind-bg);
+  border-radius: 14px;
+  padding: 10px 12px;
+  line-height: 1.45;
+}
+.dup-title { font-size: 12.5px; font-weight: 800; color: var(--kind-ink); }
+.dup-body { font-size: 13px; margin-top: 2px; }
+.dup-actions { display: flex; gap: 6px; margin-top: 8px; }
+.dup-actions button {
+  flex: 1;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 6px;
+  font-family: inherit;
+  font-size: 12.5px;
+}
+.dup-primary { background: var(--primary); color: var(--primary-ink); font-weight: 800; }
+.dup-secondary { background: var(--surface); color: var(--ink); font-weight: 700; }
+
+.merge-note {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.merge-note button {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ===== 홈: 며칠째 동기화가 안 될 때 ===== */
+.sync-stuck {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 11px 12px 11px 14px;
+  margin: 2px 0 12px;
+  box-shadow: var(--shadow-sm);
+}
+.sync-stuck-ico { font-size: 20px; line-height: 1; }
+.sync-stuck-text { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.35; }
+.sync-stuck-text b { font-size: 13.5px; font-weight: 800; }
+.sync-stuck-text span { font-size: 11.5px; font-weight: 600; color: var(--muted); }
+.sync-stuck button {
+  flex: none;
+  border: none;
+  background: var(--primary);
+  color: var(--primary-ink);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+}
