@@ -159,7 +159,8 @@ export interface SyncResult {
 export type SyncSkip =
   | 'not-configured' // 아직 클라우드 설정 전
   | 'no-household' // 우리집을 안 만들었거나 참여 안 함
-  | 'offline' // 지금 연결이 안 됨 (다음에 다시 시도)
+  | 'offline' // 이 기기가 인터넷에 안 붙어 있음 (다음에 다시 시도)
+  | 'failed' // 인터넷은 되는데 서버에 닿지 못함 — 서버가 잠들었거나 설정 문제
 
 export async function syncNow(): Promise<SyncResult | SyncSkip> {
   if (!isCloudConfigured) return 'not-configured'
@@ -235,9 +236,11 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
       at,
     }
   } catch (err) {
-    // 서버가 잠들었거나 네트워크가 끊긴 경우 — 앱 동작에는 영향이 없다
+    // 앱 동작에는 영향이 없다. 다만 인터넷이 되는데도 실패하면 서버 쪽
+    // 문제라 사람이 손을 써야 할 수 있으므로 'offline' 과 구별해 돌려준다.
+    // (무료 서버는 한동안 안 쓰면 잠든다)
     console.warn('[얌얌로그] 동기화를 건너뜁니다.', err)
-    return 'offline'
+    return typeof navigator !== 'undefined' && navigator.onLine === false ? 'offline' : 'failed'
   }
 }
 

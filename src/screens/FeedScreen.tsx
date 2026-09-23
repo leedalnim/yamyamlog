@@ -32,7 +32,18 @@ import { useBackGuard } from '../lib/useBackGuard'
 
 
 
-export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged: () => void }) {
+export function FeedScreen({
+  onAdd,
+  onChanged,
+  syncStuck,
+  onSyncStuck,
+}: {
+  onAdd: () => void
+  onChanged: () => void
+  /** 서버에 며칠째 못 닿고 있으면 채워진다 (days: 마지막으로 맞춘 뒤 지난 날) */
+  syncStuck?: { days: number | null } | null
+  onSyncStuck?: () => void
+}) {
   const { cats } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
   const [filter, setFilter] = useState<string>('all') // 'all' | 종류(kind) | '기타'
@@ -184,6 +195,23 @@ export function FeedScreen({ onAdd, onChanged }: { onAdd: () => void; onChanged:
           </>
         )}
       </div>
+
+      {/* 거의 없는 일이지만, 생기면 앱은 멀쩡해 보이는데 다른 폰과만 조용히
+          어긋난다. 그래서 그때만 알린다. */}
+      {syncStuck && (
+        <div className="sync-stuck">
+          <span className="sync-stuck-ico" aria-hidden>☁️</span>
+          <div className="sync-stuck-text">
+            <b>
+              {syncStuck.days === null
+                ? '다른 폰과 아직 맞춰지지 않았어요'
+                : `${syncStuck.days}일째 다른 폰과 맞춰지지 않았어요`}
+            </b>
+            <span>서버가 잠들었을 수 있어요</span>
+          </div>
+          <button onClick={onSyncStuck}>확인</button>
+        </div>
+      )}
 
       {/*
         줄을 화면 양끝까지 늘린다. 화면 여백(16px) 앞에서 잘리면 배너 폭에
