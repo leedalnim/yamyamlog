@@ -7,7 +7,7 @@ import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
 import { splitBase } from '../lib/base'
 import { shortDate } from '../lib/date'
-import { IconChart, IconChevronRight, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
+import { IconChart, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
 import noPhotoUrl from '../assets/no-photo.svg'
@@ -27,6 +27,8 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   const [viewing, setViewing] = useState<Snack | null>(null)
   // 기록 목록의 기호성 필터 ('' = 전체)
   const [levelFilter, setLevelFilter] = useState<'' | ReactionLevel>('')
+  // 기록 목록은 쌓일수록 끝없이 길어진다 — 처음엔 몇 개만
+  const [showAllRecords, setShowAllRecords] = useState(false)
   // 원료가 여럿이 되면서 범례가 길어졌다 — 기본은 상위 몇 개만
   const [allBases, setAllBases] = useState(false)
 
@@ -50,6 +52,11 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
   useEffect(() => {
     setLevelFilter('')
   }, [catId])
+
+  // 보는 대상이 바뀌면 다시 처음 몇 개부터
+  useEffect(() => {
+    setShowAllRecords(false)
+  }, [catId, levelFilter])
 
   const cat = cats.find((c) => c.id === catId)
 
@@ -100,19 +107,6 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
       }))
       .sort((a, b) => b.share - a.share)
   }, [records, cat])
-
-  // 최근 7일 반응 요약
-  const week = useMemo(() => {
-    const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000
-    let good = 0, ok = 0, bad = 0
-    for (const r of records) {
-      if (r.snack.createdAt < cutoff) continue
-      if (r.level === 'good') good++
-      else if (r.level === 'ok') ok++
-      else bad++
-    }
-    return { good, ok, bad, total: good + ok + bad }
-  }, [records])
 
   // 좋아하는 것 TOP 3 (잘먹음 우선, 최신순)
   const top3 = useMemo(
@@ -222,60 +216,21 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
               </div>
               <div className="panel-row">
                 <ReactionIcon level="good" size={20} />
-                잘먹음 <b className="tabular">{counts.good}회</b>
+                잘먹음 <b className="tabular">{counts.good}개</b>
               </div>
               <div className="panel-row">
                 <ReactionIcon level="ok" size={20} />
-                보통 <b className="tabular">{counts.ok}회</b>
+                보통 <b className="tabular">{counts.ok}개</b>
               </div>
               <div className="panel-row">
                 <ReactionIcon level="bad" size={20} />
-                안먹음 <b className="tabular">{counts.bad}회</b>
+                안먹음 <b className="tabular">{counts.bad}개</b>
               </div>
               {onAdd && (
                 <button className="panel-btn" onClick={onAdd}><IconPencil size={15} /> 기록 남기기</button>
               )}
             </div>
           </div>
-
-          {/* 최근 7일 반응 요약 */}
-          {week.total > 0 && (
-            <section className="stat-section">
-              <h2 className="stat-title week-title">
-                최근 7일 반응 요약
-                <button
-                  className="see-more"
-                  onClick={() => document.getElementById('record-list-sec')?.scrollIntoView({ behavior: 'smooth' })}
-                >
-                  자세히 보기 <IconChevronRight size={13} />
-                </button>
-              </h2>
-              <div className="card week-card">
-                <div className="week-bar">
-                  {week.good > 0 && <i style={{ flex: week.good, background: 'var(--bar-good)' }} />}
-                  {week.ok > 0 && <i style={{ flex: week.ok, background: 'var(--bar-ok)' }} />}
-                  {week.bad > 0 && <i style={{ flex: week.bad, background: 'var(--bar-bad)' }} />}
-                </div>
-                <div className="week-cells">
-                  <div className="week-cell">
-                    <ReactionIcon level="good" size={30} />
-                    <span className="week-label">잘먹음</span>
-                    <span className="week-count" style={{ color: 'var(--primary)' }}>{week.good}회</span>
-                  </div>
-                  <div className="week-cell">
-                    <ReactionIcon level="ok" size={30} />
-                    <span className="week-label">보통</span>
-                    <span className="week-count muted">{week.ok}회</span>
-                  </div>
-                  <div className="week-cell">
-                    <ReactionIcon level="bad" size={30} />
-                    <span className="week-label">안먹음</span>
-                    <span className="week-count muted">{week.bad}회</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
 
           {/* 좋아하는 것 TOP 3 */}
           {top3.length > 0 && (
@@ -377,7 +332,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   {levelFilter ? REACTION_META[levelFilter].label : ''}으로 기록된 게 없어요.
                 </div>
               ) : null}
-              {shownRecords.map((r) => (
+              {(showAllRecords ? shownRecords : shownRecords.slice(0, RECORDS_PREVIEW)).map((r) => (
                 <RecordRow
                   key={r.snack.id}
                   snack={r.snack}
@@ -385,6 +340,11 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   onOpen={() => setViewing(r.snack)}
                 />
               ))}
+              {shownRecords.length > RECORDS_PREVIEW && (
+                <button className="records-more" onClick={() => setShowAllRecords((v) => !v)}>
+                  {showAllRecords ? '접기' : `${shownRecords.length - RECORDS_PREVIEW}개 더 보기`}
+                </button>
+              )}
             </div>
           </section>
         </>
@@ -392,6 +352,9 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
     </div>
   )
 }
+
+/** 기록 목록을 처음에 몇 개까지 보여줄지 */
+const RECORDS_PREVIEW = 5
 
 const DONUT_COLORS = ['#7FB3E8', '#FBC15E', '#F9A8C4', '#DCD8D3', '#FA7F38', '#F2BC57']
 /** 묶어 놓은 '기타' 는 재료 하나가 아니므로 색을 주지 않는다 (무채색) */
