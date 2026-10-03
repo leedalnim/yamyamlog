@@ -1764,3 +1764,24 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
    두 화면 모두 '상단바 → 숨은 사진 입력 → 첫 칸' 순서다.
    (:first-of-type 은 태그 기준이라 상단바 div 가 먼저 걸려 맞지 않는다) */
 .sticky-top + input + .field { margin-top: 12px; }
+
+/* ===== 상세: 얼굴 → 이름 → 반응 칩 =====
+   이름을 진하고 크게 두어 '누구'가 먼저 읽히고, 반응은 칩으로 한 단계 가볍게.
+   반응이 없는 아이는 칸 전체를 흐리게 하던 것을 그만두고 얼굴·이름만 내린다 —
+   칸째 흐리면 '기록 없음' 칩까지 읽히지 않는다. */
+.face-grid--large .face-name { color: var(--ink); font-size: 14px; font-weight: 800; margin-top: 2px; }
+.face-grid--large .face-cell.blank { opacity: 1; }
+.face-grid--large .face-cell.blank .face-name { color: var(--muted); }
+.face-rx {
+  margin-top: 3px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.face-rx[data-level='good'] { background: var(--lv-good-bg); color: var(--lv-good-ink); }
+.face-rx[data-level='ok'] { background: var(--lv-ok-bg); color: var(--lv-ok-ink); }
+.face-rx[data-level='bad'] { background: var(--lv-bad-bg); color: var(--lv-bad-ink); }
+/* '기록 없음'은 굵기를 빼서 잘 먹음·안 먹음보다 한 단계 물러나게 */
+.face-rx:not([data-level]) { color: var(--muted); font-weight: 500; border: 1px dashed var(--line); }

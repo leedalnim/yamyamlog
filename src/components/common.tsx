@@ -88,6 +88,13 @@ export function ReactionFaces({
               <FaceNeutral size={faceSize} dim />
             )}
             <span className="face-name">{cat.name}</span>
+            {/* 상세에서는 얼굴만으로 표정을 읽기 어려워 반응을 글자 칩으로 붙인다
+                (통계 기록 목록과 같은 색). 반응이 없으면 '기록 없음'. */}
+            {variant === 'large' && (
+              <span className="face-rx" data-level={lv}>
+                {lv ? REACTION_META[lv].label : '기록 없음'}
+              </span>
+            )}
           </div>
         )
       })}
