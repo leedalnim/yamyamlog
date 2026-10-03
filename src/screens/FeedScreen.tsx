@@ -32,6 +32,9 @@ import { useBackGuard } from '../lib/useBackGuard'
 
 
 
+/** 홈 최근 기록을 처음에 몇 개까지 보여줄지 (통계 기록 목록과 같게) */
+const FEED_PREVIEW = 5
+
 export function FeedScreen({
   onAdd,
   onChanged,
@@ -54,6 +57,8 @@ export function FeedScreen({
   const [sort, setSort] = useState<'recent' | 'name'>('recent')
   const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
+  // 기록이 쌓이면 홈이 끝없이 길어진다 — 처음엔 몇 개만
+  const [showAll, setShowAll] = useState(false)
 
   // 뒤로 제스처로 한 단계씩 닫히게 한다
   useBackGuard(!!viewing, () => setViewing(null))
@@ -138,6 +143,11 @@ export function FeedScreen({
     else sorted.sort((a, b) => b.createdAt - a.createdAt)
     return sorted
   }, [snacks, filter, catId, level, sort, query])
+
+  // 보는 조건이 바뀌면 다시 처음 몇 개부터
+  useEffect(() => {
+    setShowAll(false)
+  }, [filter, catId, level, sort, query])
 
   // ---- 상세 페이지 ----
   if (viewing) {
@@ -311,7 +321,7 @@ export function FeedScreen({
         </div>
       ) : (
         <div className="feed-list">
-          {filtered.map((s) => (
+          {(showAll ? filtered : filtered.slice(0, FEED_PREVIEW)).map((s) => (
             <SnackCard
             key={s.id}
             snack={s}
@@ -324,6 +334,11 @@ export function FeedScreen({
             }}
           />
           ))}
+          {filtered.length > FEED_PREVIEW && (
+            <button className="records-more" onClick={() => setShowAll((v) => !v)}>
+              {showAll ? '접기' : `${filtered.length - FEED_PREVIEW}개 더 보기`}
+            </button>
+          )}
         </div>
       )}
 
@@ -419,7 +434,8 @@ function SnackCard({
             {/* 종류·재료는 칩 대신 옅은 글자로 — 알약이 두 줄로 겹치면 시끄럽다 */}
             <span className="snack-meta">
               {snack.discontinued && <b className="meta-retired">단종</b>}
-              {[snack.kind, ...splitBase(snack.base)].filter(Boolean).join(' · ')}
+              {/* 대표 원료 하나만. 종류(파우치 등)까지 붙이면 길고 산만했다 */}
+              {splitBase(snack.base)[0] ?? ''}
             </span>
           </div>
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="pill" />

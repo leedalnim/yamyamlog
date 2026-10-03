@@ -1537,26 +1537,38 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   align-items: center;
 }
 
-/* ===== 통계 기록 목록: 기호성 필터 + 반응 글자 =====
-   얼굴 아이콘만으로는 표정 구별이 어려워 글자를 같이 둔다.
-   색은 홈 알약과 같은 반응 색 계열(연한 바탕 + 진한 글자)로 맞춘다. */
-.rx-filter { display: flex; gap: 6px; margin: 0 0 10px; flex-wrap: wrap; }
-.rx-chip {
-  font-family: inherit;
-  font-size: 12.5px;
-  font-weight: 700;
-  padding: 6px 11px;
-  border: none;
-  border-radius: 999px;
+/* ===== 기호성 필터 (홈 최근 기록 · 통계 기록 목록) — 세그먼트 =====
+   예전에는 둥근 색 칩이었는데, 카드 안 이름 알약도 둥근 색 칩이라 위아래로
+   겹쳐 지저분했다. 회색 통 하나 안에서 고른 칸만 흰색으로 띄운다.
+   반응 색을 쓰지 않는다 — 색은 카드 안 알약만의 몫이다. */
+.rx-filter {
+  display: flex;
+  flex: none;
+  margin-left: auto;
+  padding: 3px;
+  border-radius: 10px;
   background: var(--surface-2);
-  color: var(--ink);
 }
-.rx-chip i { font-style: normal; font-size: 11.5px; opacity: 0.6; }
-.rx-chip.on { background: var(--primary); color: var(--primary-ink); }
-.rx-chip.on i { opacity: 0.8; }
-.rx-chip.on[data-level='good'] { background: var(--chip-good); color: #fff; }
-.rx-chip.on[data-level='ok'] { background: var(--chip-ok); color: #fff; }
-.rx-chip.on[data-level='bad'] { background: var(--chip-bad); color: #fff; }
+.rx-chip {
+  flex: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 8px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.rx-chip i { font-style: normal; opacity: 0.7; }
+.rx-chip.on {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* 통계 기록 목록의 반응 글자 — 얼굴만으로는 표정 구별이 어려워 같이 둔다 */
 
 .rx-tag {
   flex: none;
@@ -1570,28 +1582,15 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .rx-tag[data-level='ok'] { background: var(--lv-ok-bg); color: var(--lv-ok-ink); }
 .rx-tag[data-level='bad'] { background: var(--lv-bad-bg); color: var(--lv-bad-ink); }
 
-/* 제목 + 필터 한 줄. 칩이 넘치면 줄을 화면 끝까지 늘려 옆으로 밀어 본다 —
-   가운데서 잘리면 망가져 보이고, 화면 끝에서 잘려야 '더 있다'로 읽힌다. */
+/* 제목 + 필터 한 줄. 세그먼트는 오른쪽 끝을 아래 박스 끝선에 맞춘다.
+   박스와는 14px 띄운다 — 8px 이면 필터가 박스에 붙어 보였다. */
 .stat-title-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 14px;
 }
 .stat-title-row .stat-title { margin: 0; flex: none; }
-.stat-title-row .rx-filter {
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-  justify-content: flex-end;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin-right: -16px;
-  padding-right: 16px;
-}
-.stat-title-row .rx-filter::-webkit-scrollbar { display: none; }
-.stat-title-row .rx-chip { flex: none; font-size: 12px; padding: 5px 9px; }
 
 /* ===== 수정 화면 상단바 고정 =====
    반응·종류·원료 칩이 길어서 아래로 내려가면 저장 버튼이 화면 밖으로
@@ -1627,7 +1626,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   text-underline-offset: 3px;
 }
 
-/* 통계 기록 목록 — 더 보기 / 접기 */
+/* 기록 목록 — 더 보기 / 접기. 목록보다 튀지 않게 회색 */
 .records-more {
   display: block;
   width: 100%;
@@ -1638,7 +1637,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--muted);
 }
 
 /* ===== 히어로 패널: 가장 좋아하는 원료 =====
@@ -1730,3 +1729,27 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-size: 12.5px;
   font-weight: 800;
 }
+
+/* ===== 기록 목록 박스: 한 박스 + 줄 구분 =====
+   홈 최근 기록도 통계 기록 목록처럼 박스 하나에 줄로 나눈다. 카드마다
+   그림자와 사이 여백이 있으면 기록이 쌓일수록 무거웠다.
+   두 박스 모두 테두리를 준다 — 앱 전체 .card 는 테두리를 끄지만
+   목록 박스는 선이 있어야 배경과 갈린다. */
+#record-list-sec .record-list,
+.feed-list {
+  border: 1px solid var(--line);
+}
+.feed-list {
+  gap: 0;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.feed-list .snack-card {
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  background: none;
+}
+.feed-list .snack-card + .snack-card { border-top: 1px solid var(--line); }
