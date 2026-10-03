@@ -1655,7 +1655,8 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.panel-fav-v.empty { font-size: 14px; color: var(--muted); }
+/* '.empty' 는 앱 전체 빈 화면 스타일(위아래 60px)이라 이름이 겹치면 패널이 늘어난다 */
+.panel-fav-v.none { font-size: 14px; color: var(--muted); }
 
 /* ===== 새 기록: 같은 제품이 이미 있을 때 ===== */
 .dup-hint {
@@ -1753,3 +1754,13 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   background: none;
 }
 .feed-list .snack-card + .snack-card { border-top: 1px solid var(--line); }
+
+/* 통계 패널 — 기록이 없는 아이 */
+.panel-empty { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; line-height: 1.4; }
+.panel-empty b { font-size: 15px; font-weight: 800; }
+.panel-empty span { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+/* 새 기록·수정 — 상단바를 붙인 뒤 첫 칸 이름표가 바 아래 선에 닿아 있었다.
+   두 화면 모두 '상단바 → 숨은 사진 입력 → 첫 칸' 순서다.
+   (:first-of-type 은 태그 기준이라 상단바 div 가 먼저 걸려 맞지 않는다) */
+.sticky-top + input + .field { margin-top: 12px; }

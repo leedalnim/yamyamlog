@@ -232,26 +232,37 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             <div className="stat-hero-panel">
               {/* 제목('탱자의 요즘 상태')은 뺐다 — 위 탭이 이미 누구인지 말해 주고,
                   기록이 기간 단위로 쌓이는 게 아니라 '요즘'이라 부를 근거도 없다 */}
-              <div className="panel-fav">
-                <span className="panel-fav-k">가장 좋아하는 원료</span>
-                {favBase ? (
-                  <span className="panel-fav-v">{favBase}</span>
-                ) : (
-                  <span className="panel-fav-v empty">아직 없어요</span>
-                )}
-              </div>
-              <div className="panel-row">
-                <ReactionIcon level="good" size={20} />
-                잘먹음 <b className="tabular">{counts.good}개</b>
-              </div>
-              <div className="panel-row">
-                <ReactionIcon level="ok" size={20} />
-                보통 <b className="tabular">{counts.ok}개</b>
-              </div>
-              <div className="panel-row">
-                <ReactionIcon level="bad" size={20} />
-                안먹음 <b className="tabular">{counts.bad}개</b>
-              </div>
+              {counts.total === 0 ? (
+                // 기록이 하나도 없으면 '아직 없어요'와 '0개 0개 0개'만 남아
+                // 패널이 늘어지고 빈칸이 떴다. 한 줄로 안내만 한다.
+                <div className="panel-empty">
+                  <b>아직 {cat.name}<br />기록이 없어요</b>
+                  <span>먹여 보고 반응을<br />남겨 주세요</span>
+                </div>
+              ) : (
+                <>
+                  <div className="panel-fav">
+                    <span className="panel-fav-k">가장 좋아하는 원료</span>
+                    {favBase ? (
+                      <span className="panel-fav-v">{favBase}</span>
+                    ) : (
+                      <span className="panel-fav-v none">아직 없어요</span>
+                    )}
+                  </div>
+                  <div className="panel-row">
+                    <ReactionIcon level="good" size={20} />
+                    잘먹음 <b className="tabular">{counts.good}개</b>
+                  </div>
+                  <div className="panel-row">
+                    <ReactionIcon level="ok" size={20} />
+                    보통 <b className="tabular">{counts.ok}개</b>
+                  </div>
+                  <div className="panel-row">
+                    <ReactionIcon level="bad" size={20} />
+                    안먹음 <b className="tabular">{counts.bad}개</b>
+                  </div>
+                </>
+              )}
               {onAdd && (
                 <button className="panel-btn" onClick={onAdd}><IconPencil size={15} /> 기록 남기기</button>
               )}
