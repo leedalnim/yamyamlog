@@ -16,6 +16,7 @@ import {
   leaveHousehold,
   readHousehold,
   readLastSyncedAt,
+  lastSyncFailure,
   syncNow,
   type HouseholdInfo,
 } from '../data/sync'
@@ -104,6 +105,18 @@ export function SettingsScreen({
     })()
   }, [])
 
+  // 실패 이유에 따라 할 일이 다르다 — 서버가 잠든 것과 이 폰이 구성원에서
+  // 빠진 것은 증상이 같아도 고치는 법이 전혀 다르다
+  function failureText(): string {
+    const f = lastSyncFailure()
+    const keep = ' 기록은 이 기기에 그대로 있어요.'
+    if (!f || f.kind === 'unreachable') {
+      return '서버에 닿지 못했어요. 인터넷이 되는데도 며칠째 이러면 서버가 잠든 거예요. Supabase 대시보드에서 프로젝트를 다시 켜주세요(Restore).' + keep
+    }
+    if (f.kind === 'not-member') return f.message + keep
+    return `서버가 오류를 돌려줬어요: ${f.message}` + keep
+  }
+
   async function runSync() {
     setCloudBusy('sync')
     setCloudNote(null)
@@ -115,7 +128,7 @@ export function SettingsScreen({
           r === 'offline'
             ? '지금은 연결이 안 돼요. 기록은 이 기기에 그대로 있고, 나중에 자동으로 맞춰집니다.'
             : r === 'failed'
-              ? '서버에 닿지 못했어요. 인터넷이 되는데도 계속 이러면 서버가 잠든 거예요. Supabase 대시보드에서 프로젝트를 다시 켜주세요(Restore). 기록은 이 기기에 그대로 있어요.'
+              ? failureText()
             : r === 'no-household'
               ? '먼저 우리집을 만들거나 코드로 참여해주세요.'
               : '클라우드가 아직 설정되지 않았어요.',

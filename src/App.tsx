@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { DEFAULT_SETTINGS, type Settings } from './data/types'
 import { readSettings, writeSettings } from './data/db'
 import { ensureSeeded } from './data/repo'
-import { readLastSyncedAt, syncNow } from './data/sync'
+import { lastSyncFailure, readLastSyncedAt, syncNow } from './data/sync'
 import { FeedScreen } from './screens/FeedScreen'
 import { AddScreen } from './screens/AddScreen'
 import { StatsScreen } from './screens/StatsScreen'
@@ -33,7 +33,7 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
   const [tab, setTab] = useState<Tab>('feed')
   // 서버에 며칠째 못 닿고 있을 때만 홈에 알린다. 한두 번 실패는 흔하고
   // 다음에 알아서 맞춰지므로 조용히 넘긴다. days: 마지막으로 맞춘 뒤 지난 날 (null = 한 번도 못 맞춤)
-  const [syncStuck, setSyncStuck] = useState<{ days: number | null } | null>(null)
+  const [syncStuck, setSyncStuck] = useState<{ days: number | null; hint: string } | null>(null)
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [dataVersion, setDataVersion] = useState(0)
 
@@ -75,7 +75,14 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
         if (r === 'failed') {
           const last = await readLastSyncedAt()
           const days = last === null ? null : Math.floor((Date.now() - last) / 86_400_000)
-          setSyncStuck(days === null || days >= SYNC_STUCK_DAYS ? { days } : null)
+          const f = lastSyncFailure()
+          const hint =
+            !f || f.kind === 'unreachable'
+              ? '서버가 잠들었을 수 있어요'
+              : f.kind === 'not-member'
+                ? '이 폰을 우리집에 다시 참여시켜야 해요'
+                : '설정에서 이유를 확인해주세요'
+          setSyncStuck(days === null || days >= SYNC_STUCK_DAYS ? { days, hint } : null)
           return
         }
         if (typeof r === 'string') return

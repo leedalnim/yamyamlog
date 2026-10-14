@@ -44,7 +44,7 @@ export function FeedScreen({
   onAdd: () => void
   onChanged: () => void
   /** 서버에 며칠째 못 닿고 있으면 채워진다 (days: 마지막으로 맞춘 뒤 지난 날) */
-  syncStuck?: { days: number | null } | null
+  syncStuck?: { days: number | null; hint: string } | null
   onSyncStuck?: () => void
 }) {
   const { cats } = useCatsAndGroups()
@@ -217,7 +217,7 @@ export function FeedScreen({
                 ? '다른 폰과 아직 맞춰지지 않았어요'
                 : `${syncStuck.days}일째 다른 폰과 맞춰지지 않았어요`}
             </b>
-            <span>서버가 잠들었을 수 있어요</span>
+            <span>{syncStuck.hint}</span>
           </div>
           <button onClick={onSyncStuck}>확인</button>
         </div>

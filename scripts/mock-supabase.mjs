@@ -6,6 +6,7 @@
  *   POST /auth/v1/signup            익명 로그인
  *   POST /rest/v1/rpc/create_household
  *   POST /rest/v1/rpc/join_household
+ *   GET  /rest/v1/household_members?household_id=eq.X   내가 구성원인가
  *   GET  /rest/v1/{table}?household_id=eq.X
  *   POST /rest/v1/{table}           upsert
  *   POST /storage/v1/object/list/{bucket}     사진 목록
@@ -179,16 +180,23 @@ const server = createServer(async (req, res) => {
   if (url.pathname === '/rest/v1/rpc/join_household') {
     const uid = userOf(req)
     if (!uid) return json(res, 401, { message: '로그인이 필요합니다' })
-    // 지금 배포된 03-short-code.sql 과 똑같이 '숫자만 남겨' 비교한다.
-    // (07-code-match.sql 을 돌리면 글자 전체로 비교하게 된다)
-    const digits = (v) => String(v ?? '').replace(/\D/g, '')
-    const wanted = digits(body.p_code)
-    const h = db.households.find((x) => digits(x.code) === wanted && wanted !== '')
+    // 지금 서버(07-code-match.sql)와 똑같이 하이픈·공백만 걷어내고 글자 전체로 비교한다
+    const key = (v) => String(v ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase()
+    const wanted = key(body.p_code)
+    const h = wanted.length >= 4 ? db.households.find((x) => key(x.code) === wanted) : undefined
     if (!h) return json(res, 400, { message: '그런 코드가 없어요' })
     if (!db.members.some((m) => m.household_id === h.id && m.user_id === uid)) {
       db.members.push({ household_id: h.id, user_id: uid })
     }
     return json(res, 200, h.id)
+  }
+
+  // ── 구성원 명단 — 실제 정책(members_select)처럼 내 줄만 보인다 ──
+  if (url.pathname === '/rest/v1/household_members' && req.method === 'GET') {
+    const uid = userOf(req)
+    if (!uid) return json(res, 401, { message: '로그인이 필요합니다' })
+    const hid = (url.searchParams.get('household_id') ?? '').replace(/^eq\./, '')
+    return json(res, 200, db.members.filter((x) => x.user_id === uid && (!hid || x.household_id === hid)))
   }
 
   // ── 테이블 ────────────────────────────────────────────────
@@ -212,7 +220,7 @@ const server = createServer(async (req, res) => {
       const rows = Array.isArray(body) ? body : [body]
       for (const row of rows) {
         if (!db.members.some((x) => x.household_id === row.household_id && x.user_id === uid)) {
-          return json(res, 403, { message: 'RLS: 권한 없음' })
+          return json(res, 403, { code: '42501', message: 'new row violates row-level security policy for table "' + table + '"' })
         }
         const i = db[table].findIndex((r) => r.id === row.id)
         if (i >= 0) db[table][i] = row

@@ -160,9 +160,85 @@ export type SyncSkip =
   | 'not-configured' // 아직 클라우드 설정 전
   | 'no-household' // 우리집을 안 만들었거나 참여 안 함
   | 'offline' // 이 기기가 인터넷에 안 붙어 있음 (다음에 다시 시도)
-  | 'failed' // 인터넷은 되는데 서버에 닿지 못함 — 서버가 잠들었거나 설정 문제
+  | 'failed' // 인터넷은 되는데 실패 — 이유는 lastSyncFailure() 로 본다
 
-export async function syncNow(): Promise<SyncResult | SyncSkip> {
+/**
+ * 마지막 실패의 이유.
+ * 예전에는 실패를 전부 '서버가 잠들었다'로 안내했는데, 실제로는 서버가
+ * 깨어 있는데 이 폰을 우리집 구성원으로 못 알아봐서 막히는 경우가 있었다.
+ * 이유가 다르면 할 일도 다르므로 구별해서 남긴다.
+ *   unreachable — 서버에 아예 닿지 못함 (잠들었거나 네트워크)
+ *   not-member  — 서버는 응답했는데 이 폰이 구성원이 아님 (코드로 다시 참여 필요)
+ *   other       — 그 밖에 서버가 돌려준 오류
+ */
+export interface SyncFailure {
+  kind: 'unreachable' | 'not-member' | 'other'
+  message: string
+}
+let lastFailure: SyncFailure | null = null
+export function lastSyncFailure(): SyncFailure | null {
+  return lastFailure
+}
+
+class NotMemberError extends Error {}
+
+function classify(err: unknown): SyncFailure {
+  const e = err as { message?: string; code?: string }
+  const msg = e?.message ?? String(err)
+  if (err instanceof NotMemberError) return { kind: 'not-member', message: msg }
+  if (e?.code === '42501' || /row-level security/i.test(msg)) {
+    return { kind: 'not-member', message: '이 폰이 우리집 구성원으로 확인되지 않아요.' }
+  }
+  if (/Failed to fetch|NetworkError|Load failed|ERR_|fetch failed|timeout/i.test(msg)) {
+    return { kind: 'unreachable', message: msg }
+  }
+  return { kind: 'other', message: friendly(msg) }
+}
+
+/**
+ * 이 폰이 아직 우리집 구성원인지 확인하고, 빠져 있으면 저장된 코드로 다시 참여한다.
+ *
+ * 폰마다 회원가입 없이 자동(익명) 로그인을 쓰는데, 그 로그인 정보가 폰에서
+ * 지워지면 앱이 새로 로그인한다. 서버는 그 새 사용자를 구성원으로 모르므로
+ * 기록을 막는다(42501). 우리집 코드는 이 기기에 남아 있으니 그걸로 다시 붙인다.
+ * 확인 자체가 실패하면(권한 설정 차이 등) 판단하지 않고 그냥 진행한다.
+ */
+async function ensureMember(
+  sb: NonNullable<ReturnType<typeof getSupabase>>,
+  household: HouseholdInfo,
+): Promise<void> {
+  const { data, error } = await sb
+    .from('household_members')
+    .select('household_id')
+    .eq('household_id', household.id)
+    .limit(1)
+  if (error || (data && data.length > 0)) return
+  if (!household.code) {
+    throw new NotMemberError('이 폰이 우리집에서 빠졌어요. 설정에서 코드로 다시 참여해주세요.')
+  }
+  const { data: joined, error: joinErr } = await sb.rpc('join_household', { p_code: household.code })
+  if (joinErr || !joined) {
+    throw new NotMemberError(
+      `우리집에 다시 참여하지 못했어요 (${friendly(joinErr?.message ?? '응답 없음')}). 설정에서 코드로 다시 참여해주세요.`,
+    )
+  }
+  console.info('[얌얌로그] 이 폰을 우리집에 다시 참여시켰어요.')
+}
+
+// 앱을 열 때·다시 앞으로 올 때·설정에서 누를 때가 겹치면 동기화가 동시에 두 번
+// 돌았다. 로그인 정보를 동시에 새로 고치다 꼬일 수 있어 하나로 합친다.
+let inflight: Promise<SyncResult | SyncSkip> | null = null
+
+export function syncNow(): Promise<SyncResult | SyncSkip> {
+  if (!inflight) {
+    inflight = runSync().finally(() => {
+      inflight = null
+    })
+  }
+  return inflight
+}
+
+async function runSync(): Promise<SyncResult | SyncSkip> {
   if (!isCloudConfigured) return 'not-configured'
   const household = await readHousehold()
   if (!household) return 'no-household'
@@ -173,6 +249,7 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
 
   try {
     await ensureSignedIn()
+    await ensureMember(sb, household)
 
     const [localSnacks, localCats] = await Promise.all([
       db.getAll('snacks') as Promise<Snack[]>,
@@ -228,6 +305,7 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
 
     const at = Date.now()
     await db.put('meta', at, LAST_SYNC_KEY)
+    lastFailure = null
     return {
       pulled: snackPlan.toLocal.length + catPlan.toLocal.length,
       pushed: snackPlan.toRemote.length + catPlan.toRemote.length,
@@ -240,7 +318,9 @@ export async function syncNow(): Promise<SyncResult | SyncSkip> {
     // 문제라 사람이 손을 써야 할 수 있으므로 'offline' 과 구별해 돌려준다.
     // (무료 서버는 한동안 안 쓰면 잠든다)
     console.warn('[얌얌로그] 동기화를 건너뜁니다.', err)
-    return typeof navigator !== 'undefined' && navigator.onLine === false ? 'offline' : 'failed'
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return 'offline'
+    lastFailure = classify(err)
+    return 'failed'
   }
 }
 
