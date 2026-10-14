@@ -24,6 +24,8 @@
   --lv-good-bg: #fdeedd; --lv-good-ink: #c96f26;
   --lv-ok-bg:   #efece7; --lv-ok-ink:   #7a756d;
   --lv-bad-bg:  #e1ebf6; --lv-bad-ink:  #4a80b5;
+  /* 사진 썸네일 테두리 — 흰 배경 제품 사진이 카드 바탕에 묻히지 않게 */
+  --thumb-line: #e6e0d8;
   --retire-bg: #e6e2dc; --retire-ink: #7a736b;
   /* 반응 pill */
   --pill-good-bg: #fbe9c6; --pill-good-ink: #c4842a;
@@ -101,6 +103,7 @@ html[data-mode="dark"] {
   --lv-good-bg: #4a3018; --lv-good-ink: #f8ab6b;
   --lv-ok-bg:   #3a352e; --lv-ok-ink:   #c2b7a6;
   --lv-bad-bg:  #25374b; --lv-bad-ink:  #a2c8f2;
+  --thumb-line: #4a443a;
   --retire-bg: #3b372f; --retire-ink: #a79e90;
   /* 반응 pill */
   --pill-good-bg: #4a3418; --pill-good-ink: #f3ad5d;
