@@ -82,7 +82,7 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
               : f.kind === 'not-member'
                 ? '이 폰을 우리집에 다시 참여시켜야 해요'
                 : f.kind === 'clock'
-                  ? '잠시 후 다시 맞춰 볼게요'
+                  ? '서버를 재시작해야 해요'
                 : '설정에서 이유를 확인해주세요'
           setSyncStuck(days === null || days >= SYNC_STUCK_DAYS ? { days, hint } : null)
           return

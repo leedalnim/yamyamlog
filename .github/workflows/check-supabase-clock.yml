@@ -23,11 +23,11 @@ jobs:
           now=$(date +%s)
           echo "로그인 서버 발급 시각 - 실제 시각(NTP) = $((iat - now))초"
           start=$now
-          for i in $(seq 1 60); do
+          for i in $(seq 1 90); do
             code=$(curl -s -o /tmp/o -w '%{http_code}' -H "apikey: $KEY" -H "Authorization: Bearer $token" "$URL/rest/v1/households?select=id&limit=1")
             t=$(( $(date +%s) - start ))
             if [ "$code" = 200 ]; then echo "통과: 발급 후 ${t}초 만에 기록 서버가 받아줌"; exit 0; fi
             echo "${t}초: $code $(head -c 100 /tmp/o)"
-            sleep 3
+            sleep 20
           done
-          echo "3분 동안 계속 거절됨"
+          echo "30분 동안 계속 거절됨 — 기록 서버 시계가 30분 넘게 뒤처져 있다. 대시보드에서 프로젝트 재시작 필요"

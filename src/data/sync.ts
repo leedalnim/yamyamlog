@@ -187,10 +187,16 @@ function classify(err: unknown): SyncFailure {
   const e = err as { message?: string; code?: string }
   const msg = e?.message ?? String(err)
   if (err instanceof NotMemberError) return { kind: 'not-member', message: msg }
-  // Supabase 안에서 로그인 담당과 기록 담당의 시계가 몇 초 어긋나면, 방금 발급한
-  // 로그인 표를 기록 쪽이 '미래에 발급됐다'며 거절한다(PGRST303). 조금 지나면 풀린다.
+  // Supabase 안에서 로그인 담당과 기록 담당의 시계가 어긋나면, 방금 발급한
+  // 로그인 표를 기록 쪽이 '미래에 발급됐다'며 거절한다(PGRST303). 몇 초면 풀리지만,
+  // 2026-10 실측에서는 기록 쪽 시계가 3분 넘게 뒤처져 있었다 — 그땐 기다려도 안 되고
+  // 대시보드에서 프로젝트를 재시작해야 한다.
   if (e?.code === 'PGRST303' || /issued at future/i.test(msg)) {
-    return { kind: 'clock', message: '방금 다시 로그인해서 서버가 확인하는 중이에요. 잠시 후 다시 눌러주세요.' }
+    return {
+      kind: 'clock',
+      message:
+        '서버 안의 시계가 어긋나 있어요. Supabase 대시보드에서 프로젝트를 재시작(Restart project)해 주세요.',
+    }
   }
   if (e?.code === '42501' || /row-level security/i.test(msg)) {
     return { kind: 'not-member', message: '이 폰이 우리집 구성원으로 확인되지 않아요.' }
