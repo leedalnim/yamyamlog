@@ -1,0 +1,33 @@
+name: Check Supabase clock
+
+# 'JWT issued at future'(PGRST303) 점검용 — 손으로만 돌린다.
+# 방금 받은 로그인 표를 기록 서버가 몇 초 동안 '미래'라며 거절하는지 잰다.
+# 익명 테스트 사용자가 하나 생긴다(우리집과 무관, 아무것도 못 본다).
+on:
+  workflow_dispatch:
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 시계 차이 재기
+        run: |
+          URL=$(grep -m1 '^VITE_SUPABASE_URL=' .env.production | cut -d= -f2-)
+          KEY=$(grep -m1 '^VITE_SUPABASE_ANON_KEY=' .env.production | cut -d= -f2-)
+          resp=$(curl -s -X POST "$URL/auth/v1/signup" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}')
+          token=$(printf '%s' "$resp" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))")
+          if [ -z "$token" ]; then echo "로그인 실패: $(printf '%s' "$resp" | head -c 200)"; exit 1; fi
+          echo "::add-mask::$token"
+          iat=$(printf '%s' "$token" | python3 -c "import sys,json,base64; p=sys.stdin.read().split('.')[1]; p+='='*(-len(p)%4); print(json.loads(base64.urlsafe_b64decode(p))['iat'])")
+          now=$(date +%s)
+          echo "로그인 서버 발급 시각 - 실제 시각(NTP) = $((iat - now))초"
+          start=$now
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /tmp/o -w '%{http_code}' -H "apikey: $KEY" -H "Authorization: Bearer $token" "$URL/rest/v1/households?select=id&limit=1")
+            t=$(( $(date +%s) - start ))
+            if [ "$code" = 200 ]; then echo "통과: 발급 후 ${t}초 만에 기록 서버가 받아줌"; exit 0; fi
+            echo "${t}초: $code $(head -c 100 /tmp/o)"
+            sleep 3
+          done
+          echo "3분 동안 계속 거절됨"
