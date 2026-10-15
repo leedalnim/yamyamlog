@@ -20,6 +20,10 @@
 import { createServer } from 'node:http'
 
 const PORT = Number(process.argv[2] ?? 8791)
+// 방금 발급한 토큰을 이 시간(ms) 동안 'JWT issued at future' 로 거절한다.
+// 실제 Supabase 에서 로그인 쪽과 기록 쪽 시계가 어긋날 때 생기는 일을 흉내낸다.
+const FUTURE_MS = Number(process.argv[3] ?? 0)
+const issuedAt = new Map() // uid -> 발급 시각
 
 const db = {
   households: [], // { id, code }
@@ -75,6 +79,18 @@ function userOf(req) {
   const auth = req.headers['authorization'] ?? ''
   const token = auth.replace(/^Bearer\s+/i, '')
   return token.startsWith('tok-') ? token.slice(4) : null
+}
+
+/** 토큰이 너무 '새것'이면 실제 PostgREST 처럼 PGRST303 으로 거절 */
+function futureJwt(req, res) {
+  const uid = userOf(req)
+  if (!uid || !FUTURE_MS) return false
+  const t = issuedAt.get(uid)
+  if (t && Date.now() - t < FUTURE_MS) {
+    json(res, 401, { code: 'PGRST303', message: 'JWT issued at future', details: null, hint: null })
+    return true
+  }
+  return false
 }
 
 const server = createServer(async (req, res) => {
@@ -143,6 +159,7 @@ const server = createServer(async (req, res) => {
   // ── 익명 로그인 ────────────────────────────────────────────
   if (url.pathname === '/auth/v1/signup' || url.pathname === '/auth/v1/token') {
     const id = uuid()
+    issuedAt.set(id, Date.now())
     return json(res, 200, {
       access_token: 'tok-' + id,
       token_type: 'bearer',
@@ -152,6 +169,9 @@ const server = createServer(async (req, res) => {
       user: { id, aud: 'authenticated', role: 'authenticated', is_anonymous: true },
     })
   }
+
+  // ── 시계 어긋남 흉내 (REST·RPC 공통) ─────────────────────────
+  if (url.pathname.startsWith('/rest/v1/') && futureJwt(req, res)) return
 
   // ── RPC ───────────────────────────────────────────────────
   if (url.pathname === '/rest/v1/rpc/create_household') {

@@ -169,10 +169,11 @@ export type SyncSkip =
  * 이유가 다르면 할 일도 다르므로 구별해서 남긴다.
  *   unreachable — 서버에 아예 닿지 못함 (잠들었거나 네트워크)
  *   not-member  — 서버는 응답했는데 이 폰이 구성원이 아님 (코드로 다시 참여 필요)
+ *   clock       — 방금 받은 로그인 표를 서버가 '미래'라며 거절 (몇 초 지나면 풀린다)
  *   other       — 그 밖에 서버가 돌려준 오류
  */
 export interface SyncFailure {
-  kind: 'unreachable' | 'not-member' | 'other'
+  kind: 'unreachable' | 'not-member' | 'clock' | 'other'
   message: string
 }
 let lastFailure: SyncFailure | null = null
@@ -186,6 +187,11 @@ function classify(err: unknown): SyncFailure {
   const e = err as { message?: string; code?: string }
   const msg = e?.message ?? String(err)
   if (err instanceof NotMemberError) return { kind: 'not-member', message: msg }
+  // Supabase 안에서 로그인 담당과 기록 담당의 시계가 몇 초 어긋나면, 방금 발급한
+  // 로그인 표를 기록 쪽이 '미래에 발급됐다'며 거절한다(PGRST303). 조금 지나면 풀린다.
+  if (e?.code === 'PGRST303' || /issued at future/i.test(msg)) {
+    return { kind: 'clock', message: '방금 다시 로그인해서 서버가 확인하는 중이에요. 잠시 후 다시 눌러주세요.' }
+  }
   if (e?.code === '42501' || /row-level security/i.test(msg)) {
     return { kind: 'not-member', message: '이 폰이 우리집 구성원으로 확인되지 않아요.' }
   }
@@ -238,7 +244,23 @@ export function syncNow(): Promise<SyncResult | SyncSkip> {
   return inflight
 }
 
+/**
+ * 시계 어긋남(clock)은 기다리면 풀리므로 몇 번 쉬었다가 다시 해 본다.
+ * 다른 실패는 기다려도 그대로라 바로 돌려준다.
+ */
+const CLOCK_RETRY_MS = [2000, 4000, 8000]
+
 async function runSync(): Promise<SyncResult | SyncSkip> {
+  let r = await runSyncOnce()
+  for (const wait of CLOCK_RETRY_MS) {
+    if (r !== 'failed' || lastFailure?.kind !== 'clock') break
+    await new Promise((ok) => setTimeout(ok, wait))
+    r = await runSyncOnce()
+  }
+  return r
+}
+
+async function runSyncOnce(): Promise<SyncResult | SyncSkip> {
   if (!isCloudConfigured) return 'not-configured'
   const household = await readHousehold()
   if (!household) return 'no-household'

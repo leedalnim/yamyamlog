@@ -81,6 +81,8 @@ export default function App({ onApplyUpdate }: { onApplyUpdate?: () => void }) {
               ? '서버가 잠들었을 수 있어요'
               : f.kind === 'not-member'
                 ? '이 폰을 우리집에 다시 참여시켜야 해요'
+                : f.kind === 'clock'
+                  ? '잠시 후 다시 맞춰 볼게요'
                 : '설정에서 이유를 확인해주세요'
           setSyncStuck(days === null || days >= SYNC_STUCK_DAYS ? { days, hint } : null)
           return

@@ -113,7 +113,7 @@ export function SettingsScreen({
     if (!f || f.kind === 'unreachable') {
       return '서버에 닿지 못했어요. 인터넷이 되는데도 며칠째 이러면 서버가 잠든 거예요. Supabase 대시보드에서 프로젝트를 다시 켜주세요(Restore).' + keep
     }
-    if (f.kind === 'not-member') return f.message + keep
+    if (f.kind === 'not-member' || f.kind === 'clock') return f.message + keep
     return `서버가 오류를 돌려줬어요: ${f.message}` + keep
   }
 
