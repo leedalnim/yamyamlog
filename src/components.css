@@ -1640,6 +1640,9 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-weight: 600;
   color: var(--muted);
 }
+/* 통계 목록 상자는 아래 안쪽 여백(6px)이 있어 '더 보기' 아래가 넉넉하다.
+   홈 목록 상자는 0 이라 답답해 보였다 — 버튼 아래를 그만큼 늘려 맞춘다 */
+.feed-list .records-more { padding-bottom: 19px; }
 
 /* ===== 히어로 패널: 가장 좋아하는 원료 =====
    기호도 점수(77점)는 뭘 사 주면 되는지 알려주지 못했다. 원료 이름을 둔다. */
