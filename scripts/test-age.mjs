@@ -40,6 +40,10 @@ eq('생년월일이 있으면 그걸 쓴다',
   displayAge({ birthday: '2020-08-25', ageYears: 99 }, D('2025-08-25')), '5살')
 eq('없으면 예전에 적어 둔 나이',
   displayAge({ ageYears: 7 }, D('2025-08-25')), '7살')
+eq('소수로 적은 나이는 살·개월로', displayAge({ ageYears: 6.5 }, D('2025-08-25')), '6살 6개월')
+eq('반 살 미만은 개월만', displayAge({ ageYears: 0.5 }, D('2025-08-25')), '6개월')
+eq('6.5살 어림값은 6년 6개월 전', guessBirthday(6.5, D('2025-08-25')), '2019-02-01')
+eq('어림값으로 다시 계산해도 6살', ageFrom(guessBirthday(6.5, D('2025-08-25')), D('2025-08-25'))?.long, '6살 6개월')
 eq('둘 다 없으면 안 보여준다', displayAge({}, D('2025-08-25')), null)
 eq('생년월일이 엉터리면 적어 둔 나이로',
   displayAge({ birthday: '몰라', ageYears: 3 }, D('2025-08-25')), '3살')

@@ -77,9 +77,10 @@ export const DEFAULT_SETTINGS: Settings = {
 }
 
 export const REACTION_META: Record<ReactionLevel, { label: string; short: string }> = {
-  good: { label: '잘 먹음', short: '잘먹음' },
+  // 화면마다 '잘먹음'·'잘 먹음'이 섞여 있었다 — 띄어 쓰는 쪽으로 통일
+  good: { label: '잘 먹음', short: '잘 먹음' },
   ok: { label: '보통', short: '보통' },
-  bad: { label: '안 먹음', short: '안먹음' },
+  bad: { label: '안 먹음', short: '안 먹음' },
 }
 
 /** 간식 종류(형태) 프리셋 */

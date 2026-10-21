@@ -17,6 +17,12 @@ export function fullDate(ts: number): string {
   return `${d.getFullYear()}.${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`
 }
 
+/** 상세용, 늘 연도까지 — '2026년 8월 22일' */
+export function fullLongDate(ts: number): string {
+  const d = new Date(ts)
+  return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`
+}
+
 /** 상세용 — 올해면 '8월 22일', 아니면 '2025년 8월 22일' */
 export function longDate(ts: number, now: Date = new Date()): string {
   const d = new Date(ts)

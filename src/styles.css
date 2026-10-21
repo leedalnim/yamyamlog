@@ -147,6 +147,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
+  /* 한글은 기본값이면 글자 단위로 끊겨 '산양 / 유 양갱' 처럼 단어가 갈린다.
+     띄어쓰기 단위로 끊고, 띄어쓰기 없이 긴 낱말만 칸 끝에서 끊는다 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 button { font-family: inherit; cursor: pointer; }

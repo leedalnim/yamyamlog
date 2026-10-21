@@ -53,8 +53,17 @@ export function displayAge(
 ): string | null {
   const a = ageFrom(cat.birthday, now)
   if (a) return a.short
-  if (cat.ageYears != null) return `${cat.ageYears}살`
+  if (cat.ageYears != null) return legacyAge(cat.ageYears)
   return null
+}
+
+/** 예전에 적어 둔 나이. 6.5 를 '6.5살' 대신 '6살 6개월' 로 */
+function legacyAge(ageYears: number): string {
+  const total = Math.round(ageYears * 12)
+  const years = Math.floor(total / 12)
+  const months = total % 12
+  if (years < 1) return `${months}개월`
+  return months ? `${years}살 ${months}개월` : `${years}살`
 }
 
 /**
@@ -63,7 +72,8 @@ export function displayAge(
  * (1월 1일로 잡으면 5살이 '5살 7개월' 로 늘어나 있어 이상해 보인다)
  */
 export function guessBirthday(ageYears: number, now: Date = new Date()): string {
-  const y = now.getFullYear() - Math.floor(ageYears)
-  const m = String(now.getMonth() + 1).padStart(2, '0')
-  return `${y}-${m}-01`
+  // 6.5살처럼 소수로 적어 둔 아이는 반년(6개월)까지 거슬러 간다
+  const d = new Date(now.getFullYear(), now.getMonth() - Math.round(ageYears * 12), 1)
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  return `${d.getFullYear()}-${m}-01`
 }

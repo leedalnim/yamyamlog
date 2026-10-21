@@ -251,7 +251,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   </div>
                   <div className="panel-row">
                     <ReactionIcon level="good" size={20} />
-                    잘먹음 <b className="tabular">{counts.good}개</b>
+                    잘 먹음 <b className="tabular">{counts.good}개</b>
                   </div>
                   <div className="panel-row">
                     <ReactionIcon level="ok" size={20} />
@@ -259,7 +259,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   </div>
                   <div className="panel-row">
                     <ReactionIcon level="bad" size={20} />
-                    안먹음 <b className="tabular">{counts.bad}개</b>
+                    안 먹음 <b className="tabular">{counts.bad}개</b>
                   </div>
                 </>
               )}
