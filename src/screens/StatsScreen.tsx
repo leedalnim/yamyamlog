@@ -7,7 +7,7 @@ import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
 import { splitBase } from '../lib/base'
 import { fullDate } from '../lib/date'
-import { IconChart, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
+import { IconChart, IconHeartBroken, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
 import noPhotoUrl from '../assets/no-photo.svg'
@@ -325,7 +325,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                     <div className="record-info">
                       <div className="record-name">{r.snack.name}</div>
                     </div>
-                    <span className="avoid-note"><IconHeart size={13} /> {cat.name}가 안 먹어요</span>
+                    <span className="avoid-note"><IconHeartBroken size={13} /> {cat.name}가 안 먹어요</span>
                   </button>
                 ))}
               </div>
@@ -450,7 +450,6 @@ function Top3Card({
         {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
       </div>
       <div className="top3-name">{snack.name}</div>
-      <span className="top3-love"><IconHeart size={12} /> 좋아해요</span>
     </button>
   )
 }

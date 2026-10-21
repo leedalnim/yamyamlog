@@ -40,7 +40,6 @@
   /* 통계 패널·말풍선·기타 */
   --panel: #fffdf8;
   --blank-bub: #f6f4ef;
-  --love-bg: #f7e3ea; --love-ink: #bc5c81;
   --promo-pill-bg: #ffffff; --promo-pill-ink: #6b6259;
   --accent-2-ink: #ffffff;
   /* 칩을 채울 때 쓰는 진한 파랑 — 흰 글자가 읽히려면 이만큼 어두워야 한다 */
@@ -116,7 +115,6 @@ html[data-mode="dark"] {
   /* 통계 패널·말풍선·기타 */
   --panel: #332e25;
   --blank-bub: #2f2b23;
-  --love-bg: #432934; --love-ink: #e0a0b8;
   --promo-pill-bg: #3d372c; --promo-pill-ink: #ddd2c1;
   /* 밝은 파랑 위에 흰 글씨는 다크에서 눈부시다. 짙은 남색으로 앉힌다 */
   --accent-2-ink: #10243a;

@@ -79,6 +79,13 @@ export const IconHeart = ({ size = 24, className }: P) => (
     <path d="M12 20.6C12 20.6 2.40002 14.6 2.40002 8.40005C2.40002 5.20005 4.80002 2.80005 7.70002 2.80005C9.60002 2.80005 11.2 3.90005 12 5.20005C12.8 3.90005 14.4 2.80005 16.3 2.80005C19.2 2.80005 21.6 5.20005 21.6 8.40005C21.6 14.6 12 20.6 12 20.6Z" fill="#F1503C"/>
   </svg>
 )
+/** 피하는 것 — 하트 가운데를 지그재그로 가른다. 금은 카드 바탕색이라 다크에서도 맞는다 */
+export const IconHeartBroken = ({ size = 24, className }: P) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <path d="M12 20.6C12 20.6 2.4 14.6 2.4 8.4C2.4 5.2 4.8 2.8 7.7 2.8C9.6 2.8 11.2 3.9 12 5.2C12.8 3.9 14.4 2.8 16.3 2.8C19.2 2.8 21.6 5.2 21.6 8.4C21.6 14.6 12 20.6 12 20.6Z" fill="#F1503C"/>
+    <path d="M12.6 4.6L10.4 9.4L13.6 12L10.9 15.6L12 20" style={{ stroke: 'var(--surface)' }} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
 export const IconPencil = ({ size = 24, className }: P) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
     <path d="M19.45 11.65V18.45C19.45 19.35 18.75 20.05 17.85 20.05H4.25002C3.35002 20.05 2.65002 19.35 2.65002 18.45V4.44998C2.65002 3.54998 3.35002 2.84998 4.25002 2.84998H11.45" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"/>
