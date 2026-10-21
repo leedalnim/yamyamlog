@@ -432,11 +432,12 @@ function SnackCard({
           <div className="snack-name-row">
             <span className="snack-name">{snack.name}</span>
             {/* 종류·재료는 칩 대신 옅은 글자로 — 알약이 두 줄로 겹치면 시끄럽다 */}
-            <span className="snack-meta">
-              {snack.discontinued && <b className="meta-retired">단종</b>}
-              {/* 대표 원료 하나만. 종류(파우치 등)까지 붙이면 길고 산만했다 */}
-              {splitBase(snack.base)[0] ?? ''}
-            </span>
+            {/* 원료는 뺐다 — 별 옆에 붙어 이름과 시선을 다퉜다. 상세에서 본다 */}
+            {snack.discontinued && (
+              <span className="snack-meta">
+                <b className="meta-retired">단종</b>
+              </span>
+            )}
           </div>
           <ReactionFaces cats={cats} reactions={snack.reactions} variant="pill" />
         </div>

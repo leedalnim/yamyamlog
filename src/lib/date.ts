@@ -11,6 +11,12 @@ export function shortDate(ts: number, now: Date = new Date()): string {
   return d.getFullYear() === now.getFullYear() ? md : `${d.getFullYear()}.${md}`
 }
 
+/** 늘 연도까지 — '2026.9.05'. 통계 기록처럼 해를 넘겨 쌓이는 목록용 */
+export function fullDate(ts: number): string {
+  const d = new Date(ts)
+  return `${d.getFullYear()}.${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`
+}
+
 /** 상세용 — 올해면 '8월 22일', 아니면 '2025년 8월 22일' */
 export function longDate(ts: number, now: Date = new Date()): string {
   const d = new Date(ts)

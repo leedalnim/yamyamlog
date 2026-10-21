@@ -6,7 +6,7 @@ import { listSnacks } from '../data/repo'
 import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
 import { splitBase } from '../lib/base'
-import { shortDate } from '../lib/date'
+import { fullDate } from '../lib/date'
 import { IconChart, IconHeart, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import roomBgUrl from '../assets/room-bg.jpg'
@@ -473,7 +473,8 @@ function RecordRow({
       <div className="record-info">
         <div className="record-name">{snack.name}</div>
         <div className="record-sub muted">
-          {shortDate(snack.createdAt)}
+          {/* 해를 넘겨 쌓이므로 올해 기록도 연도부터 */}
+          {fullDate(snack.createdAt)}
           {splitBase(snack.base).map((b) => ` · ${b}`).join('')}
         </div>
       </div>
