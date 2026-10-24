@@ -55,5 +55,13 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Pages 설정이 '브랜치에서 배포'라 push 마다 GitHub 기본 배포(Jekyll,
+      # 빌드 안 된 원본)도 같이 돈다. 나중에 끝난 쪽이 사이트를 덮어쓰는데,
+      # 2026-10-21 05:52 에 둘이 같은 초에 끝나 원본이 이겨 폰이 옛 버전에
+      # 멈췄다. 기본 배포는 push 뒤 1분 30초 안에 끝나므로, 우리 배포를
+      # 조금 늦춰 늘 마지막에 덮어쓰게 한다.
+      # (Settings → Pages → Source 를 'GitHub Actions' 로 바꾸면 필요 없다)
+      - if: github.event_name == 'push'
+        run: sleep 75
       - id: deployment
         uses: actions/deploy-pages@v4
