@@ -26,6 +26,19 @@ export async function setupPwaUpdate(onNeedRefresh: (apply: () => void) => void)
     const { registerSW } = await import('virtual:pwa-register')
     const updateSW = registerSW({
       immediate: true,
+      // 브라우저는 페이지를 새로 열 때만 새 버전을 찾는다. 홈 화면 앱은
+      // '껐다 켜도' 실제로는 뒤에 살아 있다가 돌아오는 경우가 많아, 며칠씩
+      // 옛 버전에 머물렀다. 앱으로 돌아올 때마다(30분에 한 번까지) 직접 찾는다.
+      onRegisteredSW(_url, reg) {
+        if (!reg) return
+        let last = Date.now()
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState !== 'visible') return
+          if (Date.now() - last < 30 * 60 * 1000) return
+          last = Date.now()
+          void reg.update().catch(() => {})
+        })
+      },
       onNeedRefresh() {
         // 지금은 서비스워커가 스스로 인계받으므로 여기까지 오는 일이 드물지만,
         // 혹시 대기 상태로 남으면 즉시 교체한다. 위 controllerchange 리스너가
