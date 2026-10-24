@@ -4,7 +4,7 @@
  * 해가 바뀌면 '9.05' 만으로는 올해 건지 작년 건지 알 수 없다.
  * 올해가 아닐 때만 연도를 붙인다.
  */
-import { fullDate, fullLongDate, longDate, shortDate } from '../dist-test/date.js'
+import { fullDate, fullLongDate, localBuildTime, longDate, shortDate } from '../dist-test/date.js'
 
 let pass = 0, fail = 0
 const eq = (name, got, want) => {
@@ -18,6 +18,10 @@ const NOW = new Date(2026, 8, 5) // 2026-09-05
 console.log('목록용')
 eq('fullDate 는 올해도 연도부터', fullDate(T(2026, 9, 5)), '2026.9.05')
 eq('fullLongDate 는 올해도 연도부터', fullLongDate(T(2026, 8, 22)), '2026년 8월 22일')
+// 빌드 시각: UTC 로 찍힌 값을 이 기기 시간대로 (테스트는 TZ=Asia/Seoul 로 돈다)
+eq('빌드 시각은 한국 시간으로', localBuildTime('2026-10-24 13:36'), '2026-10-24 22:36')
+eq('날짜가 넘어가도', localBuildTime('2026-10-24 20:10'), '2026-10-25 05:10')
+eq('모르는 형식은 그대로', localBuildTime('dev'), 'dev')
 eq('올해면 월.일만', shortDate(T(2026, 9, 5), NOW), '9.05')
 eq('일자는 두 자리로', shortDate(T(2026, 9, 5), NOW), '9.05')
 eq('작년이면 연도까지', shortDate(T(2025, 9, 5), NOW), '2025.9.05')

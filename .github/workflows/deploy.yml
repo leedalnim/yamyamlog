@@ -9,6 +9,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write   # 사이트가 덮여 있으면 배포를 한 번 더 돌린다 (맨 아래)
 
 concurrency:
   group: pages
@@ -17,6 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      js: ${{ steps.stamp.outputs.js }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,6 +50,10 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      # 이번 빌드의 대표 파일 이름(해시 포함). 배포 뒤 실제 사이트가 이걸
+      # 내주는지 확인하는 데 쓴다.
+      - id: stamp
+        run: echo "js=$(grep -o 'assets/index-[^\"]*\.js' dist/index.html | head -1)" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: build
@@ -65,3 +72,27 @@ jobs:
         run: sleep 75
       - id: deployment
         uses: actions/deploy-pages@v4
+      # 재발 방지: '배포 성공' 표시만 믿지 않고 실제 사이트를 열어 본다.
+      # 3분 동안 이번 빌드가 안 보이면(기본 배포가 덮었으면) 배포를 한 번 더
+      # 돌린다. 손으로 돌린 배포에는 기본 배포가 따라오지 않아 그 판이 이긴다.
+      # 다시 돌린 판에서도 안 보이면 더 돌리지 않고 실패로 남긴다(무한 반복 방지).
+      - name: 실제 사이트 확인
+        env:
+          URL: ${{ steps.deployment.outputs.page_url }}
+          JS: ${{ needs.build.outputs.js }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 18); do
+            # 캐시를 피하려고 매번 다른 주소로 연다
+            if curl -fsSL "${URL}?check=$(date +%s%N)" | grep -q "$JS"; then
+              echo "확인: 사이트가 이번 빌드($JS)를 내준다"; exit 0
+            fi
+            sleep 10
+          done
+          echo "::warning::사이트가 이번 빌드($JS)를 내주지 않는다 — 기본 배포가 덮은 것 같다"
+          if [ "${{ github.event_name }}" = "push" ]; then
+            gh workflow run deploy.yml --repo "${{ github.repository }}" --ref main
+            echo "배포를 한 번 더 돌렸다"
+          else
+            exit 1
+          fi
