@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BaseChooser, KindChooser, ReactionEditor, useCatsAndGroups } from '../components/common'
+import { BaseChooser, KindChooser, ReactionEditor, useCatsAndGroups, usePhotoURL } from '../components/common'
+import { Highlight, NaverMark, ShopPhotoSheet, ShopRow, useShopSearch } from '../components/shop'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_META } from '../data/types'
 import { addSnack, listSnacks, savePhoto, updateSnack } from '../data/repo'
@@ -8,6 +9,8 @@ import { joinBase, splitBase } from '../lib/base'
 import { shortDate } from '../lib/date'
 import { nameKey, sameProduct } from '../lib/name'
 import { IconCamera, IconChevronDown, IconChevronLeft } from '../components/icons'
+import { fetchShopImage, shopState } from '../lib/naver'
+import { toDraft, type ShopItem } from '../lib/shop'
 
 export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: () => void }) {
   const { cats, groups } = useCatsAndGroups()
@@ -44,7 +47,83 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
     if (mergeInto && !sameProduct(name, mergeInto.name)) setMergeInto(null)
   }, [name, mergeInto])
 
-  const showDupHint = !!dup && !mergeInto && dismissedKey !== nameKey(name)
+  // ---- 이름을 치는 동안: 내 기록 + 네이버 쇼핑 ----
+  const [suggestOpen, setSuggestOpen] = useState(false)
+  const typed = nameKey(name)
+  const suggesting = suggestOpen && typed.length >= 2 && !mergeInto
+  // 친 낱말이 모두 들어 있으면 — '조공 산양' 은 '조공 네덜란드 산양유 양갱' 과 맞는다
+  const myMatches = useMemo(() => {
+    if (!suggesting) return []
+    const words = name.split(/\s+/).map(nameKey).filter(Boolean)
+    return existing.filter((s) => words.every((w) => nameKey(s.name).includes(w))).slice(0, 3)
+  }, [existing, name, suggesting])
+  const shop = useShopSearch(name, suggesting)
+  const shopItems = shop.items ?? []
+  const showSuggest =
+    suggesting && (myMatches.length > 0 || shopItems.length > 0 || (shop.loading && shopState() === 'ok'))
+
+  // 네이버 쇼핑에서 채웠을 때 — '되돌리기'용으로 채우기 전 값을 들고 있는다
+  type Snap = { name: string; kind: string; base: string; memo: string; photoBlob?: Blob; photoPreview?: string }
+  const [filled, setFilled] = useState<{ item: ShopItem; items: ShopItem[]; snap: Snap } | null>(null)
+  const [photoLoading, setPhotoLoading] = useState(false)
+  const [photoNote, setPhotoNote] = useState('')
+  const [photoSheet, setPhotoSheet] = useState(false)
+  const photoReq = useRef<string | null>(null)
+
+  async function loadShopPhoto(url: string, fallback?: { blob?: Blob; preview?: string }) {
+    photoReq.current = url
+    setPhotoNote('')
+    setPhotoLoading(true)
+    setPhotoBlob(undefined)
+    setPhotoPreview(url) // 받는 동안 쇼핑 사진을 바로 보여준다
+    const blob = await fetchShopImage(url)
+    if (photoReq.current !== url) return // 그사이 다른 걸 골랐다
+    setPhotoLoading(false)
+    if (blob) {
+      setPhotoBlob(blob)
+      setPhotoPreview(URL.createObjectURL(blob))
+    } else {
+      setPhotoBlob(fallback?.blob)
+      setPhotoPreview(fallback?.preview)
+      setPhotoNote('사진은 가져오지 못했어요. 직접 찍거나 다른 사진을 골라 주세요.')
+    }
+  }
+
+  function pickShop(item: ShopItem) {
+    const d = toDraft(item)
+    const snap: Snap = { name, kind, base, memo, photoBlob, photoPreview }
+    setFilled({ item, items: shopItems, snap })
+    setName(d.name)
+    if (d.kind) setKind(d.kind)
+    if (d.base.length) setBase(joinBase([...splitBase(base), ...d.base]))
+    if (d.memo && !memo.trim()) setMemo(d.memo)
+    setSuggestOpen(false)
+    setMoreOpen(true)
+    if (d.image) void loadShopPhoto(d.image, { blob: photoBlob, preview: photoPreview })
+  }
+
+  function undoShop() {
+    if (!filled) return
+    const s = filled.snap
+    photoReq.current = null
+    setPhotoLoading(false)
+    setPhotoNote('')
+    setName(s.name)
+    setKind(s.kind)
+    setBase(s.base)
+    setMemo(s.memo)
+    setPhotoBlob(s.photoBlob)
+    setPhotoPreview(s.photoPreview)
+    setFilled(null)
+  }
+
+  function pickMine(s: Snack) {
+    setName(s.name)
+    startMerge(s)
+    setSuggestOpen(false)
+  }
+
+  const showDupHint = !!dup && !mergeInto && dismissedKey !== nameKey(name) && !suggestOpen
 
   function startMerge(target: Snack) {
     setMergeInto(target)
@@ -63,7 +142,9 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
     const file = e.target.files?.[0]
     if (!file) return
     const blob = await compressImage(file)
-    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    photoReq.current = null
+    setPhotoLoading(false)
+    setPhotoNote('')
     setPhotoBlob(blob)
     setPhotoPreview(URL.createObjectURL(blob))
     e.target.value = '' // 같은 파일 다시 선택 가능하게
@@ -101,7 +182,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
     }
   }
 
-  const canSave = name.trim().length > 0 || Object.keys(reactions).length > 0 || !!photoBlob
+  const canSave = (name.trim().length > 0 || Object.keys(reactions).length > 0 || !!photoBlob) && !photoLoading
 
   return (
     <div className="screen">
@@ -112,7 +193,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
         </button>
         <h1 style={{ fontSize: 19 }}>{mergeInto ? '기록에 더하기' : '새 기록'}</h1>
         <button className="save-top" disabled={!canSave || saving} onClick={save}>
-          {saving ? '저장중…' : '저장'}
+          {saving ? '저장중…' : photoLoading ? '사진 받는 중' : '저장'}
         </button>
       </div>
 
@@ -127,8 +208,47 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
           className="input"
           placeholder="예: 챠오 츄르 참치맛"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value)
+            setSuggestOpen(true)
+          }}
+          onFocus={() => setSuggestOpen(true)}
+          // 목록을 누를 틈을 준다 (목록 버튼은 mousedown 을 막아 포커스를 지킨다)
+          onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
         />
+
+        {showSuggest && (
+          <div className="nv-drop">
+            {myMatches.length > 0 && (
+              <>
+                <div className="nv-h"><span>내 기록</span></div>
+                {myMatches.map((s) => (
+                  <MyRow key={s.id} snack={s} query={name} summary={dupSummary(s)} onPick={() => pickMine(s)} />
+                ))}
+              </>
+            )}
+            {myMatches.length > 0 && (shopItems.length > 0 || shop.loading) && <div className="nv-sep" />}
+            {(shopItems.length > 0 || shop.loading) && (
+              <>
+                <div className="nv-h">
+                  <span><NaverMark /> 네이버 쇼핑</span>
+                  <span className="nv-h-r">{shop.loading && shopItems.length === 0 ? '찾는 중…' : '누르면 정보가 채워져요'}</span>
+                </div>
+                {shopItems.slice(0, 5).map((it, i) => (
+                  <ShopRow key={i + it.link} item={it} query={name} onPick={() => pickShop(it)} />
+                ))}
+              </>
+            )}
+          </div>
+        )}
+
+        {filled && (
+          <div className="nv-filled">
+            <NaverMark />
+            <span>네이버 쇼핑 정보로 채웠어요 · 고쳐도 돼요</span>
+            <button onClick={undoShop}>되돌리기</button>
+          </div>
+        )}
 
         {showDupHint && dup && (
           <div className="dup-hint">
@@ -181,11 +301,21 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
             <div className="field">
               <label>사진</label>
               {photoPreview ? (
-                <div className="photo-box">
-                  <img src={photoPreview} alt="제품 사진" />
+                <div className="photo-box nv-photo">
+                  <img src={photoPreview} alt="제품 사진" referrerPolicy="no-referrer" />
+                  {filled && !photoNote && (
+                    <span className="nv-tag">{photoLoading ? '사진 받는 중…' : '네이버 쇼핑 사진'}</span>
+                  )}
                   <div className="photo-actions">
-                    {/* 보관함에서도 고를 수 있어 '다시 찍기'는 맞지 않는다 */}
-                    <button className="mini-btn" onClick={() => fileRef.current?.click()}>사진 바꾸기</button>
+                    {filled && filled.items.some((it) => it.image) ? (
+                      <>
+                        <button className="mini-btn" onClick={() => setPhotoSheet(true)}>다른 사진 고르기</button>
+                        <button className="mini-btn" onClick={() => fileRef.current?.click()}>직접 찍기</button>
+                      </>
+                    ) : (
+                      // 보관함에서도 고를 수 있어 '다시 찍기'는 맞지 않는다
+                      <button className="mini-btn" onClick={() => fileRef.current?.click()}>사진 바꾸기</button>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -194,6 +324,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
                   사진 추가하기
                 </button>
               )}
+              {photoNote && <div className="nv-err">{photoNote}</div>}
             </div>
             <div className="field">
               <label>종류</label>
@@ -215,6 +346,37 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
           </div>
         )}
       </div>
+
+      {photoSheet && filled && (
+        <ShopPhotoSheet
+          items={filled.items}
+          title={filled.snap.name.trim() || name}
+          onClose={() => setPhotoSheet(false)}
+          onPick={(blob) => {
+            photoReq.current = null
+            setPhotoLoading(false)
+            setPhotoNote('')
+            setPhotoBlob(blob)
+            setPhotoPreview(URL.createObjectURL(blob))
+            setPhotoSheet(false)
+          }}
+        />
+      )}
     </div>
+  )
+}
+
+/** 이름을 치는 동안 뜨는 '내 기록' 한 줄 — 누르면 그 기록에 반응을 더한다 */
+function MyRow({ snack, query, summary, onPick }: { snack: Snack; query: string; summary: string; onPick: () => void }) {
+  const url = usePhotoURL(snack.photoId)
+  return (
+    <button type="button" className="nv-row" onMouseDown={(e) => e.preventDefault()} onClick={onPick}>
+      {url ? <img src={url} alt="" /> : <span className="nv-noimg" />}
+      <span className="nv-txt">
+        <span className="nv-t"><Highlight text={snack.name} query={query} /></span>
+        <span className="nv-s">{summary}</span>
+      </span>
+      <span className="nv-mine">반응 더하기</span>
+    </button>
   )
 }

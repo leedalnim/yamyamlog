@@ -21,8 +21,32 @@ SQL Editor에 파일 내용을 붙여넣고 Run. **번호 순서대로** 실행�
 
 ## 지금 남은 것
 
-없다. 앱이 쓰는 테이블·컬럼·사진 보관함·코드 비교가 모두 서버에 있다.
+- 네이버 쇼핑 검색 설정 (아래 '네이버 쇼핑 검색') — 안 해도 앱은 그대로 동작한다
+
+그 밖에는 없다. 앱이 쓰는 테이블·컬럼·사진 보관함·코드 비교가 모두 서버에 있다.
 헷갈리면 `00-verify.sql` 을 돌려서 지금 상태를 눈으로 확인하면 된다.
+
+## 네이버 쇼핑 검색 (서버 함수 `naver-shop`)
+
+새 기록·기록 수정에서 네이버 쇼핑 상품을 찾아 이름·사진·종류·원료·메모를
+채운다. 네이버 열쇠는 앱에 넣으면 누구나 볼 수 있으므로, 서버 함수가
+열쇠를 들고 대신 검색한다. 설정 전에는 앱이 이 기능을 조용히 숨긴다.
+
+1. **네이버 열쇠 받기** — https://developers.naver.com/apps/#/register
+   - 애플리케이션 이름: 얌얌로그
+   - 사용 API: **검색**
+   - 비로그인 오픈 API 서비스 환경: **WEB 설정** → `https://leedalnim.github.io`
+   - 등록하면 **Client ID** 와 **Client Secret** 이 나온다
+2. **Supabase 비밀 값 넣기** — Edge Functions → Secrets
+   - `NAVER_CLIENT_ID` = Client ID
+   - `NAVER_CLIENT_SECRET` = Client Secret
+3. **함수 올리기** — Edge Functions → Deploy a new function → Via Editor
+   - 이름: `naver-shop` (정확히 이 이름)
+   - 내용: `functions/naver-shop/index.ts` 전체를 붙여넣고 Deploy
+4. **JWT 확인 끄기** — 함수 `naver-shop` → Details → *Verify JWT with legacy secret* 끔
+   - 함수가 안에서 직접 '우리 앱으로 로그인한 기기인지' 확인한다
+
+검색은 하루 25,000번까지 무료. 함수 코드를 고치면 3번을 다시 하면 된다.
 
 ## 참여가 안 될 때
 
