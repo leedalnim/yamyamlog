@@ -1540,7 +1540,8 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   flex: none;
   margin-left: auto;
   padding: 3px;
-  border-radius: 10px;
+  /* 앱의 다른 칩(종류·이름·반응 글자)이 모두 알약이라 맞춘다 */
+  border-radius: 999px;
   background: var(--surface-2);
 }
 .rx-chip {
@@ -1550,7 +1551,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   font-weight: 700;
   padding: 5px 8px;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   background: none;
   color: var(--muted);
   white-space: nowrap;
