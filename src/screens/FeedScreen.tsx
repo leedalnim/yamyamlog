@@ -24,6 +24,12 @@ import noResultCatUrl from '../assets/no-result.png'
 // 흰 덩어리로 남지 않으려면 페이지 배경색을 따라가야 한다. 그러려면
 // <img> 가 아니라 문서 안에 직접 그려야 CSS 변수가 닿는다.
 import logoRaw from '../assets/logo.svg?raw'
+
+// 로고 구멍(배경색)을 모드별 배경색으로 채운 그림 두 장 — styles.css 의 --bg 와 같은 값
+const logoUrl = (bg: string) =>
+  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(logoRaw.split('var(--bg)').join(bg))
+const LOGO_LIGHT = logoUrl('#fffdfb')
+const LOGO_DARK = logoUrl('#232019')
 import noPhotoUrl from '../assets/no-photo.svg'
 import { matches } from '../lib/hangul'
 import { splitBase } from '../lib/base'
@@ -197,7 +203,11 @@ export function FeedScreen({
         ) : (
           <>
             <h1 className="logo" aria-label="얌얌로그">
-              <span className="logo-img" role="img" dangerouslySetInnerHTML={{ __html: logoRaw }} />
+              {/* 글자 안으로 그려 넣으면(inline SVG) 아이폰에서 로고만 뿌옇게 보였다.
+                  그림(img)으로 넣으면 기기 해상도대로 그린다. 구멍 색(배경색)은 그림
+                  안에서 CSS 변수를 못 읽으므로 밝게·어둡게 두 장을 두고 갈아 끼운다 */}
+              <img className="logo-img logo-light" src={LOGO_LIGHT} width={138} height={32} alt="" />
+              <img className="logo-img logo-dark" src={LOGO_DARK} width={138} height={32} alt="" />
             </h1>
             <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
               <IconSearch size={22} />

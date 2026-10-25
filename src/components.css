@@ -797,8 +797,10 @@
 .react-pill img, .week-cell img, .panel-row img, .top3-thumb img.face, .cat-paw img { flex: none; }
 
 /* 가이드 로고 이미지 */
-.logo-img { height: 32px; display: block; line-height: 0; }
-.logo-img svg { height: 32px; width: auto; display: block; }
+.logo-img { height: 32px; width: auto; display: block; }
+.logo-dark { display: none; }
+html[data-mode="dark"] .logo-light { display: none; }
+html[data-mode="dark"] .logo-dark { display: block; }
 
 /* ===== 플랫 정리: 중첩 입체감 제거 ===== */
 .input, .textarea { box-shadow: none; border: 1px solid var(--line); }
