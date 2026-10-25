@@ -267,15 +267,11 @@ export function FeedScreen({
         </button>
       </div>
 
-      {/* 오늘의 기록 유도 배너 — 일러스트 + 실제 텍스트 */}
-      <button className="promo-banner promo2" onClick={onAdd}>
-        <div className="promo-text">
-          <div className="promo-title">오늘은<br />뭘 먹어볼까요?</div>
-          <div className="promo-sub-row">
-            <span className="promo-sub">새로 먹은 걸 기록해보세요</span>
-            <span className="promo-arrow-dot"><IconChevronRight size={12} /></span>
-          </div>
-        </div>
+      {/* 오늘의 기록 유도 배너 — 한 줄. 매일 여는 화면에서 큰 카드가 최근 기록을
+          아래로 밀어냈다. 글자는 왼쪽, 일러스트는 지금처럼 오른쪽 */}
+      <button className="promo-banner promo2 promo-line" onClick={onAdd}>
+        <span className="promo-title">오늘 먹은 거 기록하기</span>
+        <span className="promo-arrow-dot"><IconChevronRight size={12} /></span>
         <img src={bannerCatUrl} alt="" className="promo-cat" />
       </button>
 

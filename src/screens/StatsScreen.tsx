@@ -269,6 +269,59 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             </div>
           </div>
 
+          {/* 기록 리스트 — 가장 자주 보는 곳이라 그림 패널 바로 아래에 둔다 */}
+          <section className="stat-section" id="record-list-sec">
+            {/* 제목과 필터를 한 줄에 — 목록 위 공간을 줄이 두 개나 먹지 않게 */}
+            <div className="stat-title-row">
+              <h2 className="stat-title">{cat.name}의 기록</h2>
+              {/* 개수를 같이 보여줘야 누르기 전에 몇 개인지 감이 온다 */}
+              {records.length > 0 && (
+              <div className="rx-filter">
+                {([
+                  ['', '전체', counts.total],
+                  ['good', REACTION_META.good.label, counts.good],
+                  ['ok', REACTION_META.ok.label, counts.ok],
+                  ['bad', REACTION_META.bad.label, counts.bad],
+                ] as const).map(([lv, text, n]) => (
+                  <button
+                    key={lv || 'all'}
+                    className={'rx-chip' + (levelFilter === lv ? ' on' : '')}
+                    data-level={lv || undefined}
+                    onClick={() => setLevelFilter(lv as '' | ReactionLevel)}
+                  >
+                    {text} <i>{n}</i>
+                  </button>
+                ))}
+              </div>
+              )}
+            </div>
+
+            <div className="card record-list">
+              {records.length === 0 ? (
+                <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
+                  아직 {cat.name} 반응이 기록된 게 없어요.
+                </div>
+              ) : shownRecords.length === 0 ? (
+                <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
+                  {levelFilter ? REACTION_META[levelFilter].label : ''}으로 기록된 게 없어요.
+                </div>
+              ) : null}
+              {(showAllRecords ? shownRecords : shownRecords.slice(0, RECORDS_PREVIEW)).map((r) => (
+                <RecordRow
+                  key={r.snack.id}
+                  snack={r.snack}
+                  level={r.level}
+                  onOpen={() => setViewing(r.snack)}
+                />
+              ))}
+              {shownRecords.length > RECORDS_PREVIEW && (
+                <button className="records-more" onClick={() => setShowAllRecords((v) => !v)}>
+                  {showAllRecords ? '접기' : `${shownRecords.length - RECORDS_PREVIEW}개 더 보기`}
+                </button>
+              )}
+            </div>
+          </section>
+
           {/* 좋아하는 것 TOP 3 */}
           {top3.length > 0 && (
             <section className="stat-section">
@@ -332,58 +385,6 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
             </section>
           )}
 
-          {/* 기록 리스트 */}
-          <section className="stat-section" id="record-list-sec">
-            {/* 제목과 필터를 한 줄에 — 목록 위 공간을 줄이 두 개나 먹지 않게 */}
-            <div className="stat-title-row">
-              <h2 className="stat-title">{cat.name}의 기록</h2>
-              {/* 개수를 같이 보여줘야 누르기 전에 몇 개인지 감이 온다 */}
-              {records.length > 0 && (
-              <div className="rx-filter">
-                {([
-                  ['', '전체', counts.total],
-                  ['good', REACTION_META.good.label, counts.good],
-                  ['ok', REACTION_META.ok.label, counts.ok],
-                  ['bad', REACTION_META.bad.label, counts.bad],
-                ] as const).map(([lv, text, n]) => (
-                  <button
-                    key={lv || 'all'}
-                    className={'rx-chip' + (levelFilter === lv ? ' on' : '')}
-                    data-level={lv || undefined}
-                    onClick={() => setLevelFilter(lv as '' | ReactionLevel)}
-                  >
-                    {text} <i>{n}</i>
-                  </button>
-                ))}
-              </div>
-              )}
-            </div>
-
-            <div className="card record-list">
-              {records.length === 0 ? (
-                <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
-                  아직 {cat.name} 반응이 기록된 게 없어요.
-                </div>
-              ) : shownRecords.length === 0 ? (
-                <div className="muted" style={{ fontSize: 13.5, padding: '14px 16px' }}>
-                  {levelFilter ? REACTION_META[levelFilter].label : ''}으로 기록된 게 없어요.
-                </div>
-              ) : null}
-              {(showAllRecords ? shownRecords : shownRecords.slice(0, RECORDS_PREVIEW)).map((r) => (
-                <RecordRow
-                  key={r.snack.id}
-                  snack={r.snack}
-                  level={r.level}
-                  onOpen={() => setViewing(r.snack)}
-                />
-              ))}
-              {shownRecords.length > RECORDS_PREVIEW && (
-                <button className="records-more" onClick={() => setShowAllRecords((v) => !v)}>
-                  {showAllRecords ? '접기' : `${shownRecords.length - RECORDS_PREVIEW}개 더 보기`}
-                </button>
-              )}
-            </div>
-          </section>
         </>
       )}
     </div>

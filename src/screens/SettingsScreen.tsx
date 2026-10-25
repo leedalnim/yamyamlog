@@ -56,6 +56,8 @@ export function SettingsScreen({
   const fileRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState<'export' | 'import' | null>(null)
   const [note, setNote] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null)
+  // 안내 문단은 한 줄만 보이고 '자세히'를 눌러야 펼쳐진다 — 긴 문단이 화면을 채워 안 읽혔다
+  const [more, setMore] = useState<{ backup?: boolean; share?: boolean }>({})
   const [pending, setPending] = useState<{ data: BackupFile; summary: BackupSummary } | null>(null)
 
   // ── 공유(클라우드) ──────────────────────────────────────────
@@ -279,10 +281,19 @@ export function SettingsScreen({
         <h2 className="stat-title">백업</h2>
         <div className="card" style={{ padding: 16 }}>
           <p className="muted" style={{ margin: '0 0 14px', fontSize: 13.5, lineHeight: 1.7 }}>
-            기록은 이 기기에만 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면
-            사라지니, 가끔 파일로 빼두세요. <b>사진까지 함께</b> 저장됩니다.
-            <br />
-            파일 이름이 항상 같아서, 같은 자리에 저장하면 <b>덮어쓰기 한 개</b>로 유지돼요.
+            {more.backup ? (
+              <>
+                기록은 이 기기에만 저장돼요. 브라우저 데이터를 지우거나 기기를 바꾸면
+                사라지니, 가끔 파일로 빼두세요. <b>사진까지 함께</b> 저장됩니다.
+                <br />
+                파일 이름이 항상 같아서, 같은 자리에 저장하면 <b>덮어쓰기 한 개</b>로 유지돼요.
+              </>
+            ) : (
+              <>
+                기록은 이 기기에만 저장돼요. 가끔 파일로 빼두세요.
+                <button className="more-link" onClick={() => setMore((m) => ({ ...m, backup: true }))}>자세히</button>
+              </>
+            )}
           </p>
 
           <button className="btn btn-primary btn-block" onClick={doExport} disabled={busy !== null}>
@@ -389,8 +400,17 @@ export function SettingsScreen({
           ) : (
             <>
               <p className="muted" style={{ margin: '0 0 14px', fontSize: 13.5, lineHeight: 1.7 }}>
-                두 사람이 <b>같은 기록</b>을 보게 만들어요. 한 사람이 우리집을 만들고,
-                나온 코드를 상대가 넣으면 됩니다.
+                {more.share ? (
+                  <>
+                    두 사람이 <b>같은 기록</b>을 보게 만들어요. 한 사람이 우리집을 만들고,
+                    나온 코드를 상대가 넣으면 됩니다.
+                  </>
+                ) : (
+                  <>
+                    코드 하나로 가족과 같은 기록을 봐요.
+                    <button className="more-link" onClick={() => setMore((m) => ({ ...m, share: true }))}>자세히</button>
+                  </>
+                )}
               </p>
               <button
                 className="btn btn-primary btn-block"

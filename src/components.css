@@ -1155,7 +1155,8 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 }
 .record-thumb img.no-photo { height: 58%; }
 .top3-thumb, .record-thumb { display: flex; align-items: center; justify-content: center; }
-.top3-thumb:has(.no-photo), .record-thumb:has(.no-photo) { background: linear-gradient(140deg, #FBB472, #FA8F45); }
+/* 사진 없는 기록 — 주황이면 반응 색(잘 먹음 주황)과 섞여 읽혀 흐린 회색으로 */
+.top3-thumb:has(.no-photo), .record-thumb:has(.no-photo) { background: var(--thumb-empty); }
 
 /* ===== 히어로 패널: 잘먹음·보통·안먹음 3행 + 기호도 ===== */
 .panel-title { display: block; margin-bottom: 0; }
@@ -1311,7 +1312,7 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 홈 카드: 사진 없는 기록의 츄르 썸네일 ===== */
 .snack-thumb.no-photo-thumb {
-  background: linear-gradient(140deg, #fbb472, #fa8f45);
+  background: var(--thumb-empty);
   border-color: transparent;
   display: flex;
   align-items: center;
@@ -1792,3 +1793,31 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
   border: 1px solid var(--thumb-line);
   box-sizing: border-box;
 }
+
+/* 설정 안내 문단의 '자세히' — 글자처럼 보이는 버튼 */
+.more-link {
+  border: none;
+  background: none;
+  padding: 0 0 0 4px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* 홈 배너 한 줄 — 알약 모양, 글자 왼쪽 · 일러스트는 지금처럼 오른쪽.
+   위의 피그마 겹침 배치(.promo2 display:block, .promo-cat absolute)를 덮어쓴다 */
+.promo2.promo-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 64px;
+  padding: 0 16px 0 20px;
+  border-radius: 999px;
+}
+.promo2.promo-line .promo-title { font-size: 16px; line-height: 1; }
+.promo2.promo-line .promo-arrow-dot { flex: none; }
+.promo2.promo-line .promo-cat { right: 56px; top: 4px; width: auto; height: 74px; }
+/* 사진 없는 기록의 츄르 그림 — 회색 바탕 위에서 보이도록 같은 회색 계열로 한 톤 진하게 */
+.snack-thumb.no-photo-thumb img.no-photo,
+.top3-thumb img.no-photo,
+.record-thumb img.no-photo { filter: grayscale(1) brightness(0.78); }
