@@ -1,0 +1,34 @@
+name: Check link preview
+
+# '링크로 채우기' 점검용 — 손으로만 돌린다.
+# 쇼핑몰 상품 링크에서 미리보기 정보(og:title / og:image)를 서버가 읽어 올 수
+# 있는지 본다. 카톡 미리보기와 같은 정보다. 쇼핑몰마다 봇을 막는 정도가
+# 달라서, 실제 서버(데이터센터)에서 열어 봐야 알 수 있다.
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 상품 링크들 (띄어쓰기로 구분)
+        required: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 미리보기 읽기
+        env:
+          URLS: ${{ inputs.urls }}
+        run: |
+          for url in $URLS; do
+            echo "================ $url"
+            for ua in "kakaotalk-scrap/1.0" "facebookexternalhit/1.1" "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"; do
+              out=$(curl -sL -m 20 -A "$ua" -H 'Accept-Language: ko-KR,ko;q=0.9' -w '\n__STATUS__ %{http_code} %{url_effective}' "$url" || true)
+              status=$(printf '%s' "$out" | grep -o '__STATUS__.*' | tail -1)
+              title=$(printf '%s' "$out" | grep -io '<meta[^>]*og:title[^>]*>' | head -1)
+              image=$(printf '%s' "$out" | grep -io '<meta[^>]*og:image[^>]*>' | head -1)
+              echo "-- UA: ${ua:0:24}"
+              echo "   $status"
+              echo "   제목: ${title:-(없음)}"
+              echo "   사진: ${image:-(없음)}"
+            done
+          done
