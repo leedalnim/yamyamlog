@@ -9,6 +9,20 @@ import { splitBase } from '../lib/base'
 import { fullDate } from '../lib/date'
 import { IconChart, IconHeartBroken, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
+import heroTangja from '../assets/hero/tangja.webp'
+import heroYuja from '../assets/hero/yuja.webp'
+import heroKong from '../assets/hero/kong.webp'
+import heroNamul from '../assets/hero/namul.webp'
+
+/** 통계 맨 위 장면 — 고른 냥이 모습으로. 새로 추가한 냥이는 기본 그림 */
+const HERO_BY_CAT: Record<string, string> = {
+  'c-tangja': heroTangja,
+  'c-yuja': heroYuja,
+  'c-kong': heroKong,
+  'c-namul': heroNamul,
+}
+const HERO_BY_NAME: Record<string, string> = { 탱자: heroTangja, 유자: heroYuja, 콩이: heroKong, 콩: heroKong, 나물이: heroNamul, 나물: heroNamul }
+const heroFor = (c: { id: string; name: string }) => HERO_BY_CAT[c.id] ?? HERO_BY_NAME[c.name.trim()] ?? heroUrl
 import roomBgUrl from '../assets/room-bg.jpg'
 import noPhotoUrl from '../assets/no-photo.svg'
 import rank1Url from '../assets/badges/rank1.png'
@@ -227,7 +241,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
           {/* 히어로 — 냥이 장면 + 오늘 상태 패널 (가이드 구조) */}
           <div className="stat-hero" style={{ backgroundImage: `url(${roomBgUrl})` }}>
             <div className="stat-hero-scene">
-              <img src={heroUrl} alt="" className="hero-img" />
+              <img src={heroFor(cat)} alt="" className="hero-img" key={cat.id} />
             </div>
             <div className="stat-hero-panel">
               {/* 제목('탱자의 요즘 상태')은 뺐다 — 위 탭이 이미 누구인지 말해 주고,
