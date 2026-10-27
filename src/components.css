@@ -1038,8 +1038,18 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .cat-row { width: 100%; background: none; border: none; font-family: inherit; color: inherit; cursor: pointer; }
 .cat-row .record-info { text-align: left; }
 .cat-row-edit { color: var(--muted); line-height: 0; flex: none; margin-left: 8px; }
-.cat-edit-row { display: flex; gap: 12px; }
-.cat-edit-row .field { flex: 1; }
+/* 생년월일·몸무게 두 칸. 아이폰은 날짜 칸을 자기 모양(가운데 정렬, 다른 높이,
+   더 넓은 최소 폭)으로 그려서 옆 몸무게 칸을 밀고 겹쳤다. 반반 칸에 가두고
+   (min-width: 0) 기본 모양을 끈 뒤 두 칸 높이를 똑같이 맞춘다. */
+.cat-edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cat-edit-row .field { min-width: 0; }
+.cat-edit-row .input {
+  height: 50px; min-width: 0; max-width: 100%; line-height: normal;
+  -webkit-appearance: none; appearance: none;
+}
+.cat-edit-row input[type="date"] { display: block; text-align: left; }
+.cat-edit-row input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+.cat-edit-row input[type="date"]::-webkit-datetime-edit { padding: 0; }
 .cat-edit-hint { font-size: 12.5px; margin: -6px 0 16px; }
 
 /* ===== 반응 선택 버튼: 배경 없이 테두리·글씨색으로만 구분 =====
