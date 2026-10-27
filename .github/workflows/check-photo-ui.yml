@@ -1,0 +1,85 @@
+name: Check photo UI
+
+# 실제 사이트에서 '이름으로 사진 찾기'를 끝까지 눌러 본다 — 손으로만 돌린다.
+#   1. 새 기록: 이름을 치고 '자세히 입력하기' → 찾은 사진 중 하나 고르기
+#   2. 기록 수정: 사진 없는 기록 → '이름으로 사진 찾기' → 고르기 → 이 사진 쓰기
+# 저장은 하지 않는다. 처음 여는 브라우저라 우리집 기록과는 무관하고,
+# 익명 테스트 사용자가 하나 생긴다. 화면은 로그에 base64 로 남긴다.
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 새 기록에 칠 이름
+        default: 조공 오키로스틱 퍼플
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 화면 눌러 보기
+        env:
+          NAME: ${{ inputs.name }}
+        run: |
+          npm i --no-save --silent playwright-core@1 > /dev/null
+          CHROME=$(command -v google-chrome || command -v chromium || command -v chromium-browser)
+          echo "브라우저: $CHROME"
+          cat > t.cjs <<'JS'
+          const { chromium } = require('playwright-core')
+          const fs = require('fs')
+          const out = (tag, buf) => {
+            console.log(`__SHOT_${tag}_BEGIN__`)
+            const b = buf.toString('base64')
+            for (let i = 0; i < b.length; i += 2000) console.log(b.slice(i, i + 2000))
+            console.log(`__SHOT_${tag}_END__`)
+          }
+          ;(async () => {
+            const b = await chromium.launch({ executablePath: process.env.CHROME })
+            const p = await b.newPage({ viewport: { width: 390, height: 844 }, locale: 'ko-KR' })
+            p.on('pageerror', (e) => console.log('페이지 오류:', String(e)))
+            await p.goto('https://leedalnim.github.io/yamyamlog/?check=' + Date.now(), { waitUntil: 'networkidle' })
+            await p.waitForTimeout(2000)
+            // 1. 새 기록
+            await p.click('.nav-fab')
+            await p.waitForTimeout(500)
+            await p.click('.field .input')
+            await p.keyboard.type(process.env.NAME, { delay: 30 })
+            await p.locator('.edit-acc-head').click()
+            try {
+              await p.waitForSelector('.pk-cell img', { timeout: 20000 })
+              await p.waitForTimeout(2500)
+              const n = await p.locator('.pk-cell').count()
+              const loaded = await p.evaluate(() => [...document.querySelectorAll('.pk-cell img')].filter((i) => i.complete && i.naturalWidth > 0).length)
+              console.log(`새 기록: 사진 칸 ${n}개, 그림 뜬 것 ${loaded}개`)
+              await p.locator('.pk-cell').nth(1).click()
+              await p.waitForSelector('.pk-cell.on', { timeout: 20000 })
+              console.log('새 기록: 사진 고르기 됨')
+            } catch (e) {
+              console.log('새 기록 실패:', String(e).slice(0, 200), await p.locator('.pk-empty, .nv-err').allTextContents())
+            }
+            await p.evaluate(() => document.querySelector('.pk-wrap, .edit-acc-head')?.scrollIntoView({ block: 'center' }))
+            await p.waitForTimeout(500)
+            out('NEW', await p.screenshot({ type: 'jpeg', quality: 60 }))
+            // 2. 기록 수정
+            await p.goto('https://leedalnim.github.io/yamyamlog/?check2=' + Date.now(), { waitUntil: 'networkidle' })
+            await p.waitForTimeout(2000)
+            const row = p.locator('.snack-card, .record-row').filter({ hasText: '오키로 레드' }).first()
+            await row.click()
+            await p.waitForTimeout(600)
+            await p.click('text=수정')
+            await p.waitForTimeout(400)
+            try {
+              await p.click('.nv-naver')
+              await p.waitForSelector('.sheet .pk-cell img', { timeout: 20000 })
+              await p.waitForTimeout(2500)
+              await p.locator('.sheet .pk-cell').first().click()
+              await p.click('.nv-go')
+              await p.waitForSelector('.photo-box img', { timeout: 20000 })
+              console.log('기록 수정: 사진 바뀜 (저장 전)')
+            } catch (e) {
+              console.log('기록 수정 실패:', String(e).slice(0, 200), await p.locator('.pk-empty, .nv-err').allTextContents())
+            }
+            out('EDIT', await p.screenshot({ type: 'jpeg', quality: 60 }))
+            await b.close()
+          })()
+          JS
+          CHROME="$CHROME" node t.cjs
