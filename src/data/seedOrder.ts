@@ -1,13 +1,13 @@
-// 노션에서 옮겨 온 첫 기록들의 날짜 순서 바로잡기.
+// 노션에서 옮겨 온 첫 기록들의 날짜 바로잡기.
 //
-// 처음 옮길 때 실제 날짜가 없어서 앱이 날짜를 임의로 붙였는데, 노션 목록의
-// 맨 앞(가장 오래된) '조공 네덜란드 산양유 양갱'에 가장 최근 날짜가 붙었다.
-// 그래서 홈 '최근 기록' 맨 위에 가장 오래된 산양유가 떴다.
+// 노션 기록에는 실제 날짜가 없어서 앱이 날짜를 임의로 붙였다. 그런데 앱을
+// 고치면서 이 기록들을 다시 넣을 때마다 '다시 넣은 그날'로 날짜가 새로
+// 붙어서, 그 전에 사용자가 직접 넣은 기록보다 최신으로 보였다
+// (홈 '최근 기록' 위쪽에 노션 기록이 끼어 있었다).
 //
-// 이미 붙어 있는 날짜 값들은 그대로 쓰고, 순서만 노션 순서로 다시 나눠 준다
-// (목록 앞쪽일수록 오래된 날짜). 날짜 값 묶음이 같으면 어느 폰에서 돌려도
-// 결과가 같아서, 가족 폰끼리 맞출 때 어긋나지 않는다. 이미 맞는 순서면
-// 아무것도 바꾸지 않는다.
+// 노션 기록은 앱을 쓰기 전의 것이므로 직접 넣은 가장 오래된 기록보다 앞에 둔다.
+// 순서는 노션 목록 순서(앞쪽이 오래된 것), 1분 간격. 직접 넣은 기록의 날짜로
+// 계산하므로 어느 폰에서 돌려도 결과가 같다. 이미 맞으면 아무것도 바꾸지 않는다.
 
 export interface Dated {
   id: string
@@ -15,17 +15,24 @@ export interface Dated {
   deletedAt?: number
 }
 
+const GAP = 60 * 1000
+
 /**
- * ids 순서(앞쪽이 오래된 것)대로 createdAt 을 다시 나눈다.
- * 바뀐 기록만 돌려준다. 지운 기록·없는 기록은 건드리지 않는다.
+ * ids(노션 순서, 앞쪽이 오래된 것) 기록을 직접 넣은 가장 오래된 기록 바로 앞으로 옮긴다.
+ * 바뀐 기록만 돌려준다. 직접 넣은 기록이 하나도 없으면 아무것도 안 한다.
  */
-export function reorderDates<T extends Dated>(records: T[], ids: readonly string[]): T[] {
+export function placeBeforeOwn<T extends Dated>(records: T[], ids: readonly string[]): T[] {
+  const seed = new Set(ids)
+  const own = records.filter((r) => !seed.has(r.id))
+  if (own.length === 0) return []
+  const earliest = Math.min(...own.map((r) => r.createdAt))
   const byId = new Map(records.filter((r) => !r.deletedAt).map((r) => [r.id, r]))
-  const present = ids.map((id) => byId.get(id)).filter((r): r is T => !!r)
-  const times = present.map((r) => r.createdAt).sort((a, b) => a - b)
   const changed: T[] = []
-  present.forEach((r, i) => {
-    if (r.createdAt !== times[i]) changed.push({ ...r, createdAt: times[i] })
+  ids.forEach((id, i) => {
+    const r = byId.get(id)
+    if (!r) return
+    const at = earliest - (ids.length - i) * GAP
+    if (r.createdAt !== at) changed.push({ ...r, createdAt: at })
   })
   return changed
 }

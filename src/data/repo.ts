@@ -3,7 +3,7 @@
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
 import { getDB } from './db'
-import { reorderDates } from './seedOrder'
+import { placeBeforeOwn } from './seedOrder'
 import {
   RETIRED_SEED_IDS,
   SEED_CATS,
@@ -33,19 +33,17 @@ export async function ensureSeeded(): Promise<void> {
 }
 
 /**
- * 노션에서 옮겨 온 기록의 날짜를 노션 순서대로(맨 앞이 가장 오래된 것) 바로잡는다.
- * 한 번만 돈다. 바뀐 기록은 수정 시각을 올려 가족 폰에도 넘어가게 한다.
- * 자세한 이유는 seedOrder.ts.
+ * 노션에서 옮겨 온 기록을 직접 넣은 가장 오래된 기록보다 앞 날짜로 옮긴다.
+ * 이미 맞으면 아무것도 안 바뀐다(가족 폰에서 기록이 넘어와도 다시 맞춘다).
+ * 바뀐 기록은 수정 시각을 올려 가족 폰에도 넘어가게 한다. 자세한 이유는 seedOrder.ts.
  */
 async function fixSeedOrder(): Promise<void> {
   const db = await getDB()
-  if (await db.get('meta', 'seedOrderFixed')) return
   const all = (await db.getAll('snacks')) as Snack[]
   const now = Date.now()
-  for (const s of reorderDates(all, SEED_SNACKS.map((x) => x.id))) {
+  for (const s of placeBeforeOwn(all, SEED_SNACKS.map((x) => x.id))) {
     await db.put('snacks', { ...s, updatedAt: now })
   }
-  await db.put('meta', 1, 'seedOrderFixed')
 }
 
 async function seedOnce(): Promise<void> {
@@ -55,17 +53,21 @@ async function seedOnce(): Promise<void> {
 
   // 모든 시드 데이터를 한 트랜잭션으로 커밋 → 첫 조회에서 확실히 보이게
   // put은 id 기준이라 이미 있으면 덮어쓸 뿐 중복되지 않음
+  const have = new Set(((await db.getAll('snacks')) as Snack[]).map((x) => x.id))
   const tx = db.transaction(['groups', 'cats', 'photos', 'snacks', 'meta'], 'readwrite')
   for (const g of SEED_GROUPS) tx.objectStore('groups').put(g)
   for (const c of SEED_CATS) tx.objectStore('cats').put(c)
   tx.objectStore('photos').put({ id: SEED_PHOTO_ID, blob: b64ToBlob(CHURU_PHOTO_B64) })
 
+  // 이미 있는 기록은 건드리지 않는다 — 덮으면 날짜가 '오늘'로 바뀌고 고친 내용도 사라진다
   const now = Date.now()
+  const store = tx.objectStore('snacks')
   for (const s of SEED_SNACKS) {
+    if (have.has(s.id)) continue
     const { agoMs, ...rest } = s
     const t = now - agoMs
     const snack: Snack = { ...rest, createdAt: t, updatedAt: t }
-    tx.objectStore('snacks').put(snack)
+    store.put(snack)
   }
   tx.objectStore('meta').put(SEED_VERSION, 'seedVersion')
   await tx.done
