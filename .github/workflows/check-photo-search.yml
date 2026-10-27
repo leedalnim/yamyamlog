@@ -39,3 +39,17 @@ jobs:
             -H "apikey: $KEY" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$body2")
           echo "사진 받기 응답: $code2, 크기: $(wc -c < photo.bin) 바이트, 종류: $(file -b photo.bin | cut -c1-40)"
           [ "$code" = 200 ] && [ "$code2" = 200 ] && echo "확인: 사진 찾기가 동작한다"
+          # 다음 쪽(2쪽) — '사진 더 보기'가 24장 뒤로 이어지는지
+          body3=$(python3 -c "import json,os; print(json.dumps({'q': os.environ['Q'], 'page': 2}))")
+          code3=$(curl -s -o page2.json -w '%{http_code}' -X POST "$URL/functions/v1/photo-search" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$body3")
+          python3 - "$code3" <<'PY'
+          import json, sys
+          a = json.load(open('search.json')); b = json.load(open('page2.json'))
+          t1 = {x['thumb'] for x in a.get('items') or []}; t2 = [x['thumb'] for x in b.get('items') or []]
+          new = [t for t in t2 if t not in t1]
+          print(f"1쪽: {len(t1)}장 · 끝={a.get('end')} / 2쪽 응답 {sys.argv[1]}: {len(t2)}장, 새 사진 {len(new)}장 · 끝={b.get('end')}")
+          if 'end' not in a: print('새 함수가 아니다 (end 없음)'); sys.exit(1)
+          if not new and not a.get('end'): print('2쪽에 새 사진이 없다'); sys.exit(1)
+          print('확인: 사진 더 보기가 다음 쪽으로 이어진다')
+          PY
