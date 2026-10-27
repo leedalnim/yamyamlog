@@ -9,7 +9,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  actions: write   # 사이트가 덮여 있으면 배포를 한 번 더 돌린다 (맨 아래)
 
 concurrency:
   group: pages
@@ -62,25 +61,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Pages 설정이 '브랜치에서 배포'라 push 마다 GitHub 기본 배포(Jekyll,
-      # 빌드 안 된 원본)도 같이 돈다. 나중에 끝난 쪽이 사이트를 덮어쓰는데,
-      # 2026-10-21 05:52 에 둘이 같은 초에 끝나 원본이 이겨 폰이 옛 버전에
-      # 멈췄다. 기본 배포는 push 뒤 1분 30초 안에 끝나므로, 우리 배포를
-      # 조금 늦춰 늘 마지막에 덮어쓰게 한다.
-      # (Settings → Pages → Source 를 'GitHub Actions' 로 바꾸면 필요 없다)
-      - if: github.event_name == 'push'
-        run: sleep 75
+      # Pages 설정을 'GitHub Actions' 로 바꿨다(2026-10-27). 예전 '브랜치에서 배포'
+      # 시절에는 push 마다 GitHub 기본 배포(빌드 안 된 원본)가 같이 돌아 사이트를
+      # 덮어 하얀 화면이 됐다. 그래서 75초 늦추고, 덮이면 다시 배포했는데 이제
+      # 기본 배포가 없으니 필요 없다.
       - id: deployment
         uses: actions/deploy-pages@v4
       # 재발 방지: '배포 성공' 표시만 믿지 않고 실제 사이트를 열어 본다.
-      # 3분 동안 이번 빌드가 안 보이면(기본 배포가 덮었으면) 배포를 한 번 더
-      # 돌린다. 손으로 돌린 배포에는 기본 배포가 따라오지 않아 그 판이 이긴다.
-      # 다시 돌린 판에서도 안 보이면 더 돌리지 않고 실패로 남긴다(무한 반복 방지).
+      # 3분 동안 이번 빌드가 안 보이면 실패로 남긴다.
       - name: 실제 사이트 확인
         env:
           URL: ${{ steps.deployment.outputs.page_url }}
           JS: ${{ needs.build.outputs.js }}
-          GH_TOKEN: ${{ github.token }}
         run: |
           for i in $(seq 1 18); do
             # 캐시를 피하려고 매번 다른 주소로 연다
@@ -89,10 +81,5 @@ jobs:
             fi
             sleep 10
           done
-          echo "::warning::사이트가 이번 빌드($JS)를 내주지 않는다 — 기본 배포가 덮은 것 같다"
-          if [ "${{ github.event_name }}" = "push" ]; then
-            gh workflow run deploy.yml --repo "${{ github.repository }}" --ref main
-            echo "배포를 한 번 더 돌렸다"
-          else
-            exit 1
-          fi
+          echo "::error::사이트가 이번 빌드($JS)를 내주지 않는다"
+          exit 1
