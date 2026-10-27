@@ -499,6 +499,13 @@ export function SnackDetail({
     setFindOpen(false)
   }
 
+  function resetPhoto() {
+    if (newPreview) URL.revokeObjectURL(newPreview)
+    setNewPhoto(null)
+    setNewPreview(undefined)
+    setRemovePhoto(false)
+  }
+
   async function pickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     e.target.value = '' // 같은 파일 다시 고를 수 있게
@@ -597,6 +604,12 @@ export function SnackDetail({
           {shownPhoto && canFind && (
             <button className="nv-naver nv-naver-line" onClick={() => setFindOpen(true)}>
               <IconSearch size={16} />이름으로 다른 사진 찾기
+            </button>
+          )}
+          {/* 바꾸거나 뺐다가 마음이 바뀌면 원래 사진으로 */}
+          {url && (newPhoto || removePhoto) && (
+            <button className="pk-undo" onClick={resetPhoto}>
+              원래 사진으로 되돌리기
             </button>
           )}
         </div>

@@ -43,7 +43,7 @@ const FAKE_IMG = await (async () => {
   return Buffer.from(src.match(/[A-Za-z0-9+/=]{1000,}/)[0], 'base64')
 })()
 const fakePhotos = (q) =>
-  Array.from({ length: q.length > 3 ? 12 : 0 }, (_, i) => ({
+  Array.from({ length: q.length > 3 ? 24 : 0 }, (_, i) => ({
     thumb: `https://search1.kakaocdn.net/argon/320x320_85_c/fake${i}`,
     site: i % 2 ? '네이버 블로그' : '11번가',
   }))

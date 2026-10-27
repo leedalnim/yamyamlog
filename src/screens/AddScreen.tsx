@@ -317,6 +317,7 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
                   selected={pickedThumb}
                   onPick={pickSearchPhoto}
                   onCamera={() => fileRef.current?.click()}
+                  onClear={clearPhoto}
                 />
               ) : (
                 <button className="photo-drop slim" onClick={() => fileRef.current?.click()}>

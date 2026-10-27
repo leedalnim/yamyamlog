@@ -117,11 +117,13 @@ export function PhotoGrid({
   selected,
   onPick,
   onCamera,
+  onClear,
 }: {
   query: string
   selected?: string
   onPick: (blob: Blob, thumb: string) => void
   onCamera: () => void
+  onClear: () => void
 }) {
   const { items, loading } = usePhotoSearch(query, true)
   const [shown, setShown] = useState(8)
@@ -131,6 +133,8 @@ export function PhotoGrid({
 
   async function tap(h: PhotoHit) {
     if (busy) return
+    // 고른 사진을 다시 누르면 고르기 취소
+    if (selected === h.thumb) return onClear()
     setBusy(h.thumb)
     setErr('')
     const blob = await fetchPhoto(h.thumb)
@@ -144,7 +148,7 @@ export function PhotoGrid({
     <div className="pk-wrap">
       <div className="pk-head">
         <b>이 이름으로 찾은 사진</b>
-        <span>{loading ? '찾는 중…' : hits.length ? '하나를 눌러 고르세요' : ''}</span>
+        <span>{loading ? '찾는 중…' : selected ? '다시 누르면 취소돼요' : hits.length ? '하나를 눌러 고르세요' : ''}</span>
       </div>
       {items === null ? (
         <div className="pk-empty">{failText()}</div>
@@ -157,6 +161,9 @@ export function PhotoGrid({
       <div className="pk-more">
         {hits.length > shown && (
           <button type="button" onClick={() => setShown((n) => n + 8)}>사진 더 보기</button>
+        )}
+        {selected && (
+          <button type="button" onClick={onClear}>고르기 취소</button>
         )}
         <button type="button" onClick={onCamera}><IconCamera size={16} />직접 찍기</button>
       </div>
@@ -181,7 +188,10 @@ export function PhotoFindSheet({
   const [sel, setSel] = useState<string>()
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
-  const hits = (items ?? []).slice(0, 15)
+  const [shown, setShown] = useState(12)
+  useEffect(() => setShown(12), [query])
+  const all = items ?? []
+  const hits = all.slice(0, shown)
 
   async function use() {
     if (!sel) return
@@ -214,12 +224,18 @@ export function PhotoFindSheet({
         ) : hits.length === 0 ? (
           <div className="pk-empty">{nameKey(query).length < 2 ? '두 글자 이상 적어 주세요' : '찾은 사진이 없어요. 이름을 조금 줄여 보세요'}</div>
         ) : (
-          <Grid hits={hits} selected={sel} onTap={(h) => setSel(h.thumb)} cols={3} />
+          <Grid hits={hits} selected={sel} onTap={(h) => setSel(sel === h.thumb ? undefined : h.thumb)} cols={3} />
+        )}
+        {all.length > shown && (
+          <div className="pk-more">
+            <button type="button" onClick={() => setShown((n) => n + 12)}>사진 더 보기 ({all.length - shown})</button>
+          </div>
         )}
         {err && <div className="nv-err">{err}</div>}
         <button className="nv-go" disabled={!sel || busy} onClick={use}>
           {busy ? '사진 가져오는 중…' : '이 사진 쓰기'}
         </button>
+        <button type="button" className="pk-cancel" onClick={onClose}>그만두기</button>
         <div className="pk-src" style={{ textAlign: 'center' }}>사진 출처: 다음 이미지 검색 · 저장을 눌러야 바뀌어요</div>
       </div>
     </div>
