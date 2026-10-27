@@ -12,8 +12,8 @@ import {
 import type { Cat, ReactionLevel, Snack } from '../data/types'
 import { REACTION_META } from '../data/types'
 import { deleteSnack, listSnacks, savePhoto, toggleFavorite, updateSnack } from '../data/repo'
-import { NaverMark, ShopFixSheet, type FixChanges } from '../components/shop'
-import { shopState } from '../lib/naver'
+import { PhotoFindSheet } from '../components/photoPick'
+import { photoSearchState } from '../lib/photoSearch'
 import { compressImage } from '../lib/image'
 import { IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
@@ -484,20 +484,15 @@ export function SnackDetail({
   const [newPreview, setNewPreview] = useState<string>()
   const [removePhoto, setRemovePhoto] = useState(false)
   const shownPhoto = removePhoto ? undefined : (newPreview ?? url)
-  // 네이버 쇼핑 정보로 고치기 — 칸만 바꾸고, 저장은 '저장'을 눌러야 된다
-  const [shopOpen, setShopOpen] = useState(false)
-  function applyShop(c: FixChanges) {
-    if (c.name !== undefined) setName(c.name)
-    if (c.kind !== undefined) setKind(c.kind)
-    if (c.base !== undefined) setBase(c.base)
-    if (c.memo !== undefined) setMemo(c.memo)
-    if (c.photo) {
-      if (newPreview) URL.revokeObjectURL(newPreview)
-      setNewPhoto(c.photo)
-      setNewPreview(c.photoPreview)
-      setRemovePhoto(false)
-    }
-    setShopOpen(false)
+  // 이름으로 사진 찾기 — 사진만 바꾸고, 저장은 '저장'을 눌러야 된다
+  const [findOpen, setFindOpen] = useState(false)
+  const canFind = photoSearchState() !== 'off'
+  function applyFound(blob: Blob) {
+    if (newPreview) URL.revokeObjectURL(newPreview)
+    setNewPhoto(blob)
+    setNewPreview(URL.createObjectURL(blob))
+    setRemovePhoto(false)
+    setFindOpen(false)
   }
 
   async function pickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -588,16 +583,16 @@ export function SnackDetail({
                 <IconCamera size={20} />
                 사진 추가하기
               </button>
-              {shopState() !== 'off' && (
-                <button className="nv-naver" onClick={() => setShopOpen(true)}>
-                  <NaverMark />네이버에서 찾기
+              {canFind && (
+                <button className="nv-naver" onClick={() => setFindOpen(true)}>
+                  <IconSearch size={18} />이름으로 사진 찾기
                 </button>
               )}
             </div>
           )}
-          {shownPhoto && shopState() !== 'off' && (
-            <button className="nv-naver nv-naver-line" onClick={() => setShopOpen(true)}>
-              <NaverMark />네이버 쇼핑 정보로 고치기
+          {shownPhoto && canFind && (
+            <button className="nv-naver nv-naver-line" onClick={() => setFindOpen(true)}>
+              <IconSearch size={16} />이름으로 다른 사진 찾기
             </button>
           )}
         </div>
@@ -640,12 +635,8 @@ export function SnackDetail({
           <IconTrash size={18} />이 기록 삭제
         </button>
 
-        {shopOpen && (
-          <ShopFixSheet
-            current={{ name, kind, base, memo, photoUrl: shownPhoto }}
-            onApply={applyShop}
-            onClose={() => setShopOpen(false)}
-          />
+        {findOpen && (
+          <PhotoFindSheet initialQuery={name} onPick={applyFound} onClose={() => setFindOpen(false)} />
         )}
       </div>
     )

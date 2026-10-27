@@ -13,8 +13,8 @@
  *   POST /storage/v1/object/{bucket}/{path}   사진 올리기
  *   GET  /storage/v1/object/{bucket}/{path}   사진 받기
  *   DELETE /storage/v1/object/{bucket}        사진 치우기
- *   POST /functions/v1/naver-shop   네이버 쇼핑 검색 흉내 ({ q } → 결과, { img } → 사진)
- *                                   NAVER=off 로 띄우면 '함수 없음(404)'
+ *   POST /functions/v1/photo-search 이름으로 사진 찾기 흉내 ({ q } → 사진 목록, { img } → 사진)
+ *                                   PHOTO=off 로 띄우면 '함수 없음(404)'
  *
  * 검증 범위: 앱 쪽 코드(클라이언트·병합·화면). 실제 서버의 RLS 정책과
  * SQL 함수는 여기서 검증되지 않는다 — 그건 실제 프로젝트에서 확인해야 한다.
@@ -36,28 +36,17 @@ const db = {
 }
 let userSeq = 0
 
-// 가짜 쇼핑 결과 — 사진은 앱에 들어 있는 첫 기록 사진을 쓴다
+// 가짜 사진 검색 결과 — 사진은 앱에 들어 있는 첫 기록 사진을 쓴다
 const FAKE_IMG = await (async () => {
   const { readFile } = await import('node:fs/promises')
   const src = await readFile(new URL('../src/data/seed-photo.ts', import.meta.url), 'utf8')
   return Buffer.from(src.match(/[A-Za-z0-9+/=]{1000,}/)[0], 'base64')
 })()
-const SHOP = [
-  ['[무료배송] <b>조공</b> 네덜란드 <b>산양유</b> 양갱 8g', '조공', ['생활/건강', '반려동물', '고양이 간식', '캔/파우치']],
-  ['<b>조공</b> 오키로 레드 참치 동결건조 30g', '조공', ['생활/건강', '반려동물', '고양이 간식', '동결건조']],
-  ['이나바 챠오 츄르 참치&amp;연어 20개입', '이나바', ['생활/건강', '반려동물', '고양이 간식', '스틱']],
-  ['강아지 산양유 껌', '', ['생활/건강', '반려동물', '강아지 간식']],
-  ['보레알 치킨 파우치 80g', '보레알', ['생활/건강', '반려동물', '고양이 사료']],
-  ['로투스 정어리 캔 85g', '로투스', ['생활/건강', '반려동물', '고양이 간식', '캔']],
-]
-function fakeShop(q) {
-  const words = q.split(/\s+/).filter(Boolean)
-  const hit = SHOP.filter(([t]) => words.some((w) => t.replace(/<[^>]*>/g, '').includes(w)))
-  return (hit.length ? hit : SHOP).map(([title, brand, category], i) => ({
-    title, image: `https://shopping-phinf.pstatic.net/fake/${i}.jpg`, brand, maker: '',
-    category, lprice: String(1000 * (i + 1)), link: `https://example.com/${i}`,
+const fakePhotos = (q) =>
+  Array.from({ length: q.length > 3 ? 12 : 0 }, (_, i) => ({
+    thumb: `https://search1.kakaocdn.net/argon/320x320_85_c/fake${i}`,
+    site: i % 2 ? '네이버 블로그' : '11번가',
   }))
-}
 
 const uuid = () => 'u' + String(++userSeq).padStart(4, '0') + '-0000-0000-0000-000000000000'
 
@@ -134,11 +123,11 @@ const server = createServer(async (req, res) => {
   // 테스트에서 서버 상태를 들여다보기 위한 창구 (실제 Supabase 에는 없음)
   if (url.pathname === '/debug/objects') return json(res, 200, [...db.objects.keys()])
 
-  // ── 네이버 쇼핑 (서버 함수) ───────────────────────────────
-  if (url.pathname === '/functions/v1/naver-shop') {
-    if (process.env.NAVER === 'off') return json(res, 404, { message: 'Function not found' })
+  // ── 이름으로 사진 찾기 (서버 함수) ───────────────────────
+  if (url.pathname === '/functions/v1/photo-search') {
+    if (process.env.PHOTO === 'off') return json(res, 404, { message: 'Function not found' })
     if (!userOf(req)) return json(res, 401, { error: 'unauthorized' })
-    if (typeof body.q === 'string') return json(res, 200, { items: fakeShop(body.q) })
+    if (typeof body.q === 'string') return json(res, 200, { items: fakePhotos(body.q) })
     if (typeof body.img === 'string') {
       cors(res)
       res.writeHead(200, { 'Content-Type': 'application/octet-stream' })
