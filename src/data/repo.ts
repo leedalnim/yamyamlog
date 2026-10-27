@@ -3,6 +3,7 @@
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
 import { getDB } from './db'
+import { reorderDates } from './seedOrder'
 import {
   RETIRED_SEED_IDS,
   SEED_CATS,
@@ -27,6 +28,27 @@ function uid(): string {
 
 // ---------- 초기 시드 ----------
 export async function ensureSeeded(): Promise<void> {
+  await seedOnce()
+  await fixSeedOrder()
+}
+
+/**
+ * 노션에서 옮겨 온 기록의 날짜를 노션 순서대로(맨 앞이 가장 오래된 것) 바로잡는다.
+ * 한 번만 돈다. 바뀐 기록은 수정 시각을 올려 가족 폰에도 넘어가게 한다.
+ * 자세한 이유는 seedOrder.ts.
+ */
+async function fixSeedOrder(): Promise<void> {
+  const db = await getDB()
+  if (await db.get('meta', 'seedOrderFixed')) return
+  const all = (await db.getAll('snacks')) as Snack[]
+  const now = Date.now()
+  for (const s of reorderDates(all, SEED_SNACKS.map((x) => x.id))) {
+    await db.put('snacks', { ...s, updatedAt: now })
+  }
+  await db.put('meta', 1, 'seedOrderFixed')
+}
+
+async function seedOnce(): Promise<void> {
   const db = await getDB()
   const ver = Number(await db.get('meta', 'seedVersion')) || 0
   if (ver >= SEED_VERSION) return

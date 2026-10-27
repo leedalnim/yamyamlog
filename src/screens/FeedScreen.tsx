@@ -41,7 +41,7 @@ import { useBackGuard } from '../lib/useBackGuard'
 
 
 /** 홈 최근 기록을 처음에 몇 개까지 보여줄지 (통계 기록 목록과 같게) */
-const FEED_PREVIEW = 5
+const FEED_PAGE = 10
 
 export function FeedScreen({
   onAdd,
@@ -66,7 +66,8 @@ export function FeedScreen({
   const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   // 기록이 쌓이면 홈이 끝없이 길어진다 — 처음엔 몇 개만
-  const [showAll, setShowAll] = useState(false)
+  // 처음 10개, '더 보기'마다 10개씩 더
+  const [shown, setShown] = useState(FEED_PAGE)
 
   // 뒤로 제스처로 한 단계씩 닫히게 한다
   useBackGuard(!!viewing, () => setViewing(null))
@@ -154,7 +155,7 @@ export function FeedScreen({
 
   // 보는 조건이 바뀌면 다시 처음 몇 개부터
   useEffect(() => {
-    setShowAll(false)
+    setShown(FEED_PAGE)
   }, [filter, catId, level, sort, query])
 
   // ---- 상세 페이지 ----
@@ -329,7 +330,7 @@ export function FeedScreen({
         </div>
       ) : (
         <div className="feed-list">
-          {(showAll ? filtered : filtered.slice(0, FEED_PREVIEW)).map((s) => (
+          {filtered.slice(0, shown).map((s) => (
             <SnackCard
             key={s.id}
             snack={s}
@@ -342,9 +343,12 @@ export function FeedScreen({
             }}
           />
           ))}
-          {filtered.length > FEED_PREVIEW && (
-            <button className="records-more" onClick={() => setShowAll((v) => !v)}>
-              {showAll ? '접기' : `${filtered.length - FEED_PREVIEW}개 더 보기`}
+          {filtered.length > FEED_PAGE && (
+            <button
+              className="records-more"
+              onClick={() => setShown((n) => (n >= filtered.length ? FEED_PAGE : n + FEED_PAGE))}
+            >
+              {shown >= filtered.length ? '접기' : `${Math.min(FEED_PAGE, filtered.length - shown)}개 더 보기`}
             </button>
           )}
         </div>
