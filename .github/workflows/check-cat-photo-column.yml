@@ -1,0 +1,25 @@
+name: Check cat photo column
+
+# 10-cat-photo.sql 을 실행했는지 — 손으로만 돌린다.
+# 앱처럼 익명 로그인한 뒤 cats 표에서 photo_path 칸만 골라 읽어 본다.
+# 칸이 있으면 200(남의 집 기록은 접근 규칙 때문에 빈 목록), 없으면 400.
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 냥이 사진 칸 확인
+        run: |
+          URL=$(grep -m1 '^VITE_SUPABASE_URL=' .env.production | cut -d= -f2-)
+          KEY=$(grep -m1 '^VITE_SUPABASE_ANON_KEY=' .env.production | cut -d= -f2-)
+          resp=$(curl -s -X POST "$URL/auth/v1/signup" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}')
+          token=$(printf '%s' "$resp" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))")
+          if [ -z "$token" ]; then echo "로그인 실패: $(printf '%s' "$resp" | head -c 200)"; exit 1; fi
+          echo "::add-mask::$token"
+          code=$(curl -s -o out.json -w '%{http_code}' "$URL/rest/v1/cats?select=id,photo_path&limit=1" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $token")
+          echo "응답: $code $(head -c 200 out.json)"
+          if [ "$code" = 200 ]; then echo "확인: 서버에 냥이 사진 칸(photo_path)이 있다"; else echo "냥이 사진 칸이 없다 — 10-cat-photo.sql 을 실행해야 한다"; exit 1; fi
