@@ -42,9 +42,10 @@ const FAKE_IMG = await (async () => {
   const src = await readFile(new URL('../src/data/seed-photo.ts', import.meta.url), 'utf8')
   return Buffer.from(src.match(/[A-Za-z0-9+/=]{1000,}/)[0], 'base64')
 })()
-const fakePhotos = (q) =>
-  Array.from({ length: q.length > 3 ? 24 : 0 }, (_, i) => ({
-    thumb: `https://search1.kakaocdn.net/argon/320x320_85_c/fake${i}`,
+// 3쪽(72장)까지 있는 척
+const fakePhotos = (q, page = 1) =>
+  Array.from({ length: q.length > 3 && page <= 3 ? 24 : 0 }, (_, i) => ({
+    thumb: `https://search1.kakaocdn.net/argon/320x320_85_c/fake${(page - 1) * 24 + i}`,
     site: i % 2 ? '네이버 블로그' : '11번가',
   }))
 
@@ -127,7 +128,7 @@ const server = createServer(async (req, res) => {
   if (url.pathname === '/functions/v1/photo-search') {
     if (process.env.PHOTO === 'off') return json(res, 404, { message: 'Function not found' })
     if (!userOf(req)) return json(res, 401, { error: 'unauthorized' })
-    if (typeof body.q === 'string') return json(res, 200, { items: fakePhotos(body.q) })
+    if (typeof body.q === 'string') return json(res, 200, { items: fakePhotos(body.q, body.page), end: (body.page ?? 1) >= 3 })
     if (typeof body.img === 'string') {
       cors(res)
       res.writeHead(200, { 'Content-Type': 'application/octet-stream' })

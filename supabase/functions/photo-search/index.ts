@@ -5,7 +5,7 @@
 // 이 함수에 "이 이름으로 찾아 줘"만 보낸다.
 //
 // 하는 일 두 가지:
-//   { q: "조공 오키로스틱 퍼플" } → 사진 목록 (앞쪽 24장)
+//   { q: "조공 오키로스틱 퍼플", page: 1 } → 사진 목록 24장씩 (page 2, 3… 로 다음 24장)
 //   { img: "<목록에서 받은 thumb 주소>" } → 그 사진 파일 (앱에 저장할 것)
 //     브라우저는 다른 사이트 사진을 파일로 받아 저장할 수 없어서 여기서 대신 받는다.
 //     카카오 사진 서버(*.kakaocdn.net)만 받아 준다 — 아무 주소나 대신 여는 통로가
@@ -56,8 +56,10 @@ Deno.serve(async (req) => {
   // ---- 검색 ----
   if (typeof body.q === 'string') {
     const q = body.q.trim().slice(0, 80)
-    if (q.length < 2) return json({ items: [] })
-    const url = 'https://dapi.kakao.com/v2/search/image?sort=accuracy&size=24&query=' + encodeURIComponent(q)
+    if (q.length < 2) return json({ items: [], end: true })
+    // 카카오는 50쪽까지 준다
+    const page = Math.min(50, Math.max(1, Math.floor(Number(body.page) || 1)))
+    const url = `https://dapi.kakao.com/v2/search/image?sort=accuracy&size=24&page=${page}&query=` + encodeURIComponent(q)
     const r = await fetch(url, { headers: { Authorization: `KakaoAK ${key}` } })
     if (!r.ok) {
       // 카카오가 왜 거절했는지 앱 화면에서 알 수 있게 짧게 넘긴다 (열쇠는 담지 않는다)
@@ -73,7 +75,7 @@ Deno.serve(async (req) => {
       seen.add(thumb)
       items.push({ thumb, site: String(d.display_sitename ?? ''), w: d.width, h: d.height })
     }
-    return json({ items })
+    return json({ items, end: !!data.meta?.is_end || page >= 50 })
   }
 
   // ---- 사진 파일 ----

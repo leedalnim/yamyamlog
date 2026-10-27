@@ -37,12 +37,20 @@ export function CatalogRow({ item, query, onPick }: { item: CatalogItem; query: 
   )
 }
 
-/** 이름이 바뀌면 잠깐 기다렸다 찾는다. items: null = 못 씀 */
+/**
+ * 이름이 바뀌면 잠깐 기다렸다 찾는다. items: null = 못 씀.
+ * more() 는 다음 24장을 더 불러와 뒤에 붙인다. end = 더 없음.
+ */
 function usePhotoSearch(query: string, enabled: boolean, wait = 600) {
   const [items, setItems] = useState<PhotoHit[] | null>([])
   const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState(1)
+  const [end, setEnd] = useState(true)
+  const [moreBusy, setMoreBusy] = useState(false)
   const q = query.trim()
   useEffect(() => {
+    setPage(1)
+    setEnd(true)
     if (photoSearchState() === 'off') {
       setItems(null)
       setLoading(false)
@@ -58,7 +66,8 @@ function usePhotoSearch(query: string, enabled: boolean, wait = 600) {
     const t = setTimeout(async () => {
       const r = await searchPhotos(q)
       if (!alive) return
-      setItems(r)
+      setItems(r ? r.items : null)
+      setEnd(r ? r.end : true)
       setLoading(false)
     }, wait)
     return () => {
@@ -66,7 +75,22 @@ function usePhotoSearch(query: string, enabled: boolean, wait = 600) {
       clearTimeout(t)
     }
   }, [q, enabled, wait])
-  return { items, loading }
+
+  async function more(): Promise<boolean> {
+    if (end || moreBusy || !items) return false
+    setMoreBusy(true)
+    const r = await searchPhotos(q, page + 1)
+    setMoreBusy(false)
+    if (!r) return false
+    const seen = new Set(items.map((h) => h.thumb))
+    const add = r.items.filter((h) => !seen.has(h.thumb))
+    setPage(page + 1)
+    // 새 사진이 하나도 없으면 더 없는 것으로 본다
+    setEnd(r.end || add.length === 0)
+    if (add.length) setItems([...items, ...add])
+    return add.length > 0
+  }
+  return { items, loading, more, end, moreBusy }
 }
 
 function failText() {
@@ -125,7 +149,7 @@ export function PhotoGrid({
   onCamera: () => void
   onClear: () => void
 }) {
-  const { items, loading } = usePhotoSearch(query, true)
+  const { items, loading, more, end, moreBusy } = usePhotoSearch(query, true)
   const [shown, setShown] = useState(8)
   const [busy, setBusy] = useState<string>()
   const [err, setErr] = useState('')
@@ -144,6 +168,11 @@ export function PhotoGrid({
   }
 
   const hits = items ?? []
+  const canMore = hits.length > shown || !end
+  async function showMore() {
+    if (hits.length <= shown && !(await more())) return
+    setShown((n) => n + 8)
+  }
   return (
     <div className="pk-wrap">
       <div className="pk-head">
@@ -158,9 +187,12 @@ export function PhotoGrid({
         <Grid hits={hits.slice(0, shown)} selected={selected} busy={busy} onTap={tap} cols={4} />
       )}
       {err && <div className="nv-err">{err}</div>}
+      {!loading && hits.length > 0 && !canMore && (
+        <div className="pk-end">사진을 다 봤어요. 이름을 줄이거나 바꾸면 다른 사진이 나와요</div>
+      )}
       <div className="pk-more">
-        {hits.length > shown && (
-          <button type="button" onClick={() => setShown((n) => n + 8)}>사진 더 보기</button>
+        {canMore && (
+          <button type="button" disabled={moreBusy} onClick={showMore}>{moreBusy ? '불러오는 중…' : '사진 더 보기'}</button>
         )}
         {selected && (
           <button type="button" onClick={onClear}>고르기 취소</button>
@@ -184,7 +216,7 @@ export function PhotoFindSheet({
 }) {
   useBackGuard(true, onClose)
   const [query, setQuery] = useState(initialQuery)
-  const { items, loading } = usePhotoSearch(query, true, 400)
+  const { items, loading, more, end, moreBusy } = usePhotoSearch(query, true, 400)
   const [sel, setSel] = useState<string>()
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
@@ -192,6 +224,11 @@ export function PhotoFindSheet({
   useEffect(() => setShown(12), [query])
   const all = items ?? []
   const hits = all.slice(0, shown)
+  const canMore = all.length > shown || !end
+  async function showMore() {
+    if (all.length <= shown && !(await more())) return
+    setShown((n) => n + 12)
+  }
 
   async function use() {
     if (!sel) return
@@ -226,11 +263,13 @@ export function PhotoFindSheet({
         ) : (
           <Grid hits={hits} selected={sel} onTap={(h) => setSel(sel === h.thumb ? undefined : h.thumb)} cols={3} />
         )}
-        {all.length > shown && (
+        {hits.length > 0 && (canMore ? (
           <div className="pk-more">
-            <button type="button" onClick={() => setShown((n) => n + 12)}>사진 더 보기 ({all.length - shown})</button>
+            <button type="button" disabled={moreBusy} onClick={showMore}>{moreBusy ? '불러오는 중…' : '사진 더 보기'}</button>
           </div>
-        )}
+        ) : (
+          <div className="pk-end">사진을 다 봤어요. 위에서 이름을 줄이거나 바꿔 보세요</div>
+        ))}
         {err && <div className="nv-err">{err}</div>}
         <button className="nv-go" disabled={!sel || busy} onClick={use}>
           {busy ? '사진 가져오는 중…' : '이 사진 쓰기'}

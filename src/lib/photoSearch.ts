@@ -28,7 +28,13 @@ export function photoSearchError() {
   return lastError
 }
 
-const cache = new Map<string, PhotoHit[]>()
+export interface PhotoPage {
+  items: PhotoHit[]
+  /** 더 없음 */
+  end: boolean
+}
+
+const cache = new Map<string, PhotoPage>()
 
 async function invoke<T>(body: object): Promise<T | null> {
   const sb = getSupabase()
@@ -56,17 +62,19 @@ async function invoke<T>(body: object): Promise<T | null> {
   }
 }
 
-/** 이름으로 사진을 찾는다. 못 쓰면 null, 없으면 [] */
-export async function searchPhotos(q: string): Promise<PhotoHit[] | null> {
+/** 이름으로 사진을 찾는다(24장씩, page 1부터). 못 쓰면 null */
+export async function searchPhotos(q: string, page = 1): Promise<PhotoPage | null> {
   const key = q.trim().replace(/\s+/g, ' ')
-  if (key.length < 2) return []
-  const hit = cache.get(key)
+  if (key.length < 2) return { items: [], end: true }
+  const ck = key + '\n' + page
+  const hit = cache.get(ck)
   if (hit) return hit
-  const res = await invoke<{ items?: PhotoHit[] }>({ q: key })
+  const res = await invoke<{ items?: PhotoHit[]; end?: boolean }>({ q: key, page })
   if (!res) return null
-  const items = res.items ?? []
-  cache.set(key, items)
-  return items
+  // 예전 서버 함수는 end 를 안 준다 — 그땐 한 쪽뿐이라고 본다
+  const out = { items: res.items ?? [], end: res.end ?? true }
+  cache.set(ck, out)
+  return out
 }
 
 /** 고른 사진을 받아 앱에 넣을 크기로 줄인다. 못 받으면 null */
