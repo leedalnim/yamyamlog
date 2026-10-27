@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BaseChooser, KindChooser, ReactionEditor, useCatsAndGroups, usePhotoURL } from '../components/common'
 import { CatalogRow, Highlight, PhotoGrid } from '../components/photoPick'
+import { PhotoEditSheet } from '../components/PhotoEditSheet'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_META } from '../data/types'
 import { addSnack, listSnacks, savePhoto, updateSnack } from '../data/repo'
@@ -108,6 +109,15 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
     }
   }
 
+  // 직접 찍은 사진 다듬기
+  const [trimOpen, setTrimOpen] = useState(false)
+  function applyTrimmed(blob: Blob) {
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+    setPhotoBlob(blob)
+    setPhotoPreview(URL.createObjectURL(blob))
+    setTrimOpen(false)
+  }
+
   function clearPhoto() {
     if (photoPreview) URL.revokeObjectURL(photoPreview)
     setPhotoBlob(undefined)
@@ -201,6 +211,9 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
       {/* capture 를 붙이면 카메라만 열린다. 빼 두면 아이폰이
           '사진 보관함 / 사진 찍기'를 함께 물어본다. */}
       <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPickPhoto} />
+      {trimOpen && photoPreview && (
+        <PhotoEditSheet src={photoPreview} onDone={applyTrimmed} onClose={() => setTrimOpen(false)} />
+      )}
 
       {/* 제목 — 가장 중요 */}
       <div className="field">
@@ -305,9 +318,10 @@ export function AddScreen({ onDone, onCancel }: { onDone: () => void; onCancel: 
                   <img src={photoPreview} alt="제품 사진" />
                   <div className="photo-actions">
                     {/* 보관함에서도 고를 수 있어 '다시 찍기'는 맞지 않는다 */}
-                    <button className="mini-btn" onClick={() => fileRef.current?.click()}>사진 바꾸기</button>
+                    <button className="mini-btn" onClick={() => fileRef.current?.click()}>바꾸기</button>
+                    <button className="mini-btn" onClick={() => setTrimOpen(true)}>다듬기</button>
                     {canSearchPhoto && (
-                      <button className="mini-btn" onClick={clearPhoto}>이름으로 찾기</button>
+                      <button className="mini-btn" onClick={clearPhoto}>찾기</button>
                     )}
                   </div>
                 </div>

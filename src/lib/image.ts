@@ -48,6 +48,9 @@ export async function compressImage(file: File | Blob): Promise<Blob> {
     canvas.height = height
     const ctx = canvas.getContext('2d')
     if (!ctx) return file
+    // 투명한 부분(누끼 PNG 등)이 JPEG 로 바뀌며 검게 되지 않게 흰 바탕을 깐다
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, width, height)
     ctx.drawImage(src as CanvasImageSource, 0, 0, width, height)
     if ('close' in src) src.close()
 

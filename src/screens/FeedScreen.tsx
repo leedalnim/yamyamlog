@@ -13,6 +13,7 @@ import type { Cat, ReactionLevel, Snack } from '../data/types'
 import { REACTION_META } from '../data/types'
 import { deleteSnack, listSnacks, savePhoto, toggleFavorite, updateSnack } from '../data/repo'
 import { PhotoFindSheet } from '../components/photoPick'
+import { PhotoEditSheet } from '../components/PhotoEditSheet'
 import { photoSearchState } from '../lib/photoSearch'
 import { compressImage } from '../lib/image'
 import { IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash } from '../components/icons'
@@ -490,6 +491,12 @@ export function SnackDetail({
   const shownPhoto = removePhoto ? undefined : (newPreview ?? url)
   // 이름으로 사진 찾기 — 사진만 바꾸고, 저장은 '저장'을 눌러야 된다
   const [findOpen, setFindOpen] = useState(false)
+  // 사진 다듬기 — 다듬은 사진도 '저장'을 눌러야 반영된다
+  const [trimOpen, setTrimOpen] = useState(false)
+  function applyTrimmed(blob: Blob) {
+    applyFound(blob)
+    setTrimOpen(false)
+  }
   const canFind = photoSearchState() !== 'off'
   function applyFound(blob: Blob) {
     if (newPreview) URL.revokeObjectURL(newPreview)
@@ -573,7 +580,10 @@ export function SnackDetail({
               <img src={shownPhoto} alt="제품 사진" />
               <div className="photo-actions">
                 <button className="mini-btn mini-primary" onClick={() => fileRef.current?.click()}>
-                  <IconCamera size={16} />사진 바꾸기
+                  <IconCamera size={16} />바꾸기
+                </button>
+                <button className="mini-btn mini-primary" onClick={() => setTrimOpen(true)}>
+                  <IconSliders size={16} />다듬기
                 </button>
                 <button
                   className="mini-btn mini-danger"
@@ -584,7 +594,7 @@ export function SnackDetail({
                     setNewPreview(undefined)
                   }}
                 >
-                  <IconTrash size={16} />사진 빼기
+                  <IconTrash size={16} />빼기
                 </button>
               </div>
             </div>
@@ -652,6 +662,9 @@ export function SnackDetail({
           <IconTrash size={18} />이 기록 삭제
         </button>
 
+        {trimOpen && shownPhoto && (
+          <PhotoEditSheet src={shownPhoto} onDone={applyTrimmed} onClose={() => setTrimOpen(false)} />
+        )}
         {findOpen && (
           <PhotoFindSheet initialQuery={name} onPick={applyFound} onClose={() => setFindOpen(false)} />
         )}
