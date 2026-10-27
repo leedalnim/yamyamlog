@@ -27,21 +27,23 @@ SQL Editor에 파일 내용을 붙여넣고 Run. **번호 순서대로** 실행�
 
 ## 이름으로 사진 찾기 (서버 함수 `photo-search`)
 
-새 기록·기록 수정에서 제품 이름으로 다음(카카오) 이미지 검색을 해서 사진을
-고른다. 카카오 열쇠는 앱에 넣으면 누구나 볼 수 있으므로, 서버 함수가 열쇠를
-들고 대신 검색한다. 설정 전에는 '직접 찍기'만 된다.
+새 기록·기록 수정에서 제품 이름으로 **네이버 이미지 검색(NAVER API HUB)** 을 해서
+사진을 고른다. 네이버 열쇠는 앱에 넣으면 누구나 볼 수 있으므로, 서버 함수가 열쇠를
+들고 대신 검색한다. (2026-10 다음(카카오) 이미지 검색에서 바꿈 — 국내 간식 사진이 너무 적었다)
 
-1. **카카오 열쇠** — developers.kakao.com → 앱 만들기 → 앱 → 플랫폼 키 →
-   **REST API 키** (호출 허용 IP 는 비워 둔다) ✅ 받음 · 함수 올림 ✅ (동작 확인)
-2. **Supabase 비밀 값** — Edge Functions → Secrets → `KAKAO_REST_KEY` ✅ 넣음
-3. **함수 올리기** — Edge Functions → Deploy a new function → Via Editor
-   - 이름: `photo-search` (정확히 이 이름)
+1. **네이버 열쇠** — 네이버 클라우드 콘솔 → NAVER API HUB → Application 등록 →
+   '이미지 (NAVER Search Image API)' 선택 → Client ID / Client Secret ✅ 받음
+   - 2026-10 현재 한시적 무료(검색 카테고리 월 77만 5천 건). 유료 전환 시 사전 공지
+2. **Supabase 비밀 값** — Edge Functions → Secrets
+   - `NAVER_HUB_ID` = Client ID, `NAVER_HUB_SECRET` = Client Secret ✅ 넣음
+   - 예전 `KAKAO_REST_KEY` 는 이제 안 쓴다 (지워도 된다)
+3. **함수 올리기** — Edge Functions → `photo-search` → Code
    - 내용: `functions/photo-search/index.ts` 전체를 붙여넣고 Deploy
 4. **JWT 확인 끄기** — 함수 `photo-search` → Details → *Verify JWT* 끔
    - 함수가 안에서 직접 '우리 앱으로 로그인한 기기인지' 확인한다
 
-열쇠는 Supabase 에만 둔다 — GitHub 에도, 채팅에도 올리지 않는다.
-함수 코드를 고치면 3번을 다시 하면 된다.
+함수 코드를 고치면 3번을 다시 하면 된다. 확인은 GitHub Actions 의
+'Check photo search' 를 손으로 돌린다.
 
 ## 참여가 안 될 때
 

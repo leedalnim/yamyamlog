@@ -45,7 +45,9 @@ const FAKE_IMG = await (async () => {
 // 3쪽(72장)까지 있는 척
 const fakePhotos = (q, page = 1) =>
   Array.from({ length: q.length > 3 && page <= 3 ? 24 : 0 }, (_, i) => ({
-    thumb: `https://search1.kakaocdn.net/argon/320x320_85_c/fake${(page - 1) * 24 + i}`,
+    thumb: `https://search.pstatic.net/common/?src=fake${(page - 1) * 24 + i}&type=b400`,
+    img: `https://example.com/fake${(page - 1) * 24 + i}.jpg`,
+    sig: 'mock',
     site: i % 2 ? '네이버 블로그' : '11번가',
   }))
 
@@ -129,7 +131,7 @@ const server = createServer(async (req, res) => {
     if (process.env.PHOTO === 'off') return json(res, 404, { message: 'Function not found' })
     if (!userOf(req)) return json(res, 401, { error: 'unauthorized' })
     if (typeof body.q === 'string') return json(res, 200, { items: fakePhotos(body.q, body.page), end: (body.page ?? 1) >= 3 })
-    if (typeof body.img === 'string') {
+    if (typeof body.thumb === 'string' || typeof body.img === 'string') {
       cors(res)
       res.writeHead(200, { 'Content-Type': 'application/octet-stream' })
       return res.end(FAKE_IMG)

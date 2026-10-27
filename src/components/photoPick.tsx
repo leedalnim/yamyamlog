@@ -95,7 +95,7 @@ function usePhotoSearch(query: string, enabled: boolean, wait = 600) {
 
 function failText() {
   if (photoSearchState() === 'off') return '사진 찾기가 아직 설정되지 않았어요'
-  if (photoSearchError() === 'kakao') return '사진 검색이 거절됐어요. 카카오 열쇠 설정을 확인해 주세요'
+  if (photoSearchError() === 'naver') return '사진 검색이 거절됐어요. 네이버 열쇠 설정을 확인해 주세요'
   return '지금은 사진을 찾을 수 없어요. 인터넷 연결을 확인해 주세요'
 }
 
@@ -161,7 +161,7 @@ export function PhotoGrid({
     if (selected === h.thumb) return onClear()
     setBusy(h.thumb)
     setErr('')
-    const blob = await fetchPhoto(h.thumb)
+    const blob = await fetchPhoto(h)
     setBusy(undefined)
     if (!blob) return setErr('사진을 가져오지 못했어요. 다른 사진을 골라 주세요.')
     onPick(blob, h.thumb)
@@ -199,7 +199,7 @@ export function PhotoGrid({
         )}
         <button type="button" onClick={onCamera}><IconCamera size={16} />직접 찍기</button>
       </div>
-      <div className="pk-src">사진 출처: 다음 이미지 검색</div>
+      <div className="pk-src">사진 출처: 네이버 이미지 검색</div>
     </div>
   )
 }
@@ -234,7 +234,9 @@ export function PhotoFindSheet({
     if (!sel) return
     setBusy(true)
     setErr('')
-    const blob = await fetchPhoto(sel)
+    const hit = (items ?? []).find((h) => h.thumb === sel)
+    if (!hit) return
+    const blob = await fetchPhoto(hit)
     setBusy(false)
     if (!blob) return setErr('사진을 가져오지 못했어요. 다른 사진을 골라 주세요.')
     onPick(blob)
@@ -275,7 +277,7 @@ export function PhotoFindSheet({
           {busy ? '사진 가져오는 중…' : '이 사진 쓰기'}
         </button>
         <button type="button" className="pk-cancel" onClick={onClose}>그만두기</button>
-        <div className="pk-src" style={{ textAlign: 'center' }}>사진 출처: 다음 이미지 검색 · 저장을 눌러야 바뀌어요</div>
+        <div className="pk-src" style={{ textAlign: 'center' }}>사진 출처: 네이버 이미지 검색 · 저장을 눌러야 바뀌어요</div>
       </div>
     </div>
   )

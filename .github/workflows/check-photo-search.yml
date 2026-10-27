@@ -1,6 +1,6 @@
 name: Check photo search
 
-# '이름으로 사진 찾기' 서버 함수(photo-search) 점검 — 손으로만 돌린다.
+# '이름으로 사진 찾기' 서버 함수(photo-search, 네이버 이미지 검색) 점검 — 손으로만 돌린다.
 # 앱처럼 익명 로그인한 뒤 함수에 검색과 사진 받기를 시켜 본다.
 # 익명 테스트 사용자가 하나 생긴다(우리집과 무관, 아무것도 못 본다).
 on:
@@ -30,11 +30,12 @@ jobs:
             -H "apikey: $KEY" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$body")
           echo "검색 응답: $code"
           head -c 600 search.json; echo
-          thumb=$(python3 -c "import json; d=json.load(open('search.json')); it=d.get('items') or []; print(len(it)); print(it[0]['thumb'] if it else '')" | tail -1)
+          thumb=$(python3 -c "import json; d=json.load(open('search.json')); it=d.get('items') or []; print(it[0]['thumb'] if it else '')")
           count=$(python3 -c "import json; d=json.load(open('search.json')); print(len(d.get('items') or []))")
           echo "찾은 사진: ${count}장"
           if [ -z "$thumb" ]; then echo "결과 없음"; exit 1; fi
-          body2=$(python3 -c "import json,sys; print(json.dumps({'img': sys.argv[1]}))" "$thumb")
+          # 원본(서명 포함)과 썸네일을 같이 보낸다 — 앱과 같은 방식
+          body2=$(python3 -c "import json; it=json.load(open('search.json'))['items'][0]; print(json.dumps({'thumb': it['thumb'], 'img': it.get('img'), 'sig': it.get('sig')}))")
           code2=$(curl -s -o photo.bin -w '%{http_code}' -X POST "$URL/functions/v1/photo-search" \
             -H "apikey: $KEY" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$body2")
           echo "사진 받기 응답: $code2, 크기: $(wc -c < photo.bin) 바이트, 종류: $(file -b photo.bin | cut -c1-40)"
