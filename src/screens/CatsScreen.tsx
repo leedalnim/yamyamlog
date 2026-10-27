@@ -136,7 +136,13 @@ function CatEditSheet({
     cat?.birthday ?? (cat?.ageYears != null ? guessBirthday(cat.ageYears) : ''),
   )
   const [saving, setSaving] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  // 목록에서 빼기: 한 번 누르면 armed, 3초 안에 한 번 더 누르면 뺀다
+  const [armed, setArmed] = useState(false)
+  useEffect(() => {
+    if (!armed) return
+    const t = setTimeout(() => setArmed(false), 3000)
+    return () => clearTimeout(t)
+  }, [armed])
 
   const weightNum = Number(weight)
   const validWeight = weight.trim() !== '' && !Number.isNaN(weightNum) && weightNum > 0
@@ -213,24 +219,52 @@ function CatEditSheet({
           </div>
         </div>
 
-        {/* 정확한 날을 모르는 아이가 많다 — 대충 적어도 된다고 먼저 말해 준다 */}
-        <p className="cat-edit-hint muted">
-          {computed ? (
-            <>
-              지금 <b>{computed.long}</b>이에요. 나이는 생년월일에서 계산해요.
-            </>
-          ) : badBirthday ? (
-            '날짜를 다시 확인해주세요.'
-          ) : (
-            '정확한 날짜를 몰라도 괜찮아요. 대략 이맘때로 적어두면 나이가 알아서 올라가요.'
-          )}
-        </p>
-
-        {validWeight && (
-          <p className="cat-edit-hint muted">
-            하루 권장 칼로리 약 <b>{dailyKcal(weightNum)}kcal</b> (중성화한 실내묘 기준)
-          </p>
-        )}
+        {/* 나이·하루 권장 칼로리 — 줄글 대신 숫자가 먼저 보이는 카드 두 장 */}
+        <div className="cat-tiles">
+          <div className="cat-tile">
+            <div className="cat-tile-k">나이</div>
+            {computed ? (
+              <>
+                <div className="cat-tile-v">
+                  {computed.years >= 1 ? (
+                    <>
+                      {computed.years}<small>살</small> {computed.months % 12}<small>개월</small>
+                    </>
+                  ) : (
+                    <>
+                      {computed.months}<small>개월</small>
+                    </>
+                  )}
+                </div>
+                <div className="cat-tile-s">{birthdayText(birthday)}생</div>
+              </>
+            ) : (
+              <>
+                <div className="cat-tile-v none">—</div>
+                {/* 정확한 날을 모르는 아이가 많다 — 대충 적어도 된다고 먼저 말해 준다 */}
+                <div className={'cat-tile-s' + (badBirthday ? ' bad' : '')}>
+                  {badBirthday ? '날짜를 다시 확인해주세요' : '날짜를 몰라도 대략 적으면 돼요'}
+                </div>
+              </>
+            )}
+          </div>
+          <div className="cat-tile">
+            <div className="cat-tile-k">하루 권장 칼로리</div>
+            {validWeight ? (
+              <>
+                <div className="cat-tile-v">
+                  {dailyKcal(weightNum)}<small>kcal</small>
+                </div>
+                <div className="cat-tile-s">{weightNum}kg · 중성화 실내묘 기준</div>
+              </>
+            ) : (
+              <>
+                <div className="cat-tile-v none">—</div>
+                <div className="cat-tile-s">몸무게를 넣으면 계산해요</div>
+              </>
+            )}
+          </div>
+        </div>
 
         <div className="sheet-actions">
           <button className="btn" style={{ flex: 1 }} onClick={onClose}>취소</button>
@@ -244,44 +278,40 @@ function CatEditSheet({
           </button>
         </div>
 
-        {/* 삭제는 수정할 때만. 기록의 반응은 그대로 두고 목록에서만 뺀다. */}
+        {/* 빼기는 수정할 때만. 실수로 빠지지 않게 두 번 눌러야 한다.
+            기록의 반응은 그대로 두고 목록에서만 뺀다. */}
         {!isNew && (
-          confirmDelete ? (
-            // 취소는 위 시트 버튼이 이미 맡고 있으므로 여기서는 '빼기'만 둔다.
-            <div className="cat-delete-confirm">
-              <p>
-                <b>{cat.name}</b>를 목록에서 뺄까요?
-                <br />
-                지금까지의 반응 기록은 그대로 남아요.
-              </p>
-              <button
-                className="btn cat-delete-go"
-                disabled={saving}
-                onClick={async () => {
-                  setSaving(true)
-                  try {
-                    await deleteCat(cat.id)
-                    onSaved()
-                  } finally {
-                    setSaving(false)
-                  }
-                }}
-              >
-                빼기
-              </button>
-            </div>
-          ) : (
+          <>
             <button
-              className="btn btn-icon btn-block"
-              style={{ marginTop: 10, color: 'var(--muted)' }}
-              onClick={() => setConfirmDelete(true)}
+              className={'cat-del' + (armed ? ' armed' : '')}
+              disabled={saving}
+              onClick={async () => {
+                if (!armed) {
+                  setArmed(true)
+                  return
+                }
+                setSaving(true)
+                try {
+                  await deleteCat(cat.id)
+                  onSaved()
+                } finally {
+                  setSaving(false)
+                }
+              }}
             >
-              <IconTrash size={16} />
-              목록에서 빼기
+              <IconTrash size={14} />
+              {armed ? '한 번 더 누르면 목록에서 빠져요' : '목록에서 빼기'}
             </button>
-          )
+            {armed && <div className="cat-del-sub">반응 기록은 그대로 남아요 · 3초 뒤 원래대로</div>}
+          </>
         )}
       </div>
     </div>
   )
+}
+
+/** '2021-10-01' → '2021년 10월 1일' */
+function birthdayText(v: string): string {
+  const m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  return m ? `${m[1]}년 ${Number(m[2])}월 ${Number(m[3])}일` : v
 }
