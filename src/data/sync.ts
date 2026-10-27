@@ -126,6 +126,7 @@ function catToRow(c: Cat, householdId: string) {
     weight_kg: c.weightKg ?? null,
     age_years: c.ageYears ?? null,
     birthday: c.birthday ?? null,
+    photo_path: c.photoId ? photoPath(householdId, c.photoId) : null,
     updated_at: new Date(c.updatedAt ?? 0).toISOString(),
     deleted_at: c.deletedAt ? new Date(c.deletedAt).toISOString() : null,
   }
@@ -141,6 +142,7 @@ function rowToCat(r: Record<string, any>): Cat {
     weightKg: r.weight_kg ?? undefined,
     ageYears: r.age_years ?? undefined,
     birthday: r.birthday ?? undefined,
+    photoId: photoIdFromPath(r.photo_path),
     updatedAt: r.updated_at ? Date.parse(r.updated_at) : 0,
     deletedAt: r.deleted_at ? Date.parse(r.deleted_at) : undefined,
   }
@@ -306,17 +308,22 @@ async function runSyncOnce(): Promise<SyncResult | SyncSkip> {
       if (error) throw error
     }
     if (catPlan.toRemote.length > 0) {
-      const rows = catPlan.toRemote.map((c) => catToRow(c, household.id))
-      const { error } = await sb.from('cats').upsert(rows)
-      // 생년월일 칸(09-birthday.sql)을 아직 서버에 안 만들었을 수 있다.
-      // 그것 때문에 동기화 전체가 멈추면 안 되니, 그 칸만 빼고 다시 보낸다.
-      if (error && /birthday/i.test(error.message ?? '')) {
-        console.warn('[얌얌로그] 서버에 생년월일 칸이 없어 그 값만 빼고 보냅니다. 09-birthday.sql 을 실행하세요.')
-        const slim = rows.map(({ birthday, ...rest }) => (void birthday, rest))
-        const retry = await sb.from('cats').upsert(slim)
-        if (retry.error) throw retry.error
-      } else if (error) {
-        throw error
+      // 나중에 생긴 칸(생년월일 09-birthday.sql, 사진 10-cat-photo.sql)을 아직
+      // 서버에 안 만들었을 수 있다. 그것 때문에 동기화 전체가 멈추면 안 되니,
+      // 서버가 모른다는 칸만 빼고 다시 보낸다.
+      const LATER: Record<string, string> = { birthday: '09-birthday.sql', photo_path: '10-cat-photo.sql' }
+      let rows: Record<string, unknown>[] = catPlan.toRemote.map((c) => catToRow(c, household.id))
+      for (let tries = 0; ; tries++) {
+        const { error } = await sb.from('cats').upsert(rows)
+        if (!error) break
+        const missing = Object.keys(LATER).find((col) => new RegExp(col, 'i').test(error.message ?? ''))
+        if (!missing || tries >= Object.keys(LATER).length) throw error
+        console.warn(`[얌얌로그] 서버에 ${missing} 칸이 없어 그 값만 빼고 보냅니다. ${LATER[missing]} 을 실행하세요.`)
+        rows = rows.map((r) => {
+          const copy = { ...r }
+          delete copy[missing]
+          return copy
+        })
       }
     }
 
@@ -326,7 +333,10 @@ async function runSyncOnce(): Promise<SyncResult | SyncSkip> {
     try {
       const merged = new Map(localSnacks.map((s) => [s.id, s]))
       for (const s of snackPlan.toLocal) merged.set(s.id, s)
-      photos = await syncPhotos(sb, db, household.id, [...merged.values()])
+      // 냥이 사진도 같은 보관함·같은 경로 규칙으로 함께 맞춘다
+      const mergedCats = new Map(localCats.map((c) => [c.id, c]))
+      for (const c of catPlan.toLocal) mergedCats.set(c.id, c)
+      photos = await syncPhotos(sb, db, household.id, [...merged.values(), ...mergedCats.values()])
     } catch (err) {
       console.warn('[얌얌로그] 사진 동기화를 건너뜁니다.', err)
     }

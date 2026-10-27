@@ -18,10 +18,11 @@ SQL Editor에 파일 내용을 붙여넣고 Run. **번호 순서대로** 실행�
 | `07-code-match.sql` | 코드를 글자 전체로 맞춰보기 | ✅ 실행 완료 ('글자 전체' 확인) |
 | `08-reset-attempts.sql` | 쌓인 참여 실패 기록 지우기 | — 필요할 때만 (지금은 불필요) |
 | `09-birthday.sql` | 냥이 생년월일 컬럼 | ✅ 실행 완료 (birthday date 확인) |
+| `10-cat-photo.sql` | 냥이 사진 위치 컬럼 | ⏳ 실행 필요 — 안 하면 냥이 사진이 이 폰에만 남는다 |
 
 ## 지금 남은 것
 
-- 이름으로 사진 찾기 함수 올리기 (아래 '이름으로 사진 찾기' 3·4번) — 안 해도 앱은 그대로 동작한다
+- `10-cat-photo.sql` 실행 — 냥이 사진을 가족 폰에도 보이게
 
 그 밖에는 없다. 앱이 쓰는 테이블·컬럼·사진 보관함·코드 비교가 모두 서버에 있다.
 헷갈리면 `00-verify.sql` 을 돌려서 지금 상태를 눈으로 확인하면 된다.
@@ -33,7 +34,7 @@ SQL Editor에 파일 내용을 붙여넣고 Run. **번호 순서대로** 실행�
 들고 대신 검색한다. 설정 전에는 '직접 찍기'만 된다.
 
 1. **카카오 열쇠** — developers.kakao.com → 앱 만들기 → 앱 → 플랫폼 키 →
-   **REST API 키** (호출 허용 IP 는 비워 둔다) ✅ 받음
+   **REST API 키** (호출 허용 IP 는 비워 둔다) ✅ 받음 · 함수 올림 ✅ (동작 확인)
 2. **Supabase 비밀 값** — Edge Functions → Secrets → `KAKAO_REST_KEY` ✅ 넣음
 3. **함수 올리기** — Edge Functions → Deploy a new function → Via Editor
    - 이름: `photo-search` (정확히 이 이름)

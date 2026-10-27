@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
-import { useCatsAndGroups } from '../components/common'
-import { IconCalculator, IconChevronRight, IconPencil, IconTrash } from '../components/icons'
+import { useEffect, useRef, useState } from 'react'
+import { useCatsAndGroups, usePhotoURL } from '../components/common'
+import { IconCalculator, IconCamera, IconChevronRight, IconPencil, IconTrash } from '../components/icons'
+import { compressImage } from '../lib/image'
 import catFaceUrl from '../assets/faces/good-white.svg'
 
 /** 냥이별 아바타 원 배경 — 크림색 얼굴과 확실히 구분되는 파스텔 */
 const AVATAR_BG = ['#FBCB93', '#F7BFCD', '#B9D8F4', '#C4E4B8', '#DCC8F0', '#F7DC93']
 import { dailyKcal } from '../lib/kcal'
 import { ageFrom, displayAge, guessBirthday } from '../lib/age'
-import { addCat, deleteCat, listCats, updateCat } from '../data/repo'
+import { addCat, deleteCat, listCats, savePhoto, updateCat } from '../data/repo'
 import type { Cat } from '../data/types'
 import { useBackGuard } from '../lib/useBackGuard'
 
@@ -35,9 +36,7 @@ export function CatsScreen() {
         <div className="card record-list">
           {cats.map((cat, i) => (
             <button className="record-row cat-row" key={cat.id} onClick={() => setEditing(cat)}>
-              <div className="cat-avatar" style={{ background: AVATAR_BG[i % AVATAR_BG.length] }}>
-                <img src={catFaceUrl} alt="" className="cat-avatar-face" />
-              </div>
+              <CatAvatar cat={cat} bg={AVATAR_BG[i % AVATAR_BG.length]} />
               <div className="record-info">
                 <div className="record-name">{cat.name}</div>
                 {(displayAge(cat) || cat.weightKg != null) && (
@@ -94,6 +93,7 @@ export function CatsScreen() {
       {editing && (
         <CatEditSheet
           cat={editing}
+          bg={AVATAR_BG[Math.max(0, cats.findIndex((c) => c.id === editing.id)) % AVATAR_BG.length]}
           onClose={() => setEditing(null)}
           onSaved={async () => {
             setEditing(null)
@@ -104,6 +104,7 @@ export function CatsScreen() {
 
       {adding && (
         <CatEditSheet
+          bg={AVATAR_BG[cats.length % AVATAR_BG.length]}
           onClose={() => setAdding(false)}
           onSaved={async () => {
             setAdding(false)
@@ -117,12 +118,25 @@ export function CatsScreen() {
 }
 
 /** cat 이 없으면 '추가', 있으면 '수정' */
+/** 냥이 얼굴 — 사진이 있으면 사진, 없으면 파스텔 원 위 그림 얼굴 */
+function CatAvatar({ cat, bg, src, big }: { cat?: Cat; bg: string; src?: string; big?: boolean }) {
+  const saved = usePhotoURL(src ? undefined : cat?.photoId)
+  const url = src ?? saved
+  return (
+    <div className={'cat-avatar' + (big ? ' big' : '') + (url ? ' has-photo' : '')} style={{ background: bg }}>
+      {url ? <img src={url} alt="" className="cat-avatar-photo" /> : <img src={catFaceUrl} alt="" className="cat-avatar-face" />}
+    </div>
+  )
+}
+
 function CatEditSheet({
   cat,
+  bg,
   onClose,
   onSaved,
 }: {
   cat?: Cat
+  bg: string
   onClose: () => void
   onSaved: () => void
 }) {
@@ -136,6 +150,24 @@ function CatEditSheet({
     cat?.birthday ?? (cat?.ageYears != null ? guessBirthday(cat.ageYears) : ''),
   )
   const [saving, setSaving] = useState(false)
+  // 사진 — 저장을 눌러야 실제로 바뀐다
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [newPhoto, setNewPhoto] = useState<Blob>()
+  const [newPreview, setNewPreview] = useState<string>()
+  const [removePhoto, setRemovePhoto] = useState(false)
+  const savedUrl = usePhotoURL(cat?.photoId)
+  const hasPhoto = !removePhoto && !!(newPreview ?? savedUrl)
+
+  async function pickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // 같은 파일 다시 고를 수 있게
+    if (!file) return
+    const blob = await compressImage(file)
+    if (newPreview) URL.revokeObjectURL(newPreview)
+    setNewPhoto(blob)
+    setNewPreview(URL.createObjectURL(blob))
+    setRemovePhoto(false)
+  }
   // 목록에서 빼기: 한 번 누르면 armed, 3초 안에 한 번 더 누르면 뺀다
   const [armed, setArmed] = useState(false)
   useEffect(() => {
@@ -155,6 +187,7 @@ function CatEditSheet({
       // 생년월일이 있으면 나이는 거기서 계산하므로 적어 둔 나이는 지운다.
       // 둘 다 남으면 어느 쪽이 맞는지 알 수 없게 된다.
       const bd = computed ? birthday.trim() : undefined
+      const photoId = removePhoto ? undefined : newPhoto ? await savePhoto(newPhoto) : cat?.photoId
       if (cat) {
         await updateCat({
           ...cat,
@@ -162,12 +195,14 @@ function CatEditSheet({
           weightKg: validWeight ? weightNum : undefined,
           birthday: bd,
           ageYears: bd ? undefined : cat.ageYears,
+          photoId,
         })
       } else {
         await addCat({
           name: name.trim(),
           weightKg: validWeight ? weightNum : undefined,
           birthday: bd,
+          photoId,
         })
       }
       onSaved()
@@ -181,6 +216,31 @@ function CatEditSheet({
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="sheet-handle" />
         <h2 className="sheet-title">{isNew ? '냥이 추가' : `${cat.name} 정보`}</h2>
+
+        {/* 사진 — 동그라미를 누르면 사진을 넣거나 바꾼다 */}
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={pickPhoto} />
+        <div className="cat-photo-pick">
+          <button type="button" className="cat-photo-btn" onClick={() => fileRef.current?.click()} aria-label="사진 넣기">
+            <CatAvatar bg={bg} src={removePhoto ? undefined : (newPreview ?? savedUrl)} big />
+            <span className="cat-photo-cam"><IconCamera size={16} /></span>
+          </button>
+          {hasPhoto ? (
+            <button
+              type="button"
+              className="cat-photo-remove"
+              onClick={() => {
+                if (newPreview) URL.revokeObjectURL(newPreview)
+                setNewPhoto(undefined)
+                setNewPreview(undefined)
+                setRemovePhoto(true)
+              }}
+            >
+              사진 빼기
+            </button>
+          ) : (
+            <div className="cat-photo-hint">사진을 눌러 넣어요</div>
+          )}
+        </div>
 
         <div className="field">
           <label>이름</label>

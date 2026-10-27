@@ -12,7 +12,8 @@
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { AppDB } from './db'
-import type { Snack } from './types'
+/** 사진을 가진 기록 — 간식 기록과 냥이 모두 */
+type HasPhoto = { photoId?: string; deletedAt?: number }
 
 const BUCKET = 'photos'
 
@@ -47,7 +48,7 @@ export async function syncPhotos(
   sb: SupabaseClient,
   db: AppDB,
   householdId: string,
-  snacks: Snack[],
+  snacks: HasPhoto[],
 ): Promise<PhotoSyncResult> {
   const wanted = new Set(
     snacks.filter((s) => !s.deletedAt && s.photoId).map((s) => s.photoId as string),

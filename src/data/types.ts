@@ -27,6 +27,8 @@ export interface Cat {
   birthday?: string
   /** 나이(년) — 생년월일을 넣기 전에 적어 둔 값 (예비) */
   ageYears?: number
+  /** 냥이 사진 (IndexedDB Blob 참조 키). 없으면 그림 얼굴 */
+  photoId?: string
   /** 마지막 수정 시각 (동기화 병합 기준) */
   updatedAt?: number
   /** 삭제 시각 (툼스톤) */

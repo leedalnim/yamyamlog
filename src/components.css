@@ -1184,6 +1184,26 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 
 /* ===== 냥이 아바타: 흰 얼굴 SVG ===== */
 .cat-avatar-face { width: 30px; height: auto; display: block; }
+/* 사진이 있으면 원을 사진으로 채운다 */
+.cat-avatar.has-photo { overflow: hidden; }
+.cat-avatar-photo { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cat-avatar.big { width: 96px; height: 96px; border: 3px solid var(--surface); box-shadow: var(--shadow-sm); }
+.cat-avatar.big .cat-avatar-face { width: 64px; }
+
+/* ===== 냥이 정보: 맨 위 사진 ===== */
+.cat-photo-pick { display: flex; flex-direction: column; align-items: center; margin: -4px 0 12px; }
+.cat-photo-btn { position: relative; border: none; background: none; padding: 0; border-radius: 50%; }
+.cat-photo-cam {
+  position: absolute; right: -2px; bottom: 2px; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--primary); color: var(--primary-ink); border: 3px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.cat-photo-hint { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.cat-photo-remove {
+  margin-top: 4px; padding: 4px 8px; border: none; background: none; font-family: inherit;
+  font-size: 12.5px; font-weight: 600; color: var(--muted);
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line);
+}
 
 /* ===== 통계 히어로: 마스코트 왼쪽 여백 제거 ===== */
 .stat-hero-scene .hero-img { width: 268px; margin-left: -80px; }
