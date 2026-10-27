@@ -1,0 +1,41 @@
+name: Check photo search
+
+# '이름으로 사진 찾기' 서버 함수(photo-search) 점검 — 손으로만 돌린다.
+# 앱처럼 익명 로그인한 뒤 함수에 검색과 사진 받기를 시켜 본다.
+# 익명 테스트 사용자가 하나 생긴다(우리집과 무관, 아무것도 못 본다).
+on:
+  workflow_dispatch:
+    inputs:
+      q:
+        description: 검색어
+        default: 조공 오키로스틱 퍼플
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 함수 불러 보기
+        env:
+          Q: ${{ inputs.q }}
+        run: |
+          URL=$(grep -m1 '^VITE_SUPABASE_URL=' .env.production | cut -d= -f2-)
+          KEY=$(grep -m1 '^VITE_SUPABASE_ANON_KEY=' .env.production | cut -d= -f2-)
+          resp=$(curl -s -X POST "$URL/auth/v1/signup" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}')
+          token=$(printf '%s' "$resp" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token',''))")
+          if [ -z "$token" ]; then echo "로그인 실패: $(printf '%s' "$resp" | head -c 200)"; exit 1; fi
+          echo "::add-mask::$token"
+          body=$(python3 -c "import json,os; print(json.dumps({'q': os.environ['Q']}))")
+          code=$(curl -s -o search.json -w '%{http_code}' -X POST "$URL/functions/v1/photo-search" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$body")
+          echo "검색 응답: $code"
+          head -c 600 search.json; echo
+          thumb=$(python3 -c "import json; d=json.load(open('search.json')); it=d.get('items') or []; print(len(it)); print(it[0]['thumb'] if it else '')" | tail -1)
+          count=$(python3 -c "import json; d=json.load(open('search.json')); print(len(d.get('items') or []))")
+          echo "찾은 사진: ${count}장"
+          if [ -z "$thumb" ]; then echo "결과 없음"; exit 1; fi
+          body2=$(python3 -c "import json,sys; print(json.dumps({'img': sys.argv[1]}))" "$thumb")
+          code2=$(curl -s -o photo.bin -w '%{http_code}' -X POST "$URL/functions/v1/photo-search" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$body2")
+          echo "사진 받기 응답: $code2, 크기: $(wc -c < photo.bin) 바이트, 종류: $(file -b photo.bin | cut -c1-40)"
+          [ "$code" = 200 ] && [ "$code2" = 200 ] && echo "확인: 사진 찾기가 동작한다"
