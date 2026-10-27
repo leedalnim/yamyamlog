@@ -2006,3 +2006,15 @@ html[data-mode="dark"] .promo-sub-pill { background: var(--surface); color: var(
 .pe-cutrow button small { font-weight: 500; font-size: 12px; opacity: 0.85; }
 .pe-cutrow button:disabled { opacity: 0.6; }
 .pe-cut-ok { flex: 1.2; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: var(--kind-ink); }
+
+/* 사진 고르기 창: '이 사진 쓰기'를 창 아래에 고정 */
+.pk-actions {
+  position: sticky; bottom: calc(-20px - env(safe-area-inset-bottom));
+  margin: 12px -16px calc(-20px - env(safe-area-inset-bottom));
+  padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
+  background: var(--bg); border-top: 1px solid var(--line);
+  z-index: 2;
+}
+.pk-actions-row { display: flex; gap: 8px; align-items: center; }
+.pk-actions-row .nv-go { flex: 1; margin-top: 0; }
+.pk-actions-row .pk-cancel { width: auto; flex: none; margin-top: 0; padding: 0 14px; height: 52px; }

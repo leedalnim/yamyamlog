@@ -272,12 +272,17 @@ export function PhotoFindSheet({
         ) : (
           <div className="pk-end">사진을 다 봤어요. 위에서 이름을 줄이거나 바꿔 보세요</div>
         ))}
-        {err && <div className="nv-err">{err}</div>}
-        <button className="nv-go" disabled={!sel || busy} onClick={use}>
-          {busy ? '사진 가져오는 중…' : '이 사진 쓰기'}
-        </button>
-        <button type="button" className="pk-cancel" onClick={onClose}>그만두기</button>
         <div className="pk-src" style={{ textAlign: 'center' }}>사진 출처: 네이버 이미지 검색 · 저장을 눌러야 바뀌어요</div>
+        {/* 사진을 많이 불러와도 늘 보이게 창 아래에 붙여 둔다 */}
+        <div className="pk-actions">
+          {err && <div className="nv-err">{err}</div>}
+          <div className="pk-actions-row">
+            <button type="button" className="pk-cancel" onClick={onClose}>그만두기</button>
+            <button className="nv-go" disabled={!sel || busy} onClick={use}>
+              {busy ? '사진 가져오는 중…' : sel ? '이 사진 쓰기' : '사진을 골라 주세요'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
