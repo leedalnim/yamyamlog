@@ -140,6 +140,16 @@ html[data-mode="dark"] {
 
 html, body, #root { height: 100%; }
 
+/* 페이지(문서)는 스크롤하지 않고 #root 안에서만 스크롤한다.
+   iOS 26+ 홈 화면 앱은 문서가 스크롤되면 화면 위 가장자리에 흐림을 깔아
+   로고가 뿌옇게 보인다(사파리 탭·문서가 고정된 쓱싹퍼즐은 괜찮음). */
+html, body { overflow: hidden; }
+#root {
+  overflow-y: auto;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
   margin: 0;
   background: var(--bg);
