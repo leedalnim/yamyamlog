@@ -333,3 +333,10 @@ html[data-mode="dark"] .app .detail-back, html[data-mode="dark"] .app .detail-fa
 .app .edit-acc-body > .field { margin: 0; gap: 7px; }
 /* 통계 기록 목록 · 피하는 것: 상자 안쪽 위아래 여백 없이 (첫 줄 위가 넓고 '더 보기' 아래가 비어 보였다) */
 .app .record-list { padding-top: 0; padding-bottom: 0; overflow: hidden; }
+/* TOP3 이름: 글자 13.5로 키우고 늘 두 줄 자리 — 짧은 이름도 세 칸 높이·위치가 같게, 길면 두 줄에서 … */
+.app .top3-name {
+  font-size: 13.5px; line-height: 18px; font-weight: 700;
+  min-height: 36px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  word-break: keep-all;
+}
