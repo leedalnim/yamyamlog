@@ -8,7 +8,10 @@
 // 브랜드 (32): 이나바, 조공, 시그니처바이, 하림펫푸드, 뉴트리플랜, 네츄럴코어, 테비, 캐츠랑, 아르르, ANF, 웰츠, 굿데이, 헬씨미요, 이즈칸, 내추럴발란스, 뽀시래기, 펫펍, 브리더랩, 냥스푼, 로투스, 보레알, 지위픽, 어플라우즈, 알모네이쳐, 쉬바, 위스카스, 템테이션, 팬시피스트, 로얄캐닌, 인스팅트, 웰니스, K9 내추럴
 import type { CatalogItem } from '../lib/catalog'
 
-const c = (name: string, brand: string, kind: string, ...base: string[]): CatalogItem => ({ name, brand, kind, base })
+// 종류는 조사 때 적은 예전 이름(캔·파우치·주식…)을 새 분류로 옮겨 쓴다 — lib/kind.ts
+import { toNewKind } from '../lib/kind'
+
+const c = (name: string, brand: string, kind: string, ...base: string[]): CatalogItem => ({ name, brand, kind: toNewKind(kind, name) ?? kind, base })
 
 export const CATALOG: CatalogItem[] = [
   // 이나바

@@ -19,7 +19,7 @@
     "test:date": "esbuild src/lib/date.ts --outfile=dist-test/date.js --format=esm && TZ=Asia/Seoul node scripts/test-date.mjs",
     "test:name": "esbuild src/lib/name.ts --outfile=dist-test/name.js --format=esm && node scripts/test-name.mjs",
     "check:contrast": "SINGLE=1 vite build && node scripts/check-contrast.mjs",
-    "test:guess": "esbuild src/lib/guess.ts --outfile=dist-test/guess.js --format=esm && esbuild src/lib/catalog.ts --bundle --outfile=dist-test/catalog.js --format=esm && node scripts/test-guess.mjs",
+    "test:guess": "esbuild src/lib/guess.ts --bundle --outfile=dist-test/guess.js --format=esm && esbuild src/lib/kind.ts --outfile=dist-test/kind.js --format=esm && esbuild src/lib/catalog.ts --bundle --outfile=dist-test/catalog.js --format=esm && node scripts/test-guess.mjs",
     "test:seed-order": "esbuild src/data/seedOrder.ts --outfile=dist-test/seedOrder.js --format=esm && node scripts/test-seed-order.mjs"
   },
   "dependencies": {

@@ -229,7 +229,13 @@ export function ChipSelect({
 
 /** 종류(형태) 선택 */
 export function KindChooser(p: { value: string; onChange: (v: string) => void }) {
-  return <ChipSelect {...p} presets={KIND_PRESETS} placeholder="직접 입력 (예: 수프, 스틱)" accent="kind" />
+  return (
+    <>
+      <ChipSelect {...p} presets={KIND_PRESETS} placeholder="직접 입력 (예: 수프, 스틱)" accent="kind" />
+      {/* 간식과 트릿이 헷갈리지 않게 */}
+      <p className="kind-hint">습식은 끼니로 먹이는 주식캔·파우치, 간식은 간식캔·스프 등 촉촉한 간식, 트릿은 씹는 과자류(동결건조 포함), 츄르에는 양갱도 넣어요.</p>
+    </>
+  )
 }
 
 /** 원료(주재료) 선택 — 여러 개 고를 수 있다 */

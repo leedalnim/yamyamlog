@@ -3,6 +3,8 @@
 // '조공 오키로스틱 퍼플 닭가슴살' → 종류 츄르? 원료 닭가슴살.
 // 짐작이 틀릴 수 있으므로 앱은 빈칸일 때만 채우고, 사용자가 고칠 수 있다.
 
+import { toNewKind } from './kind'
+
 // 앞에 있는 규칙이 이긴다 — '동결건조 트릿'은 동결건조
 const KIND_RULES: [string, RegExp][] = [
   ['동결건조', /동결\s*건조|프리즈\s*드라이|freeze\s*dr/i],
@@ -15,9 +17,10 @@ const KIND_RULES: [string, RegExp][] = [
   ['건식', /건식|건사료|사료/],
 ]
 
-/** 이름에 적힌 낱말로 종류(형태)를 짐작한다. 모르면 undefined */
+/** 이름에 적힌 낱말로 종류(형태)를 짐작한다. 모르면 undefined.
+ *  낱말로 예전 종류를 먼저 찾고, 새 분류(건식·습식·간식·트릿·츄르)로 옮긴다 */
 export function guessKind(text: string): string | undefined {
-  for (const [k, re] of KIND_RULES) if (re.test(text)) return k
+  for (const [k, re] of KIND_RULES) if (re.test(text)) return toNewKind(k, text)
   return undefined
 }
 

@@ -304,3 +304,4 @@ html[data-mode="dark"] .app .detail-back, html[data-mode="dark"] .app .detail-fa
 /* 반응 필터(전체·잘 먹음·보통·안 먹음) — 피그마(글자 12, 높이 28)보다 크게: 글자 13, 높이 32, 칸 여백 넓게 */
 .app .rx-filter { padding: 2px; gap: 0; }
 .app .rx-chip { font-size: 13px; padding: 6px 7px; line-height: 18px; }
+.app .kind-hint { margin: 6px 2px 0; font-size: 12px; line-height: 1.5; color: var(--muted); }

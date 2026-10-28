@@ -3,6 +3,7 @@
  */
 import { guessKind, guessBase } from '../dist-test/guess.js'
 import { searchCatalog } from '../dist-test/catalog.js'
+import { toNewKind } from '../dist-test/kind.js'
 
 let pass = 0, fail = 0
 const eq = (name, got, want) => {
@@ -11,13 +12,27 @@ const eq = (name, got, want) => {
   else { fail++; console.log('  ✗', name, '\n     받음:', g, '\n     기대:', w) }
 }
 
+console.log('예전 종류 → 새 분류')
+eq('양갱 → 츄르', toNewKind('양갱', '조공 산양유 양갱'), '츄르')
+eq('동결건조 → 트릿', toNewKind('동결건조', '뽀시래기 북어 큐브'), '트릿')
+eq('주식 → 습식', toNewKind('주식', '보레알 치킨'), '습식')
+eq('주식(사료) → 건식', toNewKind('주식', '로얄캐닌 인도어 사료'), '건식')
+eq('캔(주식 브랜드) → 습식', toNewKind('캔', '아카나 주식 청크 치킨'), '습식')
+eq('캔(간식) → 간식', toNewKind('캔', 'ANF 캣 참치무스캔'), '간식')
+eq('파우치(간식) → 간식', toNewKind('파우치(습식)', '하림펫푸드 더리얼 캣 스프 명태'), '간식')
+eq('파우치(주식) → 습식', toNewKind('파우치(습식)', '위스카스 파우치 참치'), '습식')
+eq('새 분류는 그대로', toNewKind('간식', 'ANF'), '간식')
+eq('직접 적은 종류는 그대로', toNewKind('수프', 'x'), '수프')
+eq('빈 값', toNewKind(undefined, 'x'), undefined)
+
 console.log('종류 짐작')
-eq('동결건조가 트릿보다 앞', guessKind('조공 동결건조 트릿 참치'), '동결건조')
-eq('양갱', guessKind('네덜란드 산양유 양갱'), '양갱')
+eq('동결건조 → 트릿', guessKind('조공 동결건조 트릿 참치'), '트릿')
+eq('양갱 → 츄르', guessKind('네덜란드 산양유 양갱'), '츄르')
 eq('츄르', guessKind('이나바 챠오 츄르 참치'), '츄르')
 eq('짜먹는', guessKind('짜먹는 간식 연어'), '츄르')
-eq('파우치', guessKind('하우스앤가토스 파우치 치킨'), '파우치(습식)')
-eq('캔', guessKind('로투스 정어리 캔 85g'), '캔')
+eq('주식 브랜드 파우치 → 습식', guessKind('하우스앤가토스 파우치 치킨'), '습식')
+eq('주식 브랜드 캔 → 습식', guessKind('로투스 정어리 캔 85g'), '습식')
+eq('간식캔 → 간식', guessKind('테비 참치 캔'), '간식')
 eq('캔디는 캔 아님', guessKind('고양이 캔디'), undefined)
 eq('트릿', guessKind('보레알 트릿'), '트릿')
 eq('사료 → 건식', guessKind('로얄캐닌 인도어 사료'), '건식')

@@ -2,6 +2,7 @@
 // 화면에서는 이 함수들만 씁니다. 나중에 Supabase로 바꿀 때
 // 이 파일 구현만 교체하면 화면 코드는 그대로 둘 수 있습니다.
 
+import { toNewKind } from '../lib/kind'
 import { getDB } from './db'
 import { placeBeforeOwn } from './seedOrder'
 import {
@@ -30,6 +31,22 @@ function uid(): string {
 export async function ensureSeeded(): Promise<void> {
   await seedOnce()
   await fixSeedOrder()
+  await migrateKinds()
+}
+
+/**
+ * 종류를 새 분류(건식·습식·간식·트릿·츄르·기타)로 옮긴다 — lib/kind.ts.
+ * 예전 값이 남은 기록만 바꾸고 수정 시각을 올려 가족 폰에도 넘어가게 한다.
+ * 가족 폰에서 예전 값이 다시 넘어와도 켤 때마다 다시 옮긴다(같은 결과).
+ */
+async function migrateKinds(): Promise<void> {
+  const db = await getDB()
+  const all = (await db.getAll('snacks')) as Snack[]
+  const now = Date.now()
+  for (const s of all) {
+    const k = toNewKind(s.kind, s.name)
+    if (k !== s.kind) await db.put('snacks', { ...s, kind: k, updatedAt: now })
+  }
 }
 
 /**
