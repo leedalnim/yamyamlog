@@ -50,6 +50,28 @@ export function usePhotoURL(photoId?: string) {
   return url
 }
 
+/**
+ * 기호도 하트 3개 — 잘 먹음 3, 보통 2, 안 먹음 0.
+ * 색은 CSS(--heart-on / --heart-off)로 둬서 다크 모드에서 바뀐다.
+ */
+const HEART_D = 'M7 12.45l-.85-.77C3.15 8.96 1.17 7.16 1.17 4.96c0-1.8 1.41-3.21 3.21-3.21 1.01 0 1.99.47 2.62 1.22.64-.75 1.61-1.22 2.63-1.22 1.79 0 3.21 1.41 3.21 3.21 0 2.2-1.99 4-4.99 6.73L7 12.45z'
+export const HEART_SCORE: Record<ReactionLevel, number> = { good: 3, ok: 2, bad: 0 }
+export function HeartScore({ level }: { level: ReactionLevel }) {
+  const n = HEART_SCORE[level]
+  return (
+    <svg className="heart-score" width="46" height="14" viewBox="0 0 46 14" role="img" aria-label={REACTION_META[level].label}>
+      {[0, 1, 2].map((i) => (
+        <path key={i} d={HEART_D} transform={`translate(${i * 16} 0)`} className={i < n ? 'on' : 'off'} />
+      ))}
+    </svg>
+  )
+}
+
+/** 사진 없는 기록의 츄르 그림 — 색을 CSS(--no-photo-ink)로 칠하려고 그림 대신 모양(mask)으로 */
+export function NoPhoto({ className = '' }: { className?: string }) {
+  return <span className={'no-photo ' + className} aria-hidden />
+}
+
 /** 고양이 4마리 반응 얼굴 그리드 — 이름 위 + 얼굴 아래, 기록 없는 애는 흐리게 */
 export function ReactionFaces({
   cats,
@@ -67,7 +89,7 @@ export function ReactionFaces({
 }) {
   // 알약 형태는 자리가 좁으니 반응이 있는 냥이만 보여준다
   const shown = variant === 'pill' ? cats.filter((c) => reactions[c.id]) : cats
-  const faceSize = variant === 'large' ? 46 : variant === 'stack' ? 28 : variant === 'pill' ? 18 : 40
+  const faceSize = variant === 'large' ? 46 : variant === 'stack' ? 28 : variant === 'pill' ? 20 : 40
 
   return (
     <div className={'face-grid face-grid--' + variant}>
@@ -90,11 +112,12 @@ export function ReactionFaces({
             <span className="face-name">{cat.name}</span>
             {/* 상세에서는 얼굴만으로 표정을 읽기 어려워 반응을 글자 칩으로 붙인다
                 (통계 기록 목록과 같은 색). 반응이 없으면 '기록 없음'. */}
-            {variant === 'large' && (
-              <span className="face-rx" data-level={lv}>
-                {lv ? REACTION_META[lv].label : '기록 없음'}
-              </span>
-            )}
+            {variant === 'large' &&
+              (lv ? (
+                <span className="face-hearts"><HeartScore level={lv} /></span>
+              ) : (
+                <span className="face-rx">기록 없음</span>
+              ))}
           </div>
         )
       })}

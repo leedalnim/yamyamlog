@@ -217,6 +217,15 @@ export const IconCalculator = (p: P) =>
   )
 
 /** 검색 */
+/** 닫기 (X) — 검색창 닫기 */
+export const IconClose = (p: P) =>
+  svg(
+    <>
+      <path d="M7 7l10 10M17 7L7 17" />
+    </>,
+    { ...p, strokeWidth: p.strokeWidth ?? 2.4 },
+  )
+
 export const IconSearch = (p: P) =>
   svg(
     <>

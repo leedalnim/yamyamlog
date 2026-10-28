@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useCatsAndGroups, usePhotoURL } from '../components/common'
+import { HeartScore, NoPhoto, useCatsAndGroups, usePhotoURL } from '../components/common'
 import type { ReactionLevel, Snack } from '../data/types'
 import { REACTION_META, REACTION_SCORE } from '../data/types'
 import { listSnacks } from '../data/repo'
 import { SnackDetail } from './FeedScreen'
 import { useBackGuard } from '../lib/useBackGuard'
+import { HAND_HANGUL } from '../lib/handChars'
+
+/** 손글씨 글꼴에 다 들어 있는 글자인지 — 없는 글자가 섞이면 기본 글꼴로 */
+const HAND = new Set(HAND_HANGUL)
+const isHand = (t: string) => [...t].every((c) => c < '\u3000' || HAND.has(c))
 import { splitBase } from '../lib/base'
-import { fullDate } from '../lib/date'
 import { IconChart, IconHeartBroken, IconPencil, ReactionIcon } from '../components/icons'
 import heroUrl from '../assets/cat-cushion.png'
 import heroTangja from '../assets/hero/tangja.webp'
@@ -24,7 +28,6 @@ const HERO_BY_CAT: Record<string, string> = {
 const HERO_BY_NAME: Record<string, string> = { 탱자: heroTangja, 유자: heroYuja, 콩이: heroKong, 콩: heroKong, 나물이: heroNamul, 나물: heroNamul }
 const heroFor = (c: { id: string; name: string }) => HERO_BY_CAT[c.id] ?? HERO_BY_NAME[c.name.trim()] ?? heroUrl
 import roomBgUrl from '../assets/room-bg.jpg'
-import noPhotoUrl from '../assets/no-photo.svg'
 import rank1Url from '../assets/badges/rank1.png'
 import rank2Url from '../assets/badges/rank2.png'
 import rank3Url from '../assets/badges/rank3.png'
@@ -258,7 +261,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                   <div className="panel-fav">
                     <span className="panel-fav-k">가장 좋아하는 원료</span>
                     {favBase ? (
-                      <span className="panel-fav-v">{favBase}</span>
+                      <span className={'panel-fav-v' + (isHand(favBase) ? ' hand' : '')}>{favBase}</span>
                     ) : (
                       <span className="panel-fav-v none">아직 없어요</span>
                     )}
@@ -388,7 +391,6 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
                     key={r.snack.id}
                     onClick={() => setViewing(r.snack)}
                   >
-                    <ReactionIcon level="bad" size={26} />
                     <div className="record-info">
                       <div className="record-name">{r.snack.name}</div>
                     </div>
@@ -408,7 +410,7 @@ export function StatsScreen({ onAdd }: { onAdd?: () => void }) {
 /** 기록 목록을 처음에 몇 개까지 보여줄지 */
 const RECORDS_PREVIEW = 5
 
-const DONUT_COLORS = ['#7FB3E8', '#FBC15E', '#F9A8C4', '#DCD8D3', '#FA7F38', '#F2BC57']
+const DONUT_COLORS = ['#1956C1', '#FEC200', '#FF8FCF', '#DCD8D3', '#FF6411', '#7FB3E8']
 /** 묶어 놓은 '기타' 는 재료 하나가 아니므로 색을 주지 않는다 (무채색) */
 const REST_COLOR = '#c9c3bb'
 
@@ -462,7 +464,7 @@ function Top3Card({
     <button className="card top3-card" onClick={onOpen}>
       <img src={RANK_BADGES[rank - 1] ?? rank3Url} alt={rank + "위"} className="top3-medal" />
       <div className="top3-thumb">
-        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
+        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <NoPhoto />}
       </div>
       <div className="top3-name">{snack.name}</div>
     </button>
@@ -482,18 +484,13 @@ function RecordRow({
   return (
     <button className="record-row" onClick={onOpen}>
       <div className="record-thumb">
-        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <img src={noPhotoUrl} alt="" className="no-photo" />}
+        {url ? <img src={url} alt={snack.name} loading="lazy" /> : <NoPhoto />}
       </div>
       <div className="record-info">
         <div className="record-name">{snack.name}</div>
-        <div className="record-sub muted">
-          {/* 해를 넘겨 쌓이므로 올해 기록도 연도부터 */}
-          {fullDate(snack.createdAt)}
-          {splitBase(snack.base).map((b) => ` · ${b}`).join('')}
-        </div>
+        {/* 기호도는 하트 점수로 (잘 먹음 3 · 보통 2 · 안 먹음 0) */}
+        <HeartScore level={level} />
       </div>
-      {/* 얼굴만으로는 표정을 구별하기 어렵다 — 글자를 같이 둔다 */}
-      <span className="rx-tag" data-level={level}>{REACTION_META[level].label}</span>
       <ReactionIcon level={level} size={30} />
     </button>
   )

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles.css'
 import './components.css'
+import './redesign.css'
 import { setupPwaUpdate } from './lib/pwa-update'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)

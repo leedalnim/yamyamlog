@@ -1,0 +1,278 @@
+/* ===================== 2026-10 리디자인 (피그마 '화면 · 색상 실험용') =====================
+   예전 규칙(styles.css · components.css)을 지우지 않고 맨 뒤에서 덮는다.
+   되돌리려면 main.tsx 의 import 한 줄만 빼면 된다.
+
+   규칙
+   - 주황 #ff6411 = 누르는 곳(+, 저장, 링크). 고른 것 = 진한 갈색 #33292a(다크: 크림 바탕 + 진한 글씨)
+   - 반응 배지: 채운 색 + 흰 글씨 (잘 먹음 #ff6411 · 보통 #8e857b · 안 먹음 #1956c1)
+   - 모서리 12, 아래에서 올라오는 창 위쪽 24, 썸네일 20(모서리 다듬기 100%)
+   - 기호도는 하트 3개 (잘 먹음 3 · 보통 2 · 안 먹음 0) */
+
+@font-face {
+  font-family: 'MemomentKkukkukk';
+  /* 앱에 쓰는 글자만 남긴 판 — scripts/subset-hand-font.py */
+  src: url('./assets/fonts/MemomentKkukkukk-sub.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --primary: #ff6411;
+  --primary-ink: #ffffff;
+  --chip-good: #ff6411;
+  --chip-ok: #8e857b;
+  --chip-bad: #1956c1;
+  --sel-bg: #33292a;
+  --sel-ink: #ffffff;
+  --chip-ink: #534941;
+  --title-ink: #33292a;
+  --thumb-empty: #f8f5f2;
+  --no-photo-ink: #e3dbd4;
+  --thumb-line: #eeeae4;
+  --heart-on: #ff6411;
+  --heart-off: #e3dbd4;
+  --tab-active: #111111;
+  --star-off: #dbd1c2;
+  --promo-bg: #fff5e9;
+  --hero-bg: #fdf0dc;
+  --more-bg: #faf9f8;
+  --input-bg: #ffffff;
+  --fab-shadow: 0 8px 20px rgba(255, 100, 17, 0.32);
+  --radius-sm: 12px;
+  --radius-md: 12px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 4px 16px rgba(120, 95, 60, 0.10);
+  --font-memo: 'MemomentKkukkukk', var(--font);
+  --sq44: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2044%2044%22%3E%3Cpath%20d%3D%22M%2022%200%20c%201.8572%200%202.7858%200%203.5692%200.0617%20a%2020.0000%2020.0000%200%200%201%2018.3692%2018.3692%20c%200.0617%200.7834%200.0617%201.7120%200.0617%203.5692%20L%2044%2022%20c%200%201.8572%200%202.7858%20-0.0617%203.5692%20a%2020.0000%2020.0000%200%200%201%20-18.3692%2018.3692%20c%20-0.7834%200.0617%20-1.7120%200.0617%20-3.5692%200.0617%20L%2022%2044%20c%20-1.8572%200%20-2.7858%200%20-3.5692%20-0.0617%20a%2020.0000%2020.0000%200%200%201%20-18.3692%20-18.3692%20c%20-0.0617%20-0.7834%20-0.0617%20-1.7120%20-0.0617%20-3.5692%20L%200%2022%20c%200%20-1.8572%200%20-2.7858%200.0617%20-3.5692%20a%2020.0000%2020.0000%200%200%201%2018.3692%20-18.3692%20c%200.7834%20-0.0617%201.7120%20-0.0617%203.5692%20-0.0617%20Z%22%2F%3E%3C%2Fsvg%3E"); --sq48: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20d%3D%22M%2024%200%20c%203.7160%200%205.5740%200%207.1287%200.2462%20a%2020.0000%2020.0000%200%200%201%2016.6251%2016.6251%20c%200.2462%201.5547%200.2462%203.4127%200.2462%207.1287%20L%2048%2024%20c%200%203.7160%200%205.5740%20-0.2462%207.1287%20a%2020.0000%2020.0000%200%200%201%20-16.6251%2016.6251%20c%20-1.5547%200.2462%20-3.4127%200.2462%20-7.1287%200.2462%20L%2024%2048%20c%20-3.7160%200%20-5.5740%200%20-7.1287%20-0.2462%20a%2020.0000%2020.0000%200%200%201%20-16.6251%20-16.6251%20c%20-0.2462%20-1.5547%20-0.2462%20-3.4127%20-0.2462%20-7.1287%20L%200%2024%20c%200%20-3.7160%200%20-5.5740%200.2462%20-7.1287%20a%2020.0000%2020.0000%200%200%201%2016.6251%20-16.6251%20c%201.5547%20-0.2462%203.4127%20-0.2462%207.1287%20-0.2462%20Z%22%2F%3E%3C%2Fsvg%3E"); --sq56: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2056%2056%22%3E%3Cpath%20d%3D%22M%2028%200%20c%207.4451%200%2011.1677%200%2014.1803%200.9789%20a%2020.0000%2020.0000%200%200%201%2012.8408%2012.8408%20c%200.9789%203.0127%200.9789%206.7352%200.9789%2014.1803%20L%2056%2028%20c%200%207.4451%200%2011.1677%20-0.9789%2014.1803%20a%2020.0000%2020.0000%200%200%201%20-12.8408%2012.8408%20c%20-3.0127%200.9789%20-6.7352%200.9789%20-14.1803%200.9789%20L%2028%2056%20c%20-7.4451%200%20-11.1677%200%20-14.1803%20-0.9789%20a%2020.0000%2020.0000%200%200%201%20-12.8408%20-12.8408%20c%20-0.9789%20-3.0127%20-0.9789%20-6.7352%20-0.9789%20-14.1803%20L%200%2028%20c%200%20-7.4451%200%20-11.1677%200.9789%20-14.1803%20a%2020.0000%2020.0000%200%200%201%2012.8408%20-12.8408%20c%203.0127%20-0.9789%206.7352%20-0.9789%2014.1803%20-0.9789%20Z%22%2F%3E%3C%2Fsvg%3E");
+  --ring56: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2056%2056%22%3E%3CclipPath%20id%3D%22c%22%3E%3Cpath%20d%3D%22M%2028%200%20c%207.4451%200%2011.1677%200%2014.1803%200.9789%20a%2020.0000%2020.0000%200%200%201%2012.8408%2012.8408%20c%200.9789%203.0127%200.9789%206.7352%200.9789%2014.1803%20L%2056%2028%20c%200%207.4451%200%2011.1677%20-0.9789%2014.1803%20a%2020.0000%2020.0000%200%200%201%20-12.8408%2012.8408%20c%20-3.0127%200.9789%20-6.7352%200.9789%20-14.1803%200.9789%20L%2028%2056%20c%20-7.4451%200%20-11.1677%200%20-14.1803%20-0.9789%20a%2020.0000%2020.0000%200%200%201%20-12.8408%20-12.8408%20c%20-0.9789%20-3.0127%20-0.9789%20-6.7352%20-0.9789%20-14.1803%20L%200%2028%20c%200%20-7.4451%200%20-11.1677%200.9789%20-14.1803%20a%2020.0000%2020.0000%200%200%201%2012.8408%20-12.8408%20c%203.0127%20-0.9789%206.7352%20-0.9789%2014.1803%20-0.9789%20Z%22%2F%3E%3C%2FclipPath%3E%3Cpath%20d%3D%22M%2028%200%20c%207.4451%200%2011.1677%200%2014.1803%200.9789%20a%2020.0000%2020.0000%200%200%201%2012.8408%2012.8408%20c%200.9789%203.0127%200.9789%206.7352%200.9789%2014.1803%20L%2056%2028%20c%200%207.4451%200%2011.1677%20-0.9789%2014.1803%20a%2020.0000%2020.0000%200%200%201%20-12.8408%2012.8408%20c%20-3.0127%200.9789%20-6.7352%200.9789%20-14.1803%200.9789%20L%2028%2056%20c%20-7.4451%200%20-11.1677%200%20-14.1803%20-0.9789%20a%2020.0000%2020.0000%200%200%201%20-12.8408%20-12.8408%20c%20-0.9789%20-3.0127%20-0.9789%20-6.7352%20-0.9789%20-14.1803%20L%200%2028%20c%200%20-7.4451%200%20-11.1677%200.9789%20-14.1803%20a%2020.0000%2020.0000%200%200%201%2012.8408%20-12.8408%20c%203.0127%20-0.9789%206.7352%20-0.9789%2014.1803%20-0.9789%20Z%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20clip-path%3D%22url(%23c)%22%2F%3E%3C%2Fsvg%3E");
+}
+html[data-mode="dark"] {
+  --primary: #ff6411;
+  --primary-ink: #ffffff;
+  --sel-bg: #f2ead9;
+  --sel-ink: #232019;
+  --chip-ink: #d8ccb8;
+  --title-ink: #f2ead9;
+  --thumb-empty: #3a352e;
+  --no-photo-ink: #60584b;
+  --thumb-line: #3e3930;
+  --heart-off: #221b0b;
+  --tab-active: #f2ead9;
+  --star-off: #5a5246;
+  --promo-bg: #3a2e22;
+  --hero-bg: #3a2e22;
+  --more-bg: #2f2b23;
+  --input-bg: #2c2820;
+  --kind-bg: #4a3018; --kind-ink: #f8ab6b;
+  --base-bg: #3a352e; --base-ink: #c2b7a6;
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --fab-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- 사진 없는 츄르 그림 ---------- */
+.no-photo {
+  display: block;
+  height: 66%;
+  aspect-ratio: 24 / 32;
+  background: var(--no-photo-ink);
+  -webkit-mask: url('./assets/no-photo.svg') center / contain no-repeat;
+  mask: url('./assets/no-photo.svg') center / contain no-repeat;
+  filter: none !important;
+}
+
+/* ---------- 썸네일: 모서리 20 + 모서리 다듬기 100% ---------- */
+.app .snack-thumb, .app .record-thumb, .app .top3-thumb {
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  background: var(--thumb-empty);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.app .snack-thumb { width: 48px; height: 48px; -webkit-mask: var(--sq48) center / 100% 100%; mask: var(--sq48) center / 100% 100%; }
+.app .record-thumb { width: 44px; height: 44px; flex: none; -webkit-mask: var(--sq44) center / 100% 100%; mask: var(--sq44) center / 100% 100%; }
+.app .top3-thumb { width: 56px; height: 56px; -webkit-mask: var(--sq56) center / 100% 100%; mask: var(--sq56) center / 100% 100%; }
+/* TOP3 썸네일 연한 테두리 (안쪽 1px) — 다듬은 모서리를 따라가게 모양으로 그린다 */
+.app .top3-thumb::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: var(--thumb-line);
+  -webkit-mask: var(--ring56) center / 100% 100%; mask: var(--ring56) center / 100% 100%;
+}
+.app .snack-thumb img:not(.no-photo), .app .record-thumb img, .app .top3-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
+.app .snack-card.is-discontinued .snack-thumb { filter: grayscale(1); opacity: 0.75; }
+
+/* ---------- 제목 · 상단 ---------- */
+.app .topbar { padding: 12px 4px 10px; }
+.app .topbar h1 { font-family: var(--font); font-size: 24px; font-weight: 700; color: var(--title-ink); }
+.app .topbar h1.logo { line-height: 0; }
+.app .logo-img { width: 148px; height: 29px; }
+.app .bell-btn { color: var(--ink); }
+.app .stat-title { font-family: var(--font); font-size: 16px; font-weight: 700; color: var(--title-ink); }
+
+/* ---------- 칩 (종류 · 냥이) — 고른 것 진한 갈색 ---------- */
+.app .chip-tab {
+  background: var(--surface-2);
+  color: var(--chip-ink);
+  font-size: 13px; font-weight: 700;
+  padding: 9px 16px; min-height: 34px; min-width: 56px;
+  border-radius: 999px;
+  box-shadow: none;
+}
+.app .chip-tab.chip-fav, .app .chip-tab.filter-chip { min-width: 0; padding: 7px 11px; }
+.app .chip-tab.active, .app .chip-tab.on { background: var(--sel-bg); color: var(--sel-ink); }
+
+/* ---------- 반응 필터 (전체 · 잘 먹음 · 보통 · 안 먹음) ---------- */
+.app .rx-filter { background: var(--surface-2); border-radius: 999px; padding: 0; gap: 0; }
+.app .rx-chip {
+  font-size: 12px; font-weight: 700; color: var(--chip-ink);
+  padding: 5px 8px; border-radius: 999px; background: transparent;
+  border: 1px solid transparent; box-shadow: none;
+}
+.app .rx-chip i { font-style: normal; font-weight: 400; margin-left: 2px; color: inherit; }
+.app .rx-chip.on { background: var(--surface); color: var(--ink); border-color: var(--sel-bg); box-shadow: none; }
+
+/* ---------- 목록 상자 ---------- */
+.app .feed-list, .app .record-list, .app .stat-section > .card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.app .snack-name, .app .record-name { font-family: var(--font); font-size: 15.5px; color: var(--ink); }
+.app .snack-name { font-weight: 700; }
+.app .record-name { font-weight: 600; }
+.app .records-more { background: var(--more-bg); color: var(--muted); font-size: 13.5px; font-weight: 600; border-top: 1px solid var(--line); }
+.app .fav-btn:not(.on) svg { color: var(--star-off); }
+
+/* ---------- 반응 배지 (홈 목록) — 채운 색 + 흰 글씨 ---------- */
+.app .face-grid--pill { gap: 5px; }
+.app .face-grid--pill .face-cell {
+  padding: 3px 10px 3px 5px; gap: 2px; border-radius: 999px; height: 23px;
+  color: #fff; font-size: 12px; font-weight: 600; line-height: 12px;
+}
+.app .face-grid--pill .face-cell[data-level="good"] { background: var(--chip-good); }
+.app .face-grid--pill .face-cell[data-level="ok"] { background: var(--chip-ok); }
+.app .face-grid--pill .face-cell[data-level="bad"] { background: var(--chip-bad); }
+.app .face-grid--pill .face-name { color: #fff; font-size: 12px; font-weight: 600; }
+.app .face-grid--pill .face-cell img { width: 20px !important; height: 17px; }
+
+/* ---------- 하트 점수 ---------- */
+.heart-score { display: block; flex: none; }
+.heart-score .on { fill: var(--heart-on); }
+.heart-score .off { fill: var(--heart-off); }
+
+/* ---------- 하단 탭 ---------- */
+.app .nav { background: var(--surface); border-top: 1px solid var(--line); box-shadow: none; }
+.app .nav-tab { font-size: 11px; font-weight: 700; color: var(--muted); }
+.app .nav-tab.active { color: var(--tab-active); }
+.app .nav-fab { width: 58px; height: 58px; background: var(--primary); color: #fff; box-shadow: var(--fab-shadow); }
+
+/* ---------- 홈 배너 ---------- */
+.app .promo2.promo-line {
+  background: var(--promo-bg);
+  border-radius: 12px;
+  height: 64px; padding: 0 0 0 20px;
+  display: flex; align-items: center; gap: 7px;
+  position: relative; overflow: hidden;
+  box-shadow: none;
+}
+.app .promo2.promo-line .promo-title {
+  position: static;
+  font-family: var(--font-memo);
+  font-size: 20px; font-weight: 400; line-height: 1; letter-spacing: -0.32px;
+  color: var(--ink); white-space: nowrap;
+}
+.app .promo-mamma {
+  display: inline-block; font-weight: 400;
+  background: var(--sel-bg); color: var(--sel-ink);
+  border-radius: 999px; padding: 4px 6px 3px; margin: 0 3px;
+}
+.app .promo2.promo-line .promo-arrow-dot { position: static; width: 22px; height: 22px; background: var(--primary); color: #fff; }
+.app .promo2.promo-line .promo-cat { position: absolute; right: 11px; top: -5px; height: 80px; width: auto; margin: 0; }
+
+/* ---------- 검색 ---------- */
+.app .search-bar {
+  background: var(--input-bg); border: 1px solid var(--sel-bg);
+  border-radius: 999px; padding: 9px 9px 9px 15px; gap: 8px; height: 46px;
+}
+.app .search-input { font-size: 15px; font-weight: 600; }
+.app .search-close {
+  width: 26px; height: 26px; flex: none; border-radius: 13px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); color: var(--muted); border: none;
+}
+
+/* ---------- 아래에서 올라오는 창 ---------- */
+.app .sheet { border-radius: 24px 24px 0 0; background: var(--bg); }
+.app .sheet-handle { background: var(--line); width: 40px; height: 4px; border-radius: 3px; }
+.app .detail-sheet { border-radius: 24px 24px 0 0; background: var(--surface); }
+
+/* ---------- 버튼 · 입력 ---------- */
+.app .btn { border-radius: 12px; }
+.app .btn-primary, .app .nv-go { background: var(--primary); color: #fff; }
+.app .input, .app .textarea { border-radius: 12px; }
+.app .chip-tab svg { flex: none; }
+.app .promo2.promo-line .promo-title { flex: none; }
+
+/* ---------- 통계 ---------- */
+.app .stat-hero { background-color: var(--hero-bg); border-radius: 12px; box-shadow: none; }
+.app .stat-hero-panel { background: var(--surface); border-radius: 12px; box-shadow: none; }
+.app .panel-fav-k { font-size: 11.5px; font-weight: 700; color: var(--muted); }
+.app .panel-fav-v { color: var(--primary); }
+.app .panel-fav-v.hand { font-family: var(--font-memo); font-weight: 400; font-size: 21px; line-height: 24px; }
+.app .panel-row { font-size: 13px; font-weight: 600; color: var(--muted); }
+.app .panel-row b { font-weight: 800; color: var(--ink); }
+.app .panel-btn {
+  background: var(--primary); color: #fff; border: none; border-radius: 999px;
+  font-size: 13px; font-weight: 800; padding: 9px; box-shadow: none;
+}
+.app .panel-btn svg { color: #fff; }
+.app .record-row { gap: 12px; padding: 11px 16px; }
+.app .record-info { display: flex; flex-direction: column; gap: 4px; }
+.app .top3-card { background: var(--surface); border: none; border-radius: 12px; box-shadow: var(--shadow-sm); }
+.app .top3-name { font-size: 12px; font-weight: 700; line-height: 16.2px; color: var(--ink); }
+.app .stat-section > .card.top3-card { border: none; }
+.app .donut-leg-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.app .donut-leg-pct { font-size: 13.5px; font-weight: 700; color: var(--muted); }
+.app .avoid-note { color: var(--chip-bad); font-size: 12px; font-weight: 700; }
+html[data-mode="dark"] .app .avoid-note { color: #7fa6e6; }
+.app .promo2.promo-line { justify-content: flex-start; }
+
+/* ---------- 고르는 칩 (필터 · 새 기록 종류/원료) ---------- */
+.app .sel-chip {
+  background: var(--surface-2); color: var(--ink); border: 1px solid transparent;
+  font-size: 13px; font-weight: 700; padding: 7px 14px; border-radius: 999px; box-shadow: none;
+}
+.app .sel-chip.on { background: var(--sel-bg); color: var(--sel-ink); border-color: var(--sel-bg); }
+.app .filter-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.app .sheet-title { font-size: 18px; font-weight: 800; color: var(--ink); }
+.app .sheet-actions .btn:not(.btn-primary) { background: var(--surface-2); color: var(--ink); border: none; }
+.app .sheet-actions .btn { font-size: 15px; font-weight: 700; border-radius: 12px; }
+
+/* ---------- 설정 밝기 ---------- */
+.app .seg { background: var(--surface-2); border-radius: 12px; padding: 1px; gap: 4px; }
+.app .seg-btn { border-radius: 12px; font-size: 14px; font-weight: 700; color: var(--chip-ink); border: 1px solid transparent; }
+.app .seg-btn.active { background: var(--surface); color: var(--ink); border-color: var(--sel-bg); box-shadow: none; }
+
+/* ---------- 새 기록 / 기록 수정 ---------- */
+.app .lv-btn { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: 12px; font-weight: 700; color: var(--muted); }
+/* 고른 반응: 반응 배지 색 테두리 + 글씨 (배경은 그대로 — 얼굴이 묻히지 않게) */
+.app .lv-btn.active { border-width: 2px; background: var(--surface); }
+.app .lv-btn.active[data-level="good"] { border-color: var(--chip-good); color: var(--chip-good); }
+.app .lv-btn.active[data-level="ok"] { border-color: var(--chip-ok); color: var(--chip-ok); }
+.app .lv-btn.active[data-level="bad"] { border-color: var(--chip-bad); color: var(--chip-bad); }
+html[data-mode="dark"] .app .lv-btn.active[data-level="ok"] { border-color: #b3a99c; color: #c9bfb2; }
+html[data-mode="dark"] .app .lv-btn.active[data-level="bad"] { border-color: #7fa6e6; color: #a2c3f2; }
+.app .chooser-name { font-size: 14px; font-weight: 700; color: var(--ink); }
+.app .edit-acc { border-radius: 12px; border: none; box-shadow: var(--shadow-sm); }
+.app .edit-acc-head { color: var(--primary); font-size: 14px; font-weight: 700; }
+.app .edit-acc-head .snack-chev { color: var(--muted); }
+.app .photo-drop { background: var(--memo-bg); color: var(--muted); border: none; border-radius: 12px; font-size: 14px; font-weight: 700; }
+.app .field > label, .app .field-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.app .input, .app .textarea { background: var(--input-bg); border: 1px solid var(--line); }
+/* 칩 줄은 사이 여백 0 (피그마에서 일부러 없앰) */
+.app .tabs { gap: 0; }
+/* 상세 사진 위 뒤로·별 버튼 */
+.app .detail-back, .app .detail-fav { background: rgba(255, 253, 246, 0.9); color: var(--ink); }
+html[data-mode="dark"] .app .detail-back, html[data-mode="dark"] .app .detail-fav { background: rgba(44, 40, 32, 0.9); }

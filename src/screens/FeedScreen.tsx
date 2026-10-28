@@ -4,6 +4,7 @@ import {
   BaseTag,
   KindChooser,
   KindTag,
+  NoPhoto,
   ReactionEditor,
   ReactionFaces,
   useCatsAndGroups,
@@ -16,7 +17,7 @@ import { PhotoFindSheet } from '../components/photoPick'
 import { PhotoEditSheet } from '../components/PhotoEditSheet'
 import { photoSearchState } from '../lib/photoSearch'
 import { compressImage } from '../lib/image'
-import { IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash } from '../components/icons'
+import { IconClose, IconCamera, IconChevronLeft, IconChevronRight, IconPencil, IconSearch, IconSliders, IconStar, IconTrash } from '../components/icons'
 import bannerCatUrl from '../assets/cat-bowl.png'
 // 손그림 고양이(CatDoodle)는 앱의 다른 일러스트와 결이 안 맞아 어설퍼 보였다.
 // '아직 없음'은 자는 고양이, '검색해도 안 나옴'은 찾다 갸웃하는 고양이로
@@ -29,11 +30,10 @@ import noResultCatUrl from '../assets/no-result.png'
 import logoRaw from '../assets/logo.svg?raw'
 
 // 로고 구멍(배경색)을 모드별 배경색으로 채운 그림 두 장 — styles.css 의 --bg 와 같은 값
-const logoUrl = (bg: string) =>
-  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(logoRaw.split('var(--bg)').join(bg))
-const LOGO_LIGHT = logoUrl('#fffdfb')
-const LOGO_DARK = logoUrl('#232019')
-import noPhotoUrl from '../assets/no-photo.svg'
+const logoUrl = (ink: string) =>
+  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(logoRaw.split('var(--ink)').join(ink))
+const LOGO_LIGHT = logoUrl('#33292a')
+const LOGO_DARK = logoUrl('#f2ead9')
 import { matches } from '../lib/hangul'
 import { splitBase } from '../lib/base'
 import { fullLongDate } from '../lib/date'
@@ -196,12 +196,13 @@ export function FeedScreen({
             />
             <button
               className="search-close"
+              aria-label="검색 닫기"
               onClick={() => {
                 setQuery('')
                 setSearchOpen(false)
               }}
             >
-              취소
+              <IconClose size={14} />
             </button>
           </div>
         ) : (
@@ -210,8 +211,8 @@ export function FeedScreen({
               {/* 글자 안으로 그려 넣으면(inline SVG) 아이폰에서 로고만 뿌옇게 보였다.
                   그림(img)으로 넣으면 기기 해상도대로 그린다. 구멍 색(배경색)은 그림
                   안에서 CSS 변수를 못 읽으므로 밝게·어둡게 두 장을 두고 갈아 끼운다 */}
-              <img className="logo-img logo-light" src={LOGO_LIGHT} width={138} height={32} alt="" />
-              <img className="logo-img logo-dark" src={LOGO_DARK} width={138} height={32} alt="" />
+              <img className="logo-img logo-light" src={LOGO_LIGHT} width={148} height={29} alt="" />
+              <img className="logo-img logo-dark" src={LOGO_DARK} width={148} height={29} alt="" />
             </h1>
             <button className="bell-btn" aria-label="검색" onClick={() => setSearchOpen(true)}>
               <IconSearch size={22} />
@@ -274,7 +275,7 @@ export function FeedScreen({
       {/* 오늘의 기록 유도 배너 — 한 줄. 매일 여는 화면에서 큰 카드가 최근 기록을
           아래로 밀어냈다. 글자는 왼쪽, 일러스트는 지금처럼 오른쪽 */}
       <button className="promo-banner promo2 promo-line" onClick={onAdd}>
-        <span className="promo-title">오늘 먹은 거 기록하기</span>
+        <span className="promo-title">오늘 먹은 <b className="promo-mamma">맘마</b> 기록하기</span>
         <span className="promo-arrow-dot"><IconChevronRight size={12} /></span>
         <img src={bannerCatUrl} alt="" className="promo-cat" />
       </button>
@@ -438,7 +439,7 @@ function SnackCard({
           {url ? (
             <img src={url} alt={snack.name} loading="lazy" />
           ) : (
-            <img src={noPhotoUrl} alt="" className="no-photo" />
+            <NoPhoto />
           )}
         </div>
         <div className="snack-body">
@@ -708,7 +709,7 @@ export function SnackDetail({
             <BaseTag key={b} v={b} />
           ))}
           {snack.discontinued && <span className="tag-discontinued">단종</span>}
-          <span className="snack-date">{fullLongDate(snack.createdAt)} 기록</span>
+          <span className="snack-date">{fullLongDate(snack.createdAt)}</span>
         </div>
         {/* 점선으로 위쪽 제품 정보와 갈라 놓는다 — 여기부터가 '누가 잘 먹었나' */}
         <div className="detail-reactions">
@@ -743,5 +744,5 @@ export function SnackDetail({
  * '사진이 없다'는 사실도 전달되지 않는다.
  */
 function ReactionPillFallback() {
-  return <img src={noPhotoUrl} alt="" className="detail-no-photo" />
+  return <NoPhoto className="detail-no-photo" />
 }
