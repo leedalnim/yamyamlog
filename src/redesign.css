@@ -276,3 +276,14 @@ html[data-mode="dark"] .app .lv-btn.active[data-level="bad"] { border-color: #7f
 /* 상세 사진 위 뒤로·별 버튼 */
 .app .detail-back, .app .detail-fav { background: rgba(255, 253, 246, 0.9); color: var(--ink); }
 html[data-mode="dark"] .app .detail-back, html[data-mode="dark"] .app .detail-fav { background: rgba(44, 40, 32, 0.9); }
+
+/* ---------- 피그마에 없는 화면도 같은 규칙으로 (기록 수정 · 사진 고르기/다듬기) ---------- */
+.app .mini-btn { border-radius: 12px; }
+.app .nv-naver, .app .pe-cutrow button.primary { border-radius: 12px; background: var(--promo-bg); color: var(--primary); }
+.app .nv-go { border-radius: 12px; }
+.app .pk-cancel { border-radius: 12px; }
+.app .pe-seg button { border: 1px solid transparent; }
+.app .pe-seg button.on { background: var(--surface); color: var(--ink); border-color: var(--sel-bg); box-shadow: none; }
+.app .pe-color.on { outline-color: var(--sel-bg); }
+.app .pk-cell.on { outline-color: var(--sel-bg); }
+.app .pk-ck { background: var(--sel-bg); color: var(--sel-ink); }
