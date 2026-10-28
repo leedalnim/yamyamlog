@@ -144,7 +144,15 @@ html, body, #root { height: 100%; }
    iOS 26+ 홈 화면 앱은 문서가 스크롤되면 화면 위 가장자리에 흐림을 깔아
    로고가 뿌옇게 보인다(사파리 탭·문서가 고정된 쓱싹퍼즐은 괜찮음). */
 html, body { overflow: hidden; }
+html { background: var(--bg); }
+/* 스크롤 상자는 상태바 '아래'에서 시작한다. 상태바 밑까지 스크롤 상자가 깔려 있으면
+   안쪽 상자여도 iOS 가 흐림을 그린다(문서만 고정했을 때 여전히 뿌옜다).
+   상태바 뒤에는 바탕색만 보인다. */
 #root {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 0; right: 0; bottom: 0;
+  height: auto;
   overflow-y: auto;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
@@ -188,7 +196,7 @@ button { font-family: inherit; cursor: pointer; }
   /* 하단 탭바는 홈 인디케이터(safe-area) 만큼 더 높다.
      그걸 빼먹으면 아이폰에서 맨 아래 버튼이 탭바에 가린다. */
   padding: 0 16px calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
-  padding-top: calc(env(safe-area-inset-top) + 8px);
+  padding-top: 8px;
 }
 
 .topbar {
