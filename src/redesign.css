@@ -343,3 +343,6 @@ html[data-mode="dark"] .app .detail-back, html[data-mode="dark"] .app .detail-fa
 /* 반응 필터 글자와 숫자 사이를 좁게 (띄어쓰기 대신 3px) */
 .app .rx-chip { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
 .app .rx-chip i { margin-left: 0; }
+
+/* 글자를 치는 동안(키보드가 올라와 있는 동안) 하단 탭 숨김 — lib/keyboard.ts */
+html.kb-open .nav { display: none; }
