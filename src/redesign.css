@@ -346,3 +346,7 @@ html[data-mode="dark"] .app .detail-back, html[data-mode="dark"] .app .detail-fa
 
 /* 글자를 치는 동안(키보드가 올라와 있는 동안) 하단 탭 숨김 — lib/keyboard.ts */
 html.kb-open .nav { display: none; }
+
+/* 기록 수정 화면 위쪽 줄(뒤로·제목·저장): 화면 끝까지 바탕을 깔되 내용은 양옆 16 띄움.
+   위에서 .topbar 좌우 여백을 4로 덮으면서 저장 버튼이 화면 끝에 붙었다 */
+.app .topbar.sticky-top { padding-left: 16px; padding-right: 16px; }
