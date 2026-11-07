@@ -38,6 +38,7 @@ import { matches } from '../lib/hangul'
 import { splitBase } from '../lib/base'
 import { fullLongDate } from '../lib/date'
 import { useBackGuard } from '../lib/useBackGuard'
+import { useSticky } from '../lib/useSticky'
 
 
 
@@ -58,14 +59,15 @@ export function FeedScreen({
 }) {
   const { cats } = useCatsAndGroups()
   const [snacks, setSnacks] = useState<Snack[]>([])
-  const [filter, setFilter] = useState<string>('all') // 'all' | 종류(kind) | '기타'
+  const [filter, setFilter] = useSticky<string>('filter', 'all') // 'all' | 종류(kind) | '기타'
   const [viewing, setViewing] = useState<Snack | null>(null)
   const [filterOpen, setFilterOpen] = useState(false)
-  const [catId, setCatId] = useState<string>('') // '' = 전체 냥이
-  const [level, setLevel] = useState<'' | ReactionLevel>('') // '' = 반응 무관
-  const [sort, setSort] = useState<'recent' | 'name' | 'good'>('recent')
+  // 필터는 다른 화면에 다녀와도 남는다 (앱을 켜 둔 동안). useSticky 참고
+  const [catId, setCatId] = useSticky<string>('catId', '') // '' = 전체 냥이
+  const [level, setLevel] = useSticky<'' | ReactionLevel>('level', '') // '' = 반응 무관
+  const [sort, setSort] = useSticky<'recent' | 'name' | 'good'>('sort', 'recent')
   // 잘 먹는 냥이가 몇 마리 이상인 것만 (0 = 상관없음, -1 = 모두)
-  const [minGood, setMinGood] = useState(0)
+  const [minGood, setMinGood] = useSticky('minGood', 0)
   const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   // 기록이 쌓이면 홈이 끝없이 길어진다 — 처음엔 몇 개만
@@ -98,36 +100,20 @@ export function FeedScreen({
   }, [snacks])
 
   // 반응은 화면에 칩으로 보이므로 시트 배지에서는 빼고 센다
-  const activeCount = (catId ? 1 : 0) + (sort !== 'recent' ? 1 : 0) + (minGood ? 1 : 0)
+  const activeCount = (catId ? 1 : 0) + (level ? 1 : 0) + (sort !== 'recent' ? 1 : 0) + (minGood ? 1 : 0)
+  /** '최근 기록' 오른쪽에 보일 고른 조건 (종류는 빼고) */
+  const filterSummary = [
+    catId ? cats.find((c) => c.id === catId)?.name : '',
+    level ? REACTION_META[level].label : '',
+    minGood === -1 ? '모두 잘 먹음' : minGood ? `${minGood}마리 이상` : '',
+    sort === 'good' ? '잘 먹는 순' : sort === 'name' ? '이름순' : '',
+  ]
+    .filter(Boolean)
+    .join(' · ')
   /** 이 기록을 잘 먹은 냥이 수 */
   const goodCount = (s: Snack) => Object.values(s.reactions).filter((v) => v === 'good').length
   /** '잘 먹는 냥이 수' 조건에 맞는지 (-1 = 모든 냥이) */
   const enoughGood = (s: Snack) => !minGood || goodCount(s) >= (minGood === -1 ? Math.max(cats.length, 1) : minGood)
-
-  // 반응 칩에 붙일 개수. 반응 말고 다른 조건(종류·검색·냥이)은 이미 적용한
-  // 상태에서 세야 '지금 화면에서 몇 개'가 맞는다.
-  const levelCounts = useMemo(() => {
-    const hit = (s: Snack, lv: ReactionLevel) =>
-      catId ? s.reactions[catId] === lv : Object.values(s.reactions).some((v) => v === lv)
-    let list = snacks
-    if (filter === 'fav') list = list.filter((s) => s.favorite)
-    else if (filter === '기타') list = list.filter((s) => !s.kind)
-    else if (filter !== 'all') list = list.filter((s) => s.kind === filter)
-    const q = query.trim()
-    if (q) {
-      list = list.filter((s) =>
-        [s.name, s.kind, s.base, s.memo].filter(Boolean).some((v) => matches(v as string, q)),
-      )
-    }
-    if (catId) list = list.filter((s) => !!s.reactions[catId])
-    if (minGood) list = list.filter(enoughGood)
-    return {
-      total: list.length,
-      good: list.filter((s) => hit(s, 'good')).length,
-      ok: list.filter((s) => hit(s, 'ok')).length,
-      bad: list.filter((s) => hit(s, 'bad')).length,
-    }
-  }, [snacks, filter, catId, query, minGood, cats.length])
 
   const filtered = useMemo(() => {
     let list = snacks
@@ -291,25 +277,22 @@ export function FeedScreen({
 
       {/* 통계의 기록 목록과 같은 자리·같은 모양 — 두 화면에서 다르게 생기면
           같은 기능인 줄 모른다 */}
-      <div className="stat-title-row" style={{ marginTop: 4 }}>
+      {/* 개수는 제목 옆 뱃지로. 필터(냥이·반응·잘 먹는 냥이·정렬)를 켜면 고른 조건을
+          오른쪽에 글자로 보여 준다 — 누르면 필터 창, ✕ 는 한 번에 풀기.
+          종류는 위 칩에 이미 진하게 보이므로 넣지 않는다 */}
+      <div className="stat-title-row feed-title-row" style={{ marginTop: 4 }}>
         <h2 className="stat-title">최근 기록</h2>
-        {levelCounts.total > 0 && (
-          <div className="rx-filter">
-            {([
-              ['', '전체', levelCounts.total],
-              ['good', REACTION_META.good.label, levelCounts.good],
-              ['ok', REACTION_META.ok.label, levelCounts.ok],
-              ['bad', REACTION_META.bad.label, levelCounts.bad],
-            ] as const).map(([lv, text, n]) => (
-              <button
-                key={lv || 'all'}
-                className={'rx-chip' + (level === lv ? ' on' : '')}
-                data-level={lv || undefined}
-                onClick={() => setLevel(lv as '' | ReactionLevel)}
-              >
-                {text} <i>{n}</i>
-              </button>
-            ))}
+        <span className={'count-badge' + (activeCount ? ' on' : '')}>{filtered.length}</span>
+        {filterSummary && (
+          <div className="filter-summary">
+            <button className="filter-summary-text" onClick={() => setFilterOpen(true)}>{filterSummary}</button>
+            <button
+              className="filter-summary-x"
+              aria-label="필터 풀기"
+              onClick={() => { setCatId(''); setLevel(''); setSort('recent'); setMinGood(0) }}
+            >
+              <IconClose size={11} />
+            </button>
           </div>
         )}
       </div>
@@ -383,6 +366,17 @@ export function FeedScreen({
                     onClick={() => setCatId(c.id)}
                   >
                     {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="filter-sec">
+              <div className="filter-label">반응</div>
+              <div className="chip-row">
+                {(['', 'good', 'ok', 'bad'] as const).map((lv) => (
+                  <button key={lv || 'all'} className={'sel-chip' + (level === lv ? ' on' : '')} data-accent="kind" onClick={() => setLevel(lv)}>
+                    {lv ? REACTION_META[lv].label : '전체'}
                   </button>
                 ))}
               </div>

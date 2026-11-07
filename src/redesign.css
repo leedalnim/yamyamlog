@@ -350,3 +350,25 @@ html.kb-open .nav { display: none; }
 /* 기록 수정 화면 위쪽 줄(뒤로·제목·저장): 화면 끝까지 바탕을 깔되 내용은 양옆 16 띄움.
    위에서 .topbar 좌우 여백을 4로 덮으면서 저장 버튼이 화면 끝에 붙었다 */
 .app .topbar.sticky-top { padding-left: 16px; padding-right: 16px; }
+
+/* ---------- 홈 '최근 기록' 줄: 개수 뱃지 + 고른 조건 글자 ---------- */
+.app .feed-title-row { display: flex; align-items: center; gap: 6px; min-height: 28px; }
+.app .feed-title-row .stat-title { flex: none; }
+.app .count-badge {
+  flex: none; min-width: 22px; height: 20px; padding: 0 7px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-2); color: var(--chip-ink);
+  font-size: 12px; font-weight: 700; line-height: 1;
+}
+.app .count-badge.on { background: var(--sel-bg); color: var(--sel-ink); }
+.app .filter-summary { margin-left: auto; min-width: 0; display: flex; align-items: center; gap: 6px; }
+.app .filter-summary-text {
+  min-width: 0; border: none; background: none; padding: 4px 0; font: inherit;
+  font-size: 13px; font-weight: 700; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.app .filter-summary-x {
+  flex: none; width: 22px; height: 22px; border-radius: 11px; border: none; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); color: var(--muted);
+}
