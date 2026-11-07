@@ -63,7 +63,9 @@ export function FeedScreen({
   const [filterOpen, setFilterOpen] = useState(false)
   const [catId, setCatId] = useState<string>('') // '' = 전체 냥이
   const [level, setLevel] = useState<'' | ReactionLevel>('') // '' = 반응 무관
-  const [sort, setSort] = useState<'recent' | 'name'>('recent')
+  const [sort, setSort] = useState<'recent' | 'name' | 'good'>('recent')
+  // 잘 먹는 냥이가 몇 마리 이상인 것만 (0 = 상관없음, -1 = 모두)
+  const [minGood, setMinGood] = useState(0)
   const [query, setQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   // 기록이 쌓이면 홈이 끝없이 길어진다 — 처음엔 몇 개만
@@ -96,7 +98,11 @@ export function FeedScreen({
   }, [snacks])
 
   // 반응은 화면에 칩으로 보이므로 시트 배지에서는 빼고 센다
-  const activeCount = (catId ? 1 : 0) + (sort !== 'recent' ? 1 : 0)
+  const activeCount = (catId ? 1 : 0) + (sort !== 'recent' ? 1 : 0) + (minGood ? 1 : 0)
+  /** 이 기록을 잘 먹은 냥이 수 */
+  const goodCount = (s: Snack) => Object.values(s.reactions).filter((v) => v === 'good').length
+  /** '잘 먹는 냥이 수' 조건에 맞는지 (-1 = 모든 냥이) */
+  const enoughGood = (s: Snack) => !minGood || goodCount(s) >= (minGood === -1 ? Math.max(cats.length, 1) : minGood)
 
   // 반응 칩에 붙일 개수. 반응 말고 다른 조건(종류·검색·냥이)은 이미 적용한
   // 상태에서 세야 '지금 화면에서 몇 개'가 맞는다.
@@ -114,13 +120,14 @@ export function FeedScreen({
       )
     }
     if (catId) list = list.filter((s) => !!s.reactions[catId])
+    if (minGood) list = list.filter(enoughGood)
     return {
       total: list.length,
       good: list.filter((s) => hit(s, 'good')).length,
       ok: list.filter((s) => hit(s, 'ok')).length,
       bad: list.filter((s) => hit(s, 'bad')).length,
     }
-  }, [snacks, filter, catId, query])
+  }, [snacks, filter, catId, query, minGood, cats.length])
 
   const filtered = useMemo(() => {
     let list = snacks
@@ -140,6 +147,7 @@ export function FeedScreen({
     }
 
     if (catId) list = list.filter((s) => !!s.reactions[catId])
+    if (minGood) list = list.filter(enoughGood)
     if (level) {
       list = list.filter((s) =>
         catId
@@ -150,14 +158,15 @@ export function FeedScreen({
 
     const sorted = [...list]
     if (sort === 'name') sorted.sort((a, b) => a.name.localeCompare(b.name, 'ko'))
+    else if (sort === 'good') sorted.sort((a, b) => goodCount(b) - goodCount(a) || b.createdAt - a.createdAt)
     else sorted.sort((a, b) => b.createdAt - a.createdAt)
     return sorted
-  }, [snacks, filter, catId, level, sort, query])
+  }, [snacks, filter, catId, level, sort, query, minGood, cats.length])
 
   // 보는 조건이 바뀌면 다시 처음 몇 개부터
   useEffect(() => {
     setShown(FEED_PAGE)
-  }, [filter, catId, level, sort, query])
+  }, [filter, catId, level, sort, query, minGood])
 
   // ---- 상세 페이지 ----
   if (viewing) {
@@ -379,10 +388,27 @@ export function FeedScreen({
               </div>
             </div>
 
+            {/* 여러 냥이가 같이 잘 먹는 것 — 한 번에 여럿 먹일 간식 고를 때 */}
+            {cats.length >= 2 && (
+              <div className="filter-sec">
+                <div className="filter-label">잘 먹는 냥이</div>
+                <div className="chip-row">
+                  <button className={'sel-chip' + (minGood === 0 ? ' on' : '')} data-accent="kind" onClick={() => setMinGood(0)}>상관없음</button>
+                  {Array.from({ length: Math.max(0, cats.length - 2) }, (_, i) => i + 2).map((n) => (
+                    <button key={n} className={'sel-chip' + (minGood === n ? ' on' : '')} data-accent="kind" onClick={() => setMinGood(n)}>
+                      {n}마리 이상
+                    </button>
+                  ))}
+                  <button className={'sel-chip' + (minGood === -1 ? ' on' : '')} data-accent="kind" onClick={() => setMinGood(-1)}>모두</button>
+                </div>
+              </div>
+            )}
+
             <div className="filter-sec">
               <div className="filter-label">정렬</div>
               <div className="chip-row">
                 <button className={'sel-chip' + (sort === 'recent' ? ' on' : '')} data-accent="kind" onClick={() => setSort('recent')}>최신순</button>
+                <button className={'sel-chip' + (sort === 'good' ? ' on' : '')} data-accent="kind" onClick={() => setSort('good')}>잘 먹는 순</button>
                 <button className={'sel-chip' + (sort === 'name' ? ' on' : '')} data-accent="kind" onClick={() => setSort('name')}>이름순</button>
               </div>
             </div>
@@ -391,7 +417,7 @@ export function FeedScreen({
               <button
                 className="btn"
                 style={{ flex: 1 }}
-                onClick={() => { setCatId(''); setLevel(''); setSort('recent'); setFilter('all') }}
+                onClick={() => { setCatId(''); setLevel(''); setSort('recent'); setFilter('all'); setMinGood(0) }}
               >
                 초기화
               </button>
